@@ -1,0 +1,16 @@
+body {
+  margin: 20px;
+  background-color: black;
+}
+a {
+  text-decoration: none;
+}
+a:hover {
+  color: hotpink;
+  cursor: pointer;
+}
+
+.bookList {
+  width: 80%;
+  margin: auto;
+}

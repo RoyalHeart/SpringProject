@@ -1,0 +1,22 @@
+<html>
+
+<head>
+    <title>Login Screen</title>
+</head>
+
+<body>
+    <form th:action="@{/login}" method="post" style="max-width: 400px; margin: 0 auto;">
+        <div>
+            <p>Login</p>
+            <p>Username: </p>
+            <input placeholder="Username" type="username" name="username" id="username" />
+            <p>Password: </p>
+            <input placeholder="Password" type="password" name="password" id="password" />
+            <p>
+                <input type="submit" value="Login" />
+            </p>
+        </div>
+    </form>
+</body>
+
+</html>
