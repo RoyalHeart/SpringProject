@@ -14,3 +14,18 @@ a:hover {
   width: 80%;
   margin: auto;
 }
+
+.pagination {
+  display: flex;
+  flex-direction: row;
+  float: right;
+  margin-right: 10%;
+}
+
+.pagination > div {
+  margin: 10px;
+}
+
+.active {
+  color: hotpink;
+}

@@ -141,11 +141,16 @@ public class SimpleController {
             bookRepo.save(book);
             return "redirect:/book";
         } catch (Exception e) {
-            model.addAttribute("books", bookRepo.findAll());
-            model.addAttribute("newBook", new Book());
             model.addAttribute("error", "All values must not be empty");
-            return "book";
+            return "errors";
         }
+    }
+
+    @RequestMapping(value = "/add", method = RequestMethod.GET)
+    public String addBook(
+            Model model) {
+        model.addAttribute("newBook", new Book());
+        return "add";
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.POST)
@@ -153,9 +158,14 @@ public class SimpleController {
         List<Book> books = bookService.searchBook(searchBook);
         model.addAttribute("books", bookRepo.findAll());
         model.addAttribute("newBook", new Book());
-        model.addAttribute("searchBook", new Book());
         model.addAttribute("searchBooks", books);
-        return "book";
+        return "search";
+    }
+
+    @RequestMapping(value = "/search", method = RequestMethod.GET)
+    public String searchBookGet(Model model) {
+        model.addAttribute("newBook", new Book());
+        return "search";
     }
 
     // @RequestMapping(value = "/delete", method = RequestMethod.POST)

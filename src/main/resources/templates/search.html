@@ -1,0 +1,34 @@
+<html>
+
+<head>
+    <title>Search book</title>
+    <link rel="stylesheet" href="/css/style.css" />
+</head>
+
+<body>
+
+    <h1>Search Book</h1>
+    <form action="#" th:action="@{/search}" th:object="${newBook}" method="post">
+        <table border="0" cellpadding="10">
+            <tr>
+                <td>Book Author:</td>
+                <td><input type="text" th:field="*{author}" /></td>
+            </tr>
+            <tr>
+                <td>Book Title:</td>
+                <td><input type="text" th:field="*{title}" /></td>
+            </tr>
+            <tr>
+                <td colspan="2"><button type="submit">Search</button></td>
+            </tr>
+        </table>
+    </form>
+    <li th:each="searchBook : ${searchBooks}">
+        <span th:text="${searchBook.author}"></span>
+        : <span th:text="${searchBook.title}"></span>
+        <span><a th:href="@{/editBook/{id}(id=${searchBook.id})}">Edit</a></span>
+        <span><a th:href="@{/del/{id}(id=${searchBook.id})}">Delete</a></span>
+    </li>
+</body>
+
+</html>
