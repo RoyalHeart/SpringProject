@@ -4,13 +4,14 @@
     <title>Login Screen</title>
 </head>
 
-<body>
-    <form th:action="@{/login}" method="post" style="max-width: 400px; margin: 0 auto;">
+<body style="background-color: black; color: white">
+    <form th:action="@{/login}" method="post" style="max-width: 400px; margin: 0 auto">
         <div>
+            <p th:text="${error}"></p>
             <p>Login</p>
-            <p>Username: </p>
+            <p>Username:</p>
             <input placeholder="Username" type="username" name="username" id="username" />
-            <p>Password: </p>
+            <p>Password:</p>
             <input placeholder="Password" type="password" name="password" id="password" />
             <p>
                 <input type="submit" value="Login" />

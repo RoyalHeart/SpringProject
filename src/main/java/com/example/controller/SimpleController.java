@@ -91,8 +91,11 @@ public class SimpleController {
     }
 
     @GetMapping("/login")
-    public String login(Model model) {
-        model.addAttribute("appName", appName);
+    public String login(@RequestParam(required = false) String error, Model model) {
+        model.addAttribute("error", "");
+        if (error != null) {
+            model.addAttribute("error", "Invalid login information");
+        }
         return "login";
     }
 
@@ -102,6 +105,7 @@ public class SimpleController {
         int pageSize = 10;
         Pageable pageable = new PageRequest(currentPage - 1, pageSize);
         Page<Book> bookPage = bookService.getPage(pageable);
+        bookPage.getContent();
         System.out.println(">>> bookPage:" + bookPage);
         model.addAttribute("bookPage", bookPage);
         int totalPages = bookPage.getTotalPages();
@@ -112,7 +116,6 @@ public class SimpleController {
             model.addAttribute("pageNumbers", pageNumbers);
         }
         model.addAttribute("books", bookRepo.findAll());
-        model.addAttribute("newBook", new Book());
         return "book";
     }
 
@@ -142,7 +145,7 @@ public class SimpleController {
             return "redirect:/book";
         } catch (Exception e) {
             model.addAttribute("error", "All values must not be empty");
-            return "errors";
+            return "error";
         }
     }
 

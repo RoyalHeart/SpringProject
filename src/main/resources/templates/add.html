@@ -1,17 +1,21 @@
 <html>
 
 <head>
-    <title>Edit book</title>
+    <title>Add book</title>
     <link rel="stylesheet" href="/css/style.css" />
 </head>
 
 <body>
     <div>
-        <a href="/home">Home</a>
-        <a href="/book">Book</a>
+        <div class="navigation">
+            <a href="/home">Home</a>
+            <a href="/book">Book</a>
+            <a href="/add">Add</a>
+            <a href="/search">Search</a>
+        </div>
         <h1>Add new book</h1>
         <form method="post" action="#" th:action="@{/save}" th:object="${newBook}">
-            <table>
+            <table border="0" cellpadding="10">
                 <tr>
                     <td>
                         <p>Book author: </p>

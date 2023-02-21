@@ -7,14 +7,18 @@
 
 <body>
     <div>
-        <a href="/home">Home</a>
-        <a href="/book">Book</a>
+        <div class="navigation">
+            <a href="/home">Home</a>
+            <a href="/book">Book</a>
+            <a href="/add">Add</a>
+            <a href="/search">Search</a>
+        </div>
         <h1>Edit book</h1>
         <form method="post" action="#" th:action="@{/save}" th:object="${editBook}">
             <table>
                 <tr>
                     <td>
-                        <p>Book ID: </p>
+                        <p>Book ID:</p>
                     </td>
                     <td>
                         <input type="text" th:field="*{id}" readonly="True" width="0" />
@@ -22,7 +26,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <p>Book author: </p>
+                        <p>Book author:</p>
                     </td>
                     <td>
                         <input type="text" th:field="*{author}" />
@@ -30,7 +34,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <p>Book title: </p>
+                        <p>Book title:</p>
                     </td>
                     <td>
                         <input type="text" th:field="*{title}" />
