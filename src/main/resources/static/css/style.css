@@ -1,13 +1,37 @@
 body {
   margin: 20px;
   background-color: black;
+  color: rgb(235, 235, 228);
 }
 a {
-  text-decoration: none;
+  color: white;
 }
 a:hover {
   color: hotpink;
   cursor: pointer;
+}
+.login {
+  float: center;
+  max-width: 400px;
+  margin: 0 auto;
+}
+.navigation {
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+}
+.navigation a {
+  text-decoration: none;
+  margin: 5px;
+  width: 150px;
+  text-align: center;
+  background-color: rgba(120, 6, 27, 0.66);
+  border-radius: 30px;
+  font-size: 20px;
+}
+
+.navigation a.icon {
+  display: none;
 }
 
 .bookList {
@@ -21,7 +45,6 @@ a:hover {
   float: right;
   margin-right: 10%;
 }
-
 .pagination > div {
   margin: 10px;
 }

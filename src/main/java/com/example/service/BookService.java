@@ -104,8 +104,7 @@ public class BookService {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                System.out.println(">>> title: " + title);
-                System.out.println(">>> author: " + author);
+                System.out.println(">>> " + author + " : " + title);
                 Book newBook = new Book();
                 newBook.setTitle(title);
                 newBook.setAuthor(author);

@@ -7,14 +7,20 @@
 
 <body>
     <div>
-        <a href="/home">Home</a>
-        <a href="/book">Book</a>
-        <a href="/add">Add</a>
-        <a href="/search">Search</a>
+        <div class="navigation">
+            <a href="/home">Home</a>
+            <a href="/book">Book</a>
+            <a href="/add">Add</a>
+            <a href="/search">Search</a>
+        </div>
         <div th:switch="${books.size()}">
             <h1 th:case="0">No books here!</h1>
             <div th:case="*">
                 <h1>List of all books:</h1>
+                <form method="post" action="#" th:action="@{/export}" th:object="${bookPage.getContent()}">
+
+                </form>
+                <button type="submit" th:href="@{/export}">Export to XLSX</button>
                 <table border="0" cellpadding="10" class="bookList">
                     <thead>
                         <tr>
@@ -48,7 +54,7 @@
             </div>
         </div>
 
-        <h1>Create New Book</h1>
+        <!-- <h1>Create New Book</h1>
         <form action="#" th:action="@{/save}" th:object="${newBook}" method="post">
             <table border="0" cellpadding="10">
                 <tr>
@@ -88,7 +94,7 @@
             : <span th:text="${searchBook.title}"></span>
             <span><a th:href="@{/editBook/{id}(id=${searchBook.id})}">Edit</a></span>
             <span><a th:href="@{/del/{id}(id=${searchBook.id})}">Delete</a></span>
-        </li>
+        </li> -->
     </div>
 </body>
 
