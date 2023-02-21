@@ -40,12 +40,14 @@ public class BookService {
     int pageSize = 10;
     List<Book> books;
 
-    @PostConstruct
-    public void init() {
-        books = bookRepository.findAll();
-    }
+    // @PostConstruct
+    // public void init() {
+    // books = bookRepository.findAll();
+    // System.out.println(">>> init book service" + books.size());
+    // }
 
     public Page<Book> getPage(Pageable pageable) {
+        books = bookRepository.findAll();
         int pageSize = this.pageSize;
         int currentPage = pageable.getPageNumber();
         int startItem = currentPage * pageSize;
