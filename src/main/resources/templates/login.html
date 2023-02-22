@@ -2,20 +2,23 @@
 
 <head>
     <title>Login Screen</title>
+    <link rel="stylesheet" href="/css/style.css" />
 </head>
 
 <body style="background-color: black; color: white">
-    <form th:action="@{/login}" method="post" style="max-width: 400px; margin: 0 auto">
+    <form th:action="@{/login}" method="post" class="login">
         <div>
-            <p th:text="${error}"></p>
             <p>Login</p>
-            <p>Username:</p>
-            <input placeholder="Username" type="username" name="username" id="username" />
-            <p>Password:</p>
+            <p th:if="${usernameError}" style="color: red">Username:</p>
+            <p th:if="${usernameError} == null">Username:</p>
+            <input placeholder="Username" type="username" name="username" id="username" th:value="${username}" />
+            <span th:text="${usernameError}"></span>
+
+            <p th:if="${passwordError}" style="color: red">Password:</p>
+            <p th:if="${passwordError} == null">Password:</p>
             <input placeholder="Password" type="password" name="password" id="password" />
-            <p>
-                <input type="submit" value="Login" />
-            </p>
+            <span th:text="${passwordError}"></span>
+            <p><input type="submit" value="Login" /></p>
         </div>
     </form>
 </body>

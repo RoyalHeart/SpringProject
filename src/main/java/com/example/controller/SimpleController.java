@@ -5,6 +5,7 @@
  */
 package com.example.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -29,9 +30,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.persistence.model.Book;
 import com.example.persistence.model.UserDetail;
+import com.example.persistence.model.Wrapper;
 import com.example.persistence.repo.BookRepository;
 import com.example.persistence.repo.UserRepository;
 import com.example.service.BookService;
+import com.example.service.ExportToExcel;
 
 @Controller
 @ComponentScan("com.example.service")
@@ -55,6 +58,19 @@ public class SimpleController {
         bookRepo.save(book);
     }
 
+    private void initializeUsers() {
+        UserDetail user = new UserDetail();
+        user.setUsername("admin");
+        user.setUser_role("ADMIN");
+        user.setUser_password("$2a$12$Jt8ENKHcdh28mkizdJfEc.ekBTcRRRX9Cp3bz5Ze.dYnUHL3QbRmK");
+        userRepository.save(user);
+        user = new UserDetail();
+        user.setUsername("user");
+        user.setUser_role("USER");
+        user.setUser_password("$2a$12$Jt8ENKHcdh28mkizdJfEc.ekBTcRRRX9Cp3bz5Ze.dYnUHL3QbRmK");
+        userRepository.save(user);
+    }
+
     @Value("${spring.application.name}")
     String appName;
 
@@ -70,44 +86,55 @@ public class SimpleController {
     @PostConstruct
     public void init() {
         initializeBooks();
-        bookRepo.save(bookService.getTrendingBooks());
-        UserDetail user = new UserDetail();
-        user.setUsername("admin");
-        user.setUser_role("ADMIN");
-        user.setUser_password("$2a$12$Jt8ENKHcdh28mkizdJfEc.ekBTcRRRX9Cp3bz5Ze.dYnUHL3QbRmK");
-        userRepository.save(user);
+        initializeUsers();
+        // bookRepo.save(bookService.getTrendingBooks());
     }
 
     @GetMapping("/")
-    public String base(Model model) {
+    public String getBase(Model model) {
         model.addAttribute("appName", appName);
         return "redirect:/home";
     }
 
+    @GetMapping("/login")
+    public String getLogin(@RequestParam(required = false) Optional<String> authError,
+            @RequestParam(required = false) Optional<String> username, Model model) {
+        if (authError.isPresent()) {
+            if (authError.get().contains("username")) {
+                model.addAttribute("usernameError", "Username not exist");
+                return "login";
+            } else if (authError.get().contains("password")) {
+                model.addAttribute("passwordError", "Wrong password");
+                model.addAttribute("username", username.get());
+                return "login";
+            }
+        }
+        model.addAttribute("usernameError", null);
+        model.addAttribute("username", "");
+        model.addAttribute("passwordError", null);
+        model.addAttribute("error", "");
+        return "login";
+    }
+
     @GetMapping("/home")
-    public String homePage(Model model) {
+    public String getHome(Model model) {
         model.addAttribute("appName", appName);
         return "home";
     }
 
-    @GetMapping("/login")
-    public String login(@RequestParam(required = false) String error, Model model) {
-        model.addAttribute("error", "");
-        if (error != null) {
-            model.addAttribute("error", "Invalid login information");
-        }
-        return "login";
-    }
-
     @RequestMapping(value = "/book", method = RequestMethod.GET)
-    public String book(Model model, @RequestParam("page") Optional<Integer> page) {
+    public String getBook(Model model, @RequestParam("page") Optional<Integer> page) {
         int currentPage = page.orElse(1);
         int pageSize = 10;
         Pageable pageable = new PageRequest(currentPage - 1, pageSize);
         Page<Book> bookPage = bookService.getPage(pageable);
-        bookPage.getContent();
         System.out.println(">>> bookPage:" + bookPage);
         model.addAttribute("bookPage", bookPage);
+        Wrapper wrapper = new Wrapper();
+        ArrayList<Book> exportBooks = new ArrayList<Book>();
+        exportBooks.addAll(bookPage.getContent());
+        wrapper.setBooks(exportBooks);
+        model.addAttribute("wrapper", wrapper);
         int totalPages = bookPage.getTotalPages();
         if (totalPages > 0) {
             List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
@@ -119,18 +146,18 @@ public class SimpleController {
         return "book";
     }
 
-    @RequestMapping(value = "/del/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
     public String deleteBook(@PathVariable(name = "id") long id, Model model) {
         bookRepo.delete(id);
         return "redirect:/book";
     }
 
-    @RequestMapping(value = "/editBook/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
     public String editBook(@PathVariable(name = "id") long id, Model model) {
         try {
             Book editBook = bookRepo.findOne(id).get();
             model.addAttribute("editBook", editBook);
-            return "editBook";
+            return "edit";
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -149,6 +176,27 @@ public class SimpleController {
         }
     }
 
+    @RequestMapping(value = "/export", method = RequestMethod.POST)
+    public String exportBook(@ModelAttribute(name = "wrapper") Wrapper wrapper,
+            Model model) {
+        try {
+
+            ExportToExcel.writeExcel(wrapper.getBooks(), "/export.xlsx");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "redirect:/book";
+        // ArrayList<Book> books = wrapper.books;
+        // System.out.println(">>> book: " + books);
+        // try {
+        // System.out.println(">>> book: " + books);
+        // return "redirect:/book";
+        // } catch (Exception e) {
+        // model.addAttribute("error", "All values must not be empty");
+        // return "error";
+        // }
+    }
+
     @RequestMapping(value = "/add", method = RequestMethod.GET)
     public String addBook(
             Model model) {
@@ -159,22 +207,15 @@ public class SimpleController {
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public String searchBook(@ModelAttribute("book") Book searchBook, Model model) {
         List<Book> books = bookService.searchBook(searchBook);
-        model.addAttribute("books", bookRepo.findAll());
         model.addAttribute("newBook", new Book());
         model.addAttribute("searchBooks", books);
         return "search";
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
-    public String searchBookGet(Model model) {
+    public String getSearchBook(Model model) {
         model.addAttribute("newBook", new Book());
         return "search";
     }
 
-    // @RequestMapping(value = "/delete", method = RequestMethod.POST)
-    // public String deleteBook(@ModelAttribute("book") Book book) {
-    // System.out.println(">>> delete");
-    // bookRepo.delete(book.getId());
-    // return "redirect:/book";
-    // }
 }
