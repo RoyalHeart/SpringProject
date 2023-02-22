@@ -1,5 +1,6 @@
 package com.example.security;
 
+import org.springframework.boot.autoconfigure.security.oauth2.resource.AuthoritiesExtractor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -9,6 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
 import com.example.service.UserDetailsServiceImpl;
 
@@ -29,10 +31,15 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setHideUserNotFoundExceptions(false);
         authProvider.setUserDetailsService(userDetailsService());
         authProvider.setPasswordEncoder(passwordEncoder());
-
         return authProvider;
+    }
+
+    @Bean
+    public AuthenticationFailureHandler authenticationFailureHandler() {
+        return new AuthenticationFailureHandlerImpl();
     }
 
     @Override
@@ -42,16 +49,21 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.formLogin().loginPage("/login");
         http.authorizeRequests()
-                .antMatchers("/edit/**", "/delete/**").hasRole("ADMIN")
+                .antMatchers("/edit/**", "/delete/**")
+                .hasAuthority("ADMIN")
+                .antMatchers("/login/**", "/css/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .formLogin().permitAll()
+                .formLogin().loginPage("/login")
+                .failureHandler(authenticationFailureHandler())
+                .defaultSuccessUrl("/", true)
+                // .failureUrl("/login?error")
+                .permitAll()
                 .and()
                 .logout().permitAll()
                 .and()
-                .exceptionHandling().accessDeniedPage("/error");
+                .exceptionHandling();
     }
 
 }

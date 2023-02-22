@@ -20,6 +20,17 @@ a:hover {
   display: flex;
   flex-direction: row;
 }
+.navigation form {
+  float: right;
+  position: fixed;
+  right: 20px;
+}
+.navigation input {
+  right: 20px;
+  border-radius: 10px;
+  font-size: 20px;
+  background-color: gray;
+}
 .navigation a {
   text-decoration: none;
   margin: 5px;
