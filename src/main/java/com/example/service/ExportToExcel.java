@@ -92,13 +92,14 @@ public class ExportToExcel {
         cell.setCellStyle(cellStyle);
         cell.setCellValue("Id");
 
+        cell = row.createCell(COLUMN_INDEX_AUTHOR);
+        cell.setCellStyle(cellStyle);
+        cell.setCellValue("Author");
+
         cell = row.createCell(COLUMN_INDEX_TITLE);
         cell.setCellStyle(cellStyle);
         cell.setCellValue("Title");
 
-        cell = row.createCell(COLUMN_INDEX_AUTHOR);
-        cell.setCellStyle(cellStyle);
-        cell.setCellValue("Author");
     }
 
     // Write data

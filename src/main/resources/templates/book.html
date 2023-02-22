@@ -21,13 +21,9 @@
             <div th:case="*">
                 <h1>List of all books:</h1>
                 <form method="post" action="#" th:action="@{/export}" th:object="${wrapper}">
-                    <!-- <span th:each="book,stat : *{books}"> -->
                     <input th:each="book,stat : *{books}" type="hidden" th:name="*{books[__${stat.index}__]}"
                         th:field="*{books[__${stat.index}__]}" th:value="*{books[__${stat.index}__]}" />
-                    <!-- </span> -->
-                    <button type="file">Choose location</button>
-                    <button type="submit" value="Export">Export to
-                        XLSX</button>
+                    <input type="submit" value="Export to XLSX"></input>
                 </form>
                 <table border="0" cellpadding="10" class="bookList">
                     <thead>

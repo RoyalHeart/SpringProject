@@ -1,16 +1,17 @@
 package com.example.persistence.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Wrapper {
 
-    private ArrayList<Book> books = new ArrayList<Book>();
+    private List<Book> books = new ArrayList<Book>();
 
-    public void setBooks(ArrayList<Book> books) {
+    public void setBooks(List<Book> books) {
         this.books = books;
     }
 
-    public ArrayList<Book> getBooks() {
+    public List<Book> getBooks() {
         return books;
     }
 }
