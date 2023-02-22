@@ -5,13 +5,16 @@
  */
 package com.example.controller;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -87,7 +90,7 @@ public class SimpleController {
     public void init() {
         initializeBooks();
         initializeUsers();
-        // bookRepo.save(bookService.getTrendingBooks());
+        bookRepo.save(bookService.getTrendingBooks());
     }
 
     @GetMapping("/")
@@ -130,9 +133,9 @@ public class SimpleController {
         Page<Book> bookPage = bookService.getPage(pageable);
         System.out.println(">>> bookPage:" + bookPage);
         model.addAttribute("bookPage", bookPage);
-        Wrapper wrapper = new Wrapper();
-        ArrayList<Book> exportBooks = new ArrayList<Book>();
+        List<Book> exportBooks = new ArrayList<Book>();
         exportBooks.addAll(bookPage.getContent());
+        Wrapper wrapper = new Wrapper();
         wrapper.setBooks(exportBooks);
         model.addAttribute("wrapper", wrapper);
         int totalPages = bookPage.getTotalPages();
@@ -147,13 +150,15 @@ public class SimpleController {
     }
 
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
-    public String deleteBook(@PathVariable(name = "id") long id, Model model) {
+    public String deleteBook(@PathVariable(name = "id") long id, Model model, HttpServletRequest request) {
+        String referer = request.getHeader("Referer");
         bookRepo.delete(id);
-        return "redirect:/book";
+        return "redirect:" + referer;
     }
 
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
-    public String editBook(@PathVariable(name = "id") long id, Model model) {
+    public String editBook(@PathVariable(name = "id") long id, Model model, HttpServletRequest request) {
+        String referer = request.getHeader("Referer");
         try {
             Book editBook = bookRepo.findOne(id).get();
             model.addAttribute("editBook", editBook);
@@ -161,15 +166,16 @@ public class SimpleController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return "redirect:/book";
+        return "redirect:" + referer;
     }
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public String saveBook(@ModelAttribute("book") Book book,
-            Model model) {
+            Model model, HttpServletRequest request) {
+        String referer = request.getHeader("Referer");
         try {
             bookRepo.save(book);
-            return "redirect:/book";
+            return "redirect:" + referer;
         } catch (Exception e) {
             model.addAttribute("error", "All values must not be empty");
             return "error";
@@ -178,23 +184,19 @@ public class SimpleController {
 
     @RequestMapping(value = "/export", method = RequestMethod.POST)
     public String exportBook(@ModelAttribute(name = "wrapper") Wrapper wrapper,
-            Model model) {
+            Model model, HttpServletRequest request) {
+        String referer = request.getHeader("Referer");
         try {
-
-            ExportToExcel.writeExcel(wrapper.getBooks(), "/export.xlsx");
+            SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy_HH.mm.ss");
+            Date date = new Date();
+            String currentTime = formatter.format(date);
+            String home = System.getProperty("user.home");
+            String filename = "Books_" + currentTime + ".xlsx";
+            ExportToExcel.writeExcel(wrapper.getBooks(), home + "/Downloads/" + filename);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return "redirect:/book";
-        // ArrayList<Book> books = wrapper.books;
-        // System.out.println(">>> book: " + books);
-        // try {
-        // System.out.println(">>> book: " + books);
-        // return "redirect:/book";
-        // } catch (Exception e) {
-        // model.addAttribute("error", "All values must not be empty");
-        // return "error";
-        // }
+        return "redirect:" + referer;
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.GET)
@@ -204,18 +206,22 @@ public class SimpleController {
         return "add";
     }
 
+    @RequestMapping(value = "/search", method = RequestMethod.GET)
+    public String getSearchBook(Model model) {
+        Wrapper wrapper = new Wrapper();
+        model.addAttribute("wrapper", wrapper);
+        model.addAttribute("newBook", new Book());
+        return "search";
+    }
+
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public String searchBook(@ModelAttribute("book") Book searchBook, Model model) {
         List<Book> books = bookService.searchBook(searchBook);
+        Wrapper wrapper = new Wrapper();
+        wrapper.setBooks(books);
+        model.addAttribute("wrapper", wrapper);
         model.addAttribute("newBook", new Book());
         model.addAttribute("searchBooks", books);
         return "search";
     }
-
-    @RequestMapping(value = "/search", method = RequestMethod.GET)
-    public String getSearchBook(Model model) {
-        model.addAttribute("newBook", new Book());
-        return "search";
-    }
-
 }

@@ -19,6 +19,7 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     public Connection getConnection() {
         Connection conn = null;
         try {
+            System.out.println(databaseConfiguration.getUrl());
             // System.out.println(url);
             // System.out.println(user);
             // System.out.println(password);

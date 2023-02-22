@@ -16,6 +16,11 @@
         </form>
     </div>
     <h1>Search Book</h1>
+    <form method="post" action="#" th:action="@{/export}" th:object="${wrapper}">
+        <input th:each="book,stat : *{books}" type="hidden" th:name="*{books[__${stat.index}__]}"
+            th:field="*{books[__${stat.index}__]}" th:value="*{books[__${stat.index}__]}" />
+        <input type="submit" value="Export to XLSX"></input>
+    </form>
     <form action="#" th:action="@{/search}" th:object="${newBook}" method="post">
         <table border="0" cellpadding="10">
             <tr>
