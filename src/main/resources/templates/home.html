@@ -12,6 +12,9 @@
             <a href="/book">Book</a>
             <a href="/add">Add</a>
             <a href="/search">Search</a>
+            <form th:action="@{/logout}" method="post">
+                <input type="submit" value="Logout" />
+            </form>
         </div>
         <h1>Hi!</h1>
         <p>Welcome to <span th:text="${appName}"></span></p>
@@ -45,9 +48,6 @@
                 <a href="https://www.baeldung.com/spring-thymeleaf-pagination">Pagination</a>
             </li>
         </ul>
-        <form th:action="@{/logout}" method="post">
-            <input type="submit" value="Logout" />
-        </form>
     </div>
 </body>
 

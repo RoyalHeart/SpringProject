@@ -12,6 +12,9 @@
             <a href="/book">Book</a>
             <a href="/add">Add</a>
             <a href="/search">Search</a>
+            <form th:action="@{/logout}" method="post">
+                <input type="submit" value="Logout" />
+            </form>
         </div>
         <h1>Edit book</h1>
         <form method="post" action="#" th:action="@{/save}" th:object="${editBook}">

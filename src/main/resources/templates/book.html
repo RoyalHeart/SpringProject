@@ -12,15 +12,23 @@
             <a href="/book">Book</a>
             <a href="/add">Add</a>
             <a href="/search">Search</a>
+            <form th:action="@{/logout}" method="post">
+                <input type="submit" value="Logout" />
+            </form>
         </div>
         <div th:switch="${books.size()}">
             <h1 th:case="0">No books here!</h1>
             <div th:case="*">
                 <h1>List of all books:</h1>
-                <form method="post" action="#" th:action="@{/export}" th:object="${bookPage.getContent()}">
-
+                <form method="post" action="#" th:action="@{/export}" th:object="${wrapper}">
+                    <!-- <span th:each="book,stat : *{books}"> -->
+                    <input th:each="book,stat : *{books}" type="hidden" th:name="*{books[__${stat.index}__]}"
+                        th:field="*{books[__${stat.index}__]}" th:value="*{books[__${stat.index}__]}" />
+                    <!-- </span> -->
+                    <button type="file">Choose location</button>
+                    <button type="submit" value="Export">Export to
+                        XLSX</button>
                 </form>
-                <button type="submit" th:href="@{/export}">Export to XLSX</button>
                 <table border="0" cellpadding="10" class="bookList">
                     <thead>
                         <tr>
@@ -39,8 +47,8 @@
                             <td th:text="${book.author}" />
                             <td>:</td>
                             <td th:text="${book.title}" />
-                            <td><a th:href="@{/editBook/{id}(id=${book.id})}">Edit</a></td>
-                            <td><a th:href="@{/del/{id}(id=${book.id})}">Delete</a></td>
+                            <td><a th:href="@{/edit/{id}(id=${book.id})}">Edit</a></td>
+                            <td><a th:href="@{/delete/{id}(id=${book.id})}">Delete</a></td>
                         </tr>
                     </tbody>
 

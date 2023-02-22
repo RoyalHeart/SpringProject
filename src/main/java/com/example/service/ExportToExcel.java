@@ -26,8 +26,8 @@ import com.example.persistence.model.Book;
 @Service
 public class ExportToExcel {
     public static final int COLUMN_INDEX_ID = 0;
-    public static final int COLUMN_INDEX_TITLE = 1;
-    public static final int COLUMN_INDEX_AUTHOR = 2;
+    public static final int COLUMN_INDEX_AUTHOR = 1;
+    public static final int COLUMN_INDEX_TITLE = 2;
     private static CellStyle cellStyleFormatNumber = null;
 
     public static void writeExcel(List<Book> books, String excelFilePath) throws IOException {
@@ -121,7 +121,7 @@ public class ExportToExcel {
         cell = row.createCell(COLUMN_INDEX_TITLE);
         cell.setCellValue(book.getTitle());
 
-        cell = row.createCell(COLUMN_INDEX_TITLE);
+        cell = row.createCell(COLUMN_INDEX_AUTHOR);
         cell.setCellValue(book.getAuthor());
 
         // Create cell formula
