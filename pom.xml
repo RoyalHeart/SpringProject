@@ -6,7 +6,7 @@
 
     <groupId>com.example</groupId>
     <artifactId>demo</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.6.26</version>
     <packaging>jar</packaging>
 
     <name>demo</name>
@@ -27,6 +27,10 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -54,10 +58,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
         <dependency>
@@ -91,16 +91,10 @@
             <artifactId>spring-data-commons</artifactId>
             <!-- <version>3.0.0</version> -->
         </dependency>
-        <dependency>
+        <!-- <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-mirage</artifactId>
             <version>0.10.2.RELEASE</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
-        <!-- <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.10.1</version>
         </dependency> -->
         <!-- https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple -->
         <dependency>
@@ -117,7 +111,6 @@
 
 
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
@@ -126,20 +119,4 @@
             </plugin>
         </plugins>
     </build>
-    <dependencyManagement>
-        <dependencies>
-            <!-- https://mvnrepository.com/artifact/javassist/javassist -->
-            <!-- <dependency>
-                <groupId>javassist</groupId>
-                <artifactId>javassist</artifactId>
-                <version>3.12.1.GA</version>
-            </dependency>
-
-            <dependency>
-                <groupId>ognl</groupId>
-                <artifactId>ognl</artifactId>
-                <version>3.0.8</version>
-            </dependency> -->
-        </dependencies>
-    </dependencyManagement>
 </project>

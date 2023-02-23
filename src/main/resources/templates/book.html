@@ -25,9 +25,16 @@
                         th:field="*{books[__${stat.index}__]}" th:value="*{books[__${stat.index}__]}" />
                     <input type="submit" value="Export to XLSX"></input>
                 </form>
+                <form method="post" action="#" th:action="@{/import}" enctype="multipart/form-data">
+                    <input type="file" name="file" />
+                    <input type="submit" value="Import"></input>
+                </form>
                 <table border="0" cellpadding="10" class="bookList">
                     <thead>
                         <tr>
+                            <th>
+                                ID
+                            </th>
                             <th>
                                 Author
                             </th>
@@ -40,6 +47,7 @@
                     </thead>
                     <tbody>
                         <tr th:each="book,stat : ${bookPage.content}">
+                            <td th:text="${book.id}" />
                             <td th:text="${book.author}" />
                             <td>:</td>
                             <td th:text="${book.title}" />

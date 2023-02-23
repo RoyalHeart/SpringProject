@@ -3,6 +3,8 @@ package com.example.service;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -10,14 +12,12 @@ import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +28,7 @@ public class ExportToExcel {
     public static final int COLUMN_INDEX_ID = 0;
     public static final int COLUMN_INDEX_AUTHOR = 1;
     public static final int COLUMN_INDEX_TITLE = 2;
+    public static final int COLUMN_INDEX_DATE = 3;
     private static CellStyle cellStyleFormatNumber = null;
 
     public static void writeExcel(List<Book> books, String excelFilePath) throws IOException {
@@ -100,6 +101,9 @@ public class ExportToExcel {
         cell.setCellStyle(cellStyle);
         cell.setCellValue("Title");
 
+        cell = row.createCell(COLUMN_INDEX_DATE);
+        cell.setCellStyle(cellStyle);
+        cell.setCellValue("Date");
     }
 
     // Write data
@@ -124,6 +128,11 @@ public class ExportToExcel {
 
         cell = row.createCell(COLUMN_INDEX_AUTHOR);
         cell.setCellValue(book.getAuthor());
+
+        cellStyleFormatNumber.setDataFormat((short) BuiltinFormats.getBuiltinFormat("d-mmm-yy"));
+        cell = row.createCell(COLUMN_INDEX_DATE);
+        cell.setCellStyle(cellStyleFormatNumber);
+        cell.setCellValue(new Date());
 
         // Create cell formula
         // totalMoney = price * quantity
