@@ -8,6 +8,7 @@ package com.example.controller;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -48,18 +49,26 @@ public class SimpleController {
         Book book = new Book();
         book.setTitle("Mindset");
         book.setAuthor("Carol Dweck");
+        book.setImported(new Date());
+        book.setPublished((short) 2002);
         bookService.save(book);
         book = new Book();
         book.setTitle("Operating System");
         book.setAuthor("Christen Baun");
+        book.setImported(new Date());
+        book.setPublished((short) 2002);
         bookService.save(book);
         book = new Book();
         book.setTitle("Computer Network");
         book.setAuthor("Christen Baun");
+        book.setImported(new Date());
+        book.setPublished((short) 2002);
         bookService.save(book);
         book = new Book();
         book.setTitle("Around the World in 100 Days");
         book.setAuthor("Jules Verne");
+        book.setImported(new Date());
+        book.setPublished((short) 2002);
         bookService.save(book);
     }
 
@@ -87,17 +96,9 @@ public class SimpleController {
 
     @PostConstruct
     public void init() {
-        // initializeBooks();
-        // initializeUsers();
-        // Iterator<Book> trendingBookItorator =
-        // bookService.getTrendingBooks().iterator();
-        // while (trendingBookItorator.hasNext()) {
-        // try {
-        // bookRepo.save(trendingBookItorator.next());
-        // } catch (Exception e) {
-        // System.out.println(">>> Error:" + e.getMessage());
-        // }
-        // }
+        initializeBooks();
+        initializeUsers();
+        bookService.saveTrendingBooks();
     }
 
     @GetMapping("/")
