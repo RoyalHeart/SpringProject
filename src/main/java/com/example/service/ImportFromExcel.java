@@ -2,6 +2,7 @@ package com.example.service;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -62,7 +63,7 @@ public class ImportFromExcel {
                             break;
 
                         case 4:
-                            book.setImported(currentCell.getDateCellValue());
+                            book.setImported(new Date(new java.util.Date().getTime()));
                             break;
                         // case 3:
                         // book.setPublished(currentCell.getBooleanCellValue());
