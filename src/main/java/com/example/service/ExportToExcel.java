@@ -27,7 +27,8 @@ public class ExportToExcel {
     public static final int COLUMN_INDEX_ID = 0;
     public static final int COLUMN_INDEX_AUTHOR = 1;
     public static final int COLUMN_INDEX_TITLE = 2;
-    public static final int COLUMN_INDEX_DATE = 3;
+    public static final int COLUMN_INDEX_PUBLISHED = 3;
+    public static final int COLUMN_INDEX_IMPORTED = 4;
     private static CellStyle cellStyleFormatNumber = null;
 
     public static void writeExcel(List<Book> books, String excelFilePath) throws IOException {
@@ -100,9 +101,13 @@ public class ExportToExcel {
         cell.setCellStyle(cellStyle);
         cell.setCellValue("Title");
 
-        cell = row.createCell(COLUMN_INDEX_DATE);
+        cell = row.createCell(COLUMN_INDEX_PUBLISHED);
         cell.setCellStyle(cellStyle);
-        cell.setCellValue("Date");
+        cell.setCellValue("Published Year");
+
+        cell = row.createCell(COLUMN_INDEX_IMPORTED);
+        cell.setCellStyle(cellStyle);
+        cell.setCellValue("Imported Date");
     }
 
     // Write data
@@ -128,10 +133,13 @@ public class ExportToExcel {
         cell = row.createCell(COLUMN_INDEX_AUTHOR);
         cell.setCellValue(book.getAuthor());
 
+        cell = row.createCell(COLUMN_INDEX_PUBLISHED);
+        cell.setCellValue(book.getPublished());
+
         cellStyleFormatNumber.setDataFormat((short) BuiltinFormats.getBuiltinFormat("d-mmm-yy"));
-        cell = row.createCell(COLUMN_INDEX_DATE);
+        cell = row.createCell(COLUMN_INDEX_IMPORTED);
         cell.setCellStyle(cellStyleFormatNumber);
-        cell.setCellValue(new Date());
+        cell.setCellValue(book.getImported());
 
         // Create cell formula
         // totalMoney = price * quantity
