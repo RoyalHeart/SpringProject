@@ -112,7 +112,8 @@ public class SimpleController {
     }
 
     @GetMapping("/login")
-    public String getLogin(@RequestParam(required = false) Optional<String> authError,
+    public String getLogin(@RequestParam(required = false) Optional<String> logout,
+            @RequestParam(required = false) Optional<String> authError,
             @RequestParam(required = false) Optional<String> username, Model model) {
         if (authError.isPresent()) {
             if (authError.get().contains("username")) {
@@ -123,6 +124,9 @@ public class SimpleController {
                 model.addAttribute("username", username.get());
                 return "login";
             }
+        }
+        if (logout.isPresent()) {
+            model.addAttribute("logout", "Logged out successfully!");
         }
         model.addAttribute("usernameError", null);
         model.addAttribute("username", "");
@@ -189,7 +193,7 @@ public class SimpleController {
             bookService.save(book);
             return "redirect:" + referer;
         } catch (Exception e) {
-            model.addAttribute("error", "All values must not be empty");
+            model.addAttribute("error", e.getMessage());
             return "error";
         }
     }
