@@ -96,9 +96,9 @@ public class SimpleController {
 
     @PostConstruct
     public void init() {
-        initializeBooks();
-        initializeUsers();
-        bookService.saveTrendingBooks();
+        // initializeBooks();
+        // initializeUsers();
+        // bookService.saveTrendingBooks();
     }
 
     @GetMapping("/")

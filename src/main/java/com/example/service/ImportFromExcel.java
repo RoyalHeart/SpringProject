@@ -57,6 +57,13 @@ public class ImportFromExcel {
                             book.setTitle(currentCell.getStringCellValue());
                             break;
 
+                        case 3:
+                            book.setPublished((short) currentCell.getNumericCellValue());
+                            break;
+
+                        case 4:
+                            book.setImported(currentCell.getDateCellValue());
+                            break;
                         // case 3:
                         // book.setPublished(currentCell.getBooleanCellValue());
                         // break;
