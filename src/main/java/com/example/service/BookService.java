@@ -1,12 +1,10 @@
 package com.example.service;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -33,16 +31,10 @@ public class BookService {
 
     SqlManager sqlManager = new SqlManagerImpl();
     List<List<Book>> bookPages = new ArrayList<List<Book>>();
-    SqlResource sqlResource = new ClasspathSqlResource("/sql/searchBook.sql");
+    SqlResource sqlResource = new ClasspathSqlResource("/static/sql/searchBook.sql");
     ConnectionProviderImpl connProvider = new ConnectionProviderImpl();
     int pageSize = 10;
     List<Book> books;
-
-    // @PostConstruct
-    // public void init() {
-    // books = bookRepository.findAll();
-    // System.out.println(">>> init book service" + books.size());
-    // }
 
     public Page<Book> getPage(Pageable pageable) {
         books = bookRepository.findAll();
@@ -61,31 +53,11 @@ public class BookService {
         return bookPage;
     }
 
-    private Object getResponse(URL url) {
-        try {
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.setRequestMethod("GET");
-            con.setRequestProperty("Content-Type", "application/json");
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(con.getInputStream()));
-            String inputLine;
-            StringBuffer content = new StringBuffer();
-            while ((inputLine = in.readLine()) != null) {
-                content.append(inputLine);
-            }
-            in.close();
-            return content;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
     public List<Book> getTrendingBooks() {
         List<Book> trendingBooks = new ArrayList<Book>();
         try {
             System.out.println(">>> start getting trending books");
-            Object response = getResponse(new URL("https://openlibrary.org/trending/now.json"));
+            Object response = API.fetch(new URL("https://openlibrary.org/trending/now.json"));
             Object object = new JSONParser().parse(response.toString());
             JSONObject jsonObject = (JSONObject) object;
             JSONArray works = (JSONArray) jsonObject.get("works");
@@ -100,7 +72,7 @@ public class BookService {
                     authors = (JSONArray) bookJson.get("author_name");
                     author = (String) authors.get(0);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    System.out.println(e.getMessage());
                 }
                 System.out.println(">>> " + author + " : " + title);
                 Book newBook = new Book();
@@ -128,7 +100,23 @@ public class BookService {
         }
     }
 
-    public void saveBook(Book book) {
+    public void save(Book book) {
         bookRepository.save(book);
+    }
+
+    public List<Book> findAll() {
+        return bookRepository.findAll();
+    }
+
+    public void delete(Book book) {
+        bookRepository.delete(book);
+    }
+
+    public void delete(long id) {
+        bookRepository.delete(id);
+    }
+
+    public Optional<Book> findOne(long id) {
+        return bookRepository.findOne(id);
     }
 }

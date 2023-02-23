@@ -3,6 +3,7 @@
 <head>
     <title>Login Screen</title>
     <link rel="stylesheet" href="/css/style.css" />
+    <script src="/js/validate.js"></script>
 </head>
 
 <body style="background-color: black; color: white">
@@ -11,7 +12,8 @@
             <p>Login</p>
             <p th:if="${usernameError}" style="color: red">Username:</p>
             <p th:if="${usernameError} == null">Username:</p>
-            <input placeholder="Username" type="username" name="username" id="username" th:value="${username}" />
+            <input placeholder="Username" type="username" name="username" id="username" th:value="${username}"
+                onchange="validateUsername()" />
             <span th:text="${usernameError}"></span>
 
             <p th:if="${passwordError}" style="color: red">Password:</p>

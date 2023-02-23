@@ -8,6 +8,7 @@ package com.example.controller;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.persistence.model.Book;
 import com.example.persistence.model.UserDetail;
@@ -37,6 +39,8 @@ import com.example.persistence.model.Wrapper;
 import com.example.persistence.repo.BookRepository;
 import com.example.persistence.repo.UserRepository;
 import com.example.service.BookService;
+import com.example.service.ExcelService;
+import com.example.service.ImportFromExcel;
 import com.example.service.ExportToExcel;
 
 @Controller
@@ -46,19 +50,19 @@ public class SimpleController {
         Book book = new Book();
         book.setTitle("Mindset");
         book.setAuthor("Carol Dweck");
-        bookRepo.save(book);
+        bookService.save(book);
         book = new Book();
         book.setTitle("Operating System");
         book.setAuthor("Christen Baun");
-        bookRepo.save(book);
+        bookService.save(book);
         book = new Book();
         book.setTitle("Computer Network");
         book.setAuthor("Christen Baun");
-        bookRepo.save(book);
+        bookService.save(book);
         book = new Book();
         book.setTitle("Around the World in 100 Days");
         book.setAuthor("Jules Verne");
-        bookRepo.save(book);
+        bookService.save(book);
     }
 
     private void initializeUsers() {
@@ -80,17 +84,25 @@ public class SimpleController {
     @Autowired
     private BookService bookService;
 
-    @Autowired
-    BookRepository bookRepo;
+    // @Autowired
+    // BookRepository bookService;
 
     @Autowired
     UserRepository userRepository;
 
     @PostConstruct
     public void init() {
-        initializeBooks();
-        initializeUsers();
-        bookRepo.save(bookService.getTrendingBooks());
+        // initializeBooks();
+        // initializeUsers();
+        // Iterator<Book> trendingBookItorator =
+        // bookService.getTrendingBooks().iterator();
+        // while (trendingBookItorator.hasNext()) {
+        // try {
+        // bookRepo.save(trendingBookItorator.next());
+        // } catch (Exception e) {
+        // System.out.println(">>> Error:" + e.getMessage());
+        // }
+        // }
     }
 
     @GetMapping("/")
@@ -145,14 +157,14 @@ public class SimpleController {
                     .collect(Collectors.toList());
             model.addAttribute("pageNumbers", pageNumbers);
         }
-        model.addAttribute("books", bookRepo.findAll());
+        model.addAttribute("books", bookService.findAll());
         return "book";
     }
 
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
     public String deleteBook(@PathVariable(name = "id") long id, Model model, HttpServletRequest request) {
         String referer = request.getHeader("Referer");
-        bookRepo.delete(id);
+        bookService.delete(id);
         return "redirect:" + referer;
     }
 
@@ -160,7 +172,7 @@ public class SimpleController {
     public String editBook(@PathVariable(name = "id") long id, Model model, HttpServletRequest request) {
         String referer = request.getHeader("Referer");
         try {
-            Book editBook = bookRepo.findOne(id).get();
+            Book editBook = bookService.findOne(id).get();
             model.addAttribute("editBook", editBook);
             return "edit";
         } catch (Exception e) {
@@ -174,7 +186,7 @@ public class SimpleController {
             Model model, HttpServletRequest request) {
         String referer = request.getHeader("Referer");
         try {
-            bookRepo.save(book);
+            bookService.save(book);
             return "redirect:" + referer;
         } catch (Exception e) {
             model.addAttribute("error", "All values must not be empty");
@@ -196,6 +208,32 @@ public class SimpleController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return "redirect:" + referer;
+    }
+
+    @RequestMapping(value = "/import", method = RequestMethod.POST)
+    public String importBook(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
+        System.out.println(">>> file" + file);
+        if (ExcelService.isXLSX(file)) {
+            System.out.println(">>> Excel");
+            try {
+                List<Book> books = ImportFromExcel.excelToBooks(file.getInputStream());
+                for (Book book : books) {
+                    System.out.println(">>> Imported books: " + book.getTitle());
+                    try {
+                        bookService.save(book);
+                    } catch (Exception e) {
+                        System.out.println(">>> Error duplicate: " + e.getMessage());
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println(">>> Error: " + e.getMessage());
+            }
+        } else {
+            System.out.println(">>> Not Excel");
+        }
+        String referer = request.getHeader("Referer");
         return "redirect:" + referer;
     }
 
