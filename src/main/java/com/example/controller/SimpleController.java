@@ -8,7 +8,6 @@ package com.example.controller;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -36,17 +35,16 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.persistence.model.Book;
 import com.example.persistence.model.UserDetail;
 import com.example.persistence.model.Wrapper;
-import com.example.persistence.repo.BookRepository;
 import com.example.persistence.repo.UserRepository;
 import com.example.service.BookService;
 import com.example.service.ExcelService;
-import com.example.service.ImportFromExcel;
 import com.example.service.ExportToExcel;
+import com.example.service.ImportFromExcel;
 
 @Controller
 @ComponentScan("com.example.service")
 public class SimpleController {
-    private void initializeBooks() {
+    void initializeBooks() {
         Book book = new Book();
         book.setTitle("Mindset");
         book.setAuthor("Carol Dweck");
@@ -65,7 +63,7 @@ public class SimpleController {
         bookService.save(book);
     }
 
-    private void initializeUsers() {
+    void initializeUsers() {
         UserDetail user = new UserDetail();
         user.setUsername("admin");
         user.setUser_role("ADMIN");
@@ -83,9 +81,6 @@ public class SimpleController {
 
     @Autowired
     private BookService bookService;
-
-    // @Autowired
-    // BookRepository bookService;
 
     @Autowired
     UserRepository userRepository;
