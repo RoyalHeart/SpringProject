@@ -32,17 +32,22 @@
                 <td><input type="text" th:field="*{title}" /></td>
             </tr>
             <tr>
+                <td>Book published year: </td>
+                <td><input type="number" th:field="*{published}" /></td>
+            </tr>
+            <tr>
                 <td colspan="2"><button type="submit">Search</button></td>
             </tr>
         </table>
     </form>
-    <table border="0" cellpadding="10" class="bookList">
+    <table border="0" cellpadding="10" class="bookList" th:if="${searchBooks}">
         <thead>
             <tr>
                 <th>ID</th>
                 <th>Author</th>
                 <th></th>
                 <th>Title</th>
+                <th>Published year</th>
             </tr>
         </thead>
         <tbody>
@@ -51,16 +56,17 @@
                 <td th:text="${searchBook.author}" />
                 <td>:</td>
                 <td th:text="${searchBook.title}" />
+                <td th:text="${searchBook.published}" />
                 <td><a th:href="@{/edit/{id}(id=${searchBook.id})}">Edit</a></td>
                 <td><a th:href="@{/delete/{id}(id=${searchBook.id})}">Delete</a></td>
             </tr>
         </tbody>
     </table>
     <!-- <li th:each="searchBook : ${searchBooks}">
-            <span th:text="${searchBook.author}"></span>
-            : <span th:text="${searchBook.title}"></span>
-            <span><a th:href="@{/editBook/{id}(id=${searchBook.id})}">Edit</a></span>
-            <span><a th:href="@{/del/{id}(id=${searchBook.id})}">Delete</a></span>
+        <span th:text="${searchBook.author}"></span>
+        : <span th:text="${searchBook.title}"></span>
+        <span><a th:href="@{/editBook/{id}(id=${searchBook.id})}">Edit</a></span>
+        <span><a th:href="@{/del/{id}(id=${searchBook.id})}">Delete</a></span>
         </li> -->
 </body>
 
