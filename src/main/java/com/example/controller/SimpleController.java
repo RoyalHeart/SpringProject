@@ -5,10 +5,9 @@
  */
 package com.example.controller;
 
+import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -47,27 +46,28 @@ import com.example.service.ImportFromExcel;
 public class SimpleController {
     void initializeBooks() {
         Book book = new Book();
+        Date date = new Date(new java.util.Date().getTime());
         book.setTitle("Mindset");
         book.setAuthor("Carol Dweck");
-        book.setImported(new Date());
+        book.setImported(date);
         book.setPublished((short) 2002);
         bookService.save(book);
         book = new Book();
         book.setTitle("Operating System");
         book.setAuthor("Christen Baun");
-        book.setImported(new Date());
+        book.setImported(date);
         book.setPublished((short) 2002);
         bookService.save(book);
         book = new Book();
         book.setTitle("Computer Network");
         book.setAuthor("Christen Baun");
-        book.setImported(new Date());
+        book.setImported(date);
         book.setPublished((short) 2002);
         bookService.save(book);
         book = new Book();
         book.setTitle("Around the World in 100 Days");
         book.setAuthor("Jules Verne");
-        book.setImported(new Date());
+        book.setImported(date);
         book.setPublished((short) 2002);
         bookService.save(book);
     }
@@ -96,9 +96,9 @@ public class SimpleController {
 
     @PostConstruct
     public void init() {
-        // initializeBooks();
-        // initializeUsers();
-        // bookService.saveTrendingBooks();
+        initializeBooks();
+        initializeUsers();
+        bookService.saveTrendingBooks();
     }
 
     @GetMapping("/")
@@ -200,7 +200,7 @@ public class SimpleController {
         String referer = request.getHeader("Referer");
         try {
             SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy_HH.mm.ss");
-            Date date = new Date();
+            Date date = new Date(new java.util.Date().getTime());
             String currentTime = formatter.format(date);
             String home = System.getProperty("user.home");
             String filename = "Books_" + currentTime + ".xlsx";

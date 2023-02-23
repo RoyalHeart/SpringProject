@@ -1,9 +1,9 @@
 package com.example.service;
 
 import java.net.URL;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -98,7 +98,7 @@ public class BookService {
                 Book newBook = new Book();
                 newBook.setTitle(title);
                 newBook.setAuthor(author);
-                newBook.setImported(new Date());
+                newBook.setImported(new Date(new java.util.Date().getTime()));
                 newBook.setPublished(published);
                 trendingBooks.add(newBook);
             }
