@@ -43,6 +43,12 @@
                             <th>
                                 Title
                             </th>
+                            <th>
+                                Published Year
+                            </th>
+                            <th>
+                                Imported Date
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -51,6 +57,9 @@
                             <td th:text="${book.author}" />
                             <td>:</td>
                             <td th:text="${book.title}" />
+                            <td th:if="${book.published} == 0" th:text="Unknown" />
+                            <td th:if="${book.published} != 0" th:text="${book.published}" />
+                            <td th:text="${book.imported}" />
                             <td><a th:href="@{/edit/{id}(id=${book.id})}">Edit</a></td>
                             <td><a th:href="@{/delete/{id}(id=${book.id})}">Delete</a></td>
                         </tr>

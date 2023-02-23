@@ -3,6 +3,8 @@ package com.example.service;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,7 +55,18 @@ public class BookService {
         return bookPage;
     }
 
-    public List<Book> getTrendingBooks() {
+    public void saveTrendingBooks() {
+        Iterator<Book> trendingBookItorator = getTrendingBooks().iterator();
+        while (trendingBookItorator.hasNext()) {
+            try {
+                this.save(trendingBookItorator.next());
+            } catch (Exception e) {
+                System.out.println(">>> Error:" + e.getMessage());
+            }
+        }
+    }
+
+    private List<Book> getTrendingBooks() {
         List<Book> trendingBooks = new ArrayList<Book>();
         try {
             System.out.println(">>> start getting trending books");
@@ -67,6 +80,13 @@ public class BookService {
                 String title = (String) bookJson.get("title");
                 JSONArray authors;
                 String author = "Anonymous";
+                Short published = 0;
+                try {
+                    published = (short) ((Long) bookJson.get("first_publish_year")).intValue();
+                    System.out.println(">>> year: " + published);
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
                 // some book have no author
                 try {
                     authors = (JSONArray) bookJson.get("author_name");
@@ -78,6 +98,8 @@ public class BookService {
                 Book newBook = new Book();
                 newBook.setTitle(title);
                 newBook.setAuthor(author);
+                newBook.setImported(new Date());
+                newBook.setPublished(published);
                 trendingBooks.add(newBook);
             }
         } catch (Exception e) {

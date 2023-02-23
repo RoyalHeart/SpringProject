@@ -6,8 +6,11 @@
 package com.example.persistence.model;
 
 import java.io.Serializable;
+import java.time.Year;
+import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -39,4 +42,10 @@ public class Book implements Serializable {
     @Column(nullable = false)
     @NotEmpty
     private String author;
+
+    @Column(nullable = true)
+    private Date imported;
+
+    @Column(nullable = true, length = 4, columnDefinition = "smallint")
+    private Short published;
 }
