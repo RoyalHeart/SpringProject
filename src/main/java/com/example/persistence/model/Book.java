@@ -6,11 +6,9 @@
 package com.example.persistence.model;
 
 import java.io.Serializable;
-import java.time.Year;
-import java.util.Date;
+import java.sql.Date;
 
 import javax.persistence.Column;
-import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
