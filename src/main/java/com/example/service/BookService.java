@@ -1,5 +1,7 @@
 package com.example.service;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.sql.Date;
 import java.util.ArrayList;
@@ -16,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.example.database.ConnectionProviderImpl;
@@ -50,8 +53,8 @@ public class BookService {
             int toIndex = Math.min(startItem + pageSize, books.size());
             list = books.subList(startItem, toIndex);
         }
-        Page<Book> bookPage = new PageImpl<Book>(list, new PageRequest(currentPage,
-                pageSize), books.size());
+        Page<Book> bookPage = new PageImpl<Book>(list, PageRequest.of(currentPage,
+                pageSize, Sort.unsorted()), books.size());
         return bookPage;
     }
 
@@ -108,6 +111,24 @@ public class BookService {
         return trendingBooks;
     }
 
+    public void importFromExcel(InputStream inputStream) throws IOException {
+        try {
+            System.out.println(">>> Excel");
+            List<Book> books = ImportFromExcel.excelToBooks(inputStream);
+            for (Book book : books) {
+                System.out.println(">>> Imported books: " + book.getTitle());
+                try {
+                    this.save(book);
+                } catch (Exception e) {
+                    System.out.println(">>> Error duplicate: " + e.getMessage());
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(">>> Error: " + e.getMessage());
+        }
+    }
+
     public List<Book> searchBook(Book book) {
         sqlManager.setConnectionProvider(connProvider);
         try {
@@ -135,10 +156,10 @@ public class BookService {
     }
 
     public void delete(long id) {
-        bookRepository.delete(id);
+        bookRepository.deleteById(id);
     }
 
     public Optional<Book> findOne(long id) {
-        return bookRepository.findOne(id);
+        return bookRepository.findById(id);
     }
 }

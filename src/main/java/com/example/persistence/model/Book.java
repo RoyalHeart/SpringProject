@@ -16,8 +16,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import org.hibernate.validator.constraints.NotEmpty;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -34,11 +32,11 @@ public class Book implements Serializable {
     private long id;
 
     @Column(nullable = false)
-    @NotEmpty
+    // @NotEmpty
     private String title;
 
     @Column(nullable = false)
-    @NotEmpty
+    // @NotEmpty
     private String author;
 
     @Column(nullable = true)
