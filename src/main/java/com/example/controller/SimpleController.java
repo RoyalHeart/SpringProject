@@ -27,7 +27,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -41,7 +40,6 @@ import com.example.persistence.repo.UserRepository;
 import com.example.service.BookService;
 import com.example.service.ExcelService;
 import com.example.service.ExportToExcel;
-import com.example.service.ImportFromExcel;
 
 @Controller
 @ComponentScan("com.example.service")
@@ -98,9 +96,9 @@ public class SimpleController {
 
     @PostConstruct
     public void init() {
-        initializeBooks();
-        initializeUsers();
-        bookService.saveTrendingBooks();
+        // initializeBooks();
+        // initializeUsers();
+        // bookService.saveTrendingBooks();
     }
 
     @GetMapping("/")
@@ -143,7 +141,7 @@ public class SimpleController {
     public String getBook(Model model, @RequestParam("page") Optional<Integer> page) {
         int currentPage = page.orElse(1);
         int pageSize = 10;
-        Pageable pageable = new PageRequest(currentPage - 1, pageSize);
+        Pageable pageable = PageRequest.of(currentPage - 1, pageSize);
         Page<Book> bookPage = bookService.getPage(pageable);
         System.out.println(">>> bookPage:" + bookPage);
         model.addAttribute("bookPage", bookPage);
@@ -215,33 +213,21 @@ public class SimpleController {
 
     @RequestMapping(value = "/import", method = RequestMethod.POST)
     public String importBook(@RequestParam("file") MultipartFile file, HttpServletRequest request,
-            RedirectAttributes redirectAttributes) {
-        System.out.println(">>> file" + file);
+            RedirectAttributes redirectAttributes, Model model) {
+        String referer = request.getHeader("Referer");
         try {
+            System.out.println(">>> file" + file);
             if (ExcelService.isXLSX(file)) {
-                try {
-                    System.out.println(">>> Excel");
-                    List<Book> books = ImportFromExcel.excelToBooks(file.getInputStream());
-                    for (Book book : books) {
-                        System.out.println(">>> Imported books: " + book.getTitle());
-                        try {
-                            bookService.save(book);
-                        } catch (Exception e) {
-                            System.out.println(">>> Error duplicate: " + e.getMessage());
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    System.out.println(">>> Error: " + e.getMessage());
-                }
+                redirectAttributes.addFlashAttribute("isExcel", true);
+                bookService.importFromExcel(file.getInputStream());
             } else {
                 System.out.println(">>> Not Excel");
-                request.setAttribute("isExcel", false);
+                redirectAttributes.addFlashAttribute("isExcel", false);
             }
         } catch (Exception e) {
             System.out.println(">>> Error: " + e.getMessage());
+            return "redirect:" + referer;
         }
-        String referer = request.getHeader("Referer");
         return "redirect:" + referer;
     }
 
