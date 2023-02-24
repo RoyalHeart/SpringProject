@@ -16,7 +16,7 @@ import com.example.persistence.model.Book;
 public interface BookRepository extends CrudRepository<Book, Long> {
     List<Book> findByTitle(String title);
 
-    Optional<Book> findOne(long id);
+    Optional<Book> findById(long id);
 
     List<Book> findAll();
 }

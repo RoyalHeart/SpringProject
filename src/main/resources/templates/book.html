@@ -28,8 +28,7 @@
                 <form method="post" action="#" th:action="@{/import}" enctype="multipart/form-data">
                     <input type="file" name="file" />
                     <input type="submit" value="Import"></input>
-                    <span th:if="${isExcel}">an Excel file!</span>
-                    <span th:if="!${isExcel}">Not an Excel file!</span>
+                    <span th:if="${isExcel} == false">Not an Excel file!</span>
                 </form>
                 <table border="0" cellpadding="10" class="bookList">
                     <thead>
