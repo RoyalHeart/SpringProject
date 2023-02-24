@@ -94,7 +94,7 @@ public class BookService {
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
                 }
-                System.out.println(">>> " + author + " : " + title);
+                System.out.println(">>> " + author + " : " + title + "-" + published);
                 Book newBook = new Book();
                 newBook.setTitle(title);
                 newBook.setAuthor(author);

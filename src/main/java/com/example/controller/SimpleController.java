@@ -27,10 +27,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.persistence.model.Book;
 import com.example.persistence.model.UserDetail;
@@ -212,26 +214,32 @@ public class SimpleController {
     }
 
     @RequestMapping(value = "/import", method = RequestMethod.POST)
-    public String importBook(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
+    public String importBook(@RequestParam("file") MultipartFile file, HttpServletRequest request,
+            RedirectAttributes redirectAttributes) {
         System.out.println(">>> file" + file);
-        if (ExcelService.isXLSX(file)) {
-            System.out.println(">>> Excel");
-            try {
-                List<Book> books = ImportFromExcel.excelToBooks(file.getInputStream());
-                for (Book book : books) {
-                    System.out.println(">>> Imported books: " + book.getTitle());
-                    try {
-                        bookService.save(book);
-                    } catch (Exception e) {
-                        System.out.println(">>> Error duplicate: " + e.getMessage());
+        try {
+            if (ExcelService.isXLSX(file)) {
+                try {
+                    System.out.println(">>> Excel");
+                    List<Book> books = ImportFromExcel.excelToBooks(file.getInputStream());
+                    for (Book book : books) {
+                        System.out.println(">>> Imported books: " + book.getTitle());
+                        try {
+                            bookService.save(book);
+                        } catch (Exception e) {
+                            System.out.println(">>> Error duplicate: " + e.getMessage());
+                        }
                     }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    System.out.println(">>> Error: " + e.getMessage());
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-                System.out.println(">>> Error: " + e.getMessage());
+            } else {
+                System.out.println(">>> Not Excel");
+                request.setAttribute("isExcel", false);
             }
-        } else {
-            System.out.println(">>> Not Excel");
+        } catch (Exception e) {
+            System.out.println(">>> Error: " + e.getMessage());
         }
         String referer = request.getHeader("Referer");
         return "redirect:" + referer;
