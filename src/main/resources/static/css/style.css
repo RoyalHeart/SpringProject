@@ -55,7 +55,7 @@ a:hover {
   flex-direction: row;
   flex-wrap: wrap;
   float: right;
-  margin-right: 10%;
+  margin: 0 10%;
 }
 .pagination > div {
   margin: 10px;
