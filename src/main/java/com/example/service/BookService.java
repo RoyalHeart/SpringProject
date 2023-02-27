@@ -1,6 +1,5 @@
 package com.example.service;
 
-import java.io.IOException;
 import java.net.URL;
 import java.sql.Date;
 import java.util.ArrayList;
@@ -39,7 +38,6 @@ public class BookService {
 
     public void initializeBooks() {
         try {
-
             Book book = new Book();
             Date date = new Date(new java.util.Date().getTime());
             book.setTitle("Mindset");

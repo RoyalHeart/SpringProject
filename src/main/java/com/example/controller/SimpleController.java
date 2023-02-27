@@ -26,6 +26,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,6 +44,7 @@ import com.example.persistence.model.UserDetail;
 import com.example.persistence.model.Wrapper;
 import com.example.persistence.repo.UserRepository;
 import com.example.service.BookService;
+import com.example.service.DocPdf;
 import com.example.service.ExcelService;
 import com.example.service.ExportToExcel;
 
@@ -80,14 +82,15 @@ public class SimpleController {
 
     @PostConstruct
     public void init() {
-        bookService.initializeBooks();
-        initializeUsers();
-        bookService.saveTrendingBooks();
+        // bookService.initializeBooks();
+        // initializeUsers();
+        // bookService.saveTrendingBooks();
     }
 
     @GetMapping("/")
-    public String getBase(Model model) {
+    public String getBase(Model model, Authentication auth, RedirectAttributes redirectAttributes) {
         model.addAttribute("appName", appName);
+        redirectAttributes.addFlashAttribute("username", auth.getName());
         return "redirect:/home";
     }
 
@@ -127,7 +130,6 @@ public class SimpleController {
         int pageSize = 10;
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize);
         Page<Book> bookPage = bookService.getPage(pageable);
-        System.out.println(">>> bookPage:" + bookPage);
         model.addAttribute("bookPage", bookPage);
         List<Book> exportBooks = new ArrayList<Book>();
         exportBooks.addAll(bookPage.getContent());
@@ -202,6 +204,30 @@ public class SimpleController {
             String exportPath = home + "/Downloads/" + filename;
             ExportToExcel.writeExcel(wrapper.getBooks(), exportPath);
             redirectAttributes.addFlashAttribute("exportSuccessfully", "Exported at: " + exportPath);
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, ">>> Export error: " + e.getMessage());
+        }
+        return "redirect:" + referer;
+    }
+
+    @RequestMapping(value = "/exportDoc", method = RequestMethod.POST)
+    public String exportDoc(@ModelAttribute(name = "wrapper") Wrapper wrapper,
+            Model model, HttpServletRequest request, RedirectAttributes redirectAttributes, Authentication auth) {
+        String referer = request.getHeader("Referer");
+        try {
+            SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy_HH.mm.ss");
+            Date date = new Date(new java.util.Date().getTime());
+            String currentTime = formatter.format(date);
+            String home = System.getProperty("user.home");
+            String filename = "Books_" + currentTime + ".docx";
+            String exportPath = home + "/Downloads/" + filename;
+            redirectAttributes.addFlashAttribute("exportSuccessfully", "Exported at: " + exportPath);
+            UserDetail user = new UserDetail();
+            logger.log(Level.INFO, ">>> Username:" + auth.getName());
+            logger.log(Level.INFO, ">>> Role:" + auth.getAuthorities().iterator().next().getAuthority());
+            user.setUsername(auth.getName());
+            user.setUser_role(auth.getAuthorities().iterator().next().getAuthority());
+            DocPdf.exportDoc(wrapper.getBooks(), user, exportPath);
         } catch (Exception e) {
             logger.log(Level.SEVERE, ">>> Export error: " + e.getMessage());
         }

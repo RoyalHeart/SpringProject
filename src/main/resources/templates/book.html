@@ -20,6 +20,12 @@
             <h1 th:case="0">No books here!</h1>
             <div th:case="*">
                 <h1>List of all books:</h1>
+                <form method="post" action="#" th:action="@{/exportDoc}" th:object="${wrapper}">
+                    <input th:each="book,stat : *{books}" type="hidden" th:name="*{books[__${stat.index}__]}"
+                        th:field="*{books[__${stat.index}__]}" th:value="*{books[__${stat.index}__]}" />
+                    <input type="submit" value="Export to DOCX"></input>
+                    <span th:text="${exportSuccessfully}"></span>
+                </form>
                 <form method="post" action="#" th:action="@{/export}" th:object="${wrapper}">
                     <input th:each="book,stat : *{books}" type="hidden" th:name="*{books[__${stat.index}__]}"
                         th:field="*{books[__${stat.index}__]}" th:value="*{books[__${stat.index}__]}" />
