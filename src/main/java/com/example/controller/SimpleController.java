@@ -5,6 +5,7 @@
  */
 package com.example.controller;
 
+import java.io.IOException;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -44,33 +46,6 @@ import com.example.service.ExportToExcel;
 @Controller
 @ComponentScan("com.example.service")
 public class SimpleController {
-    void initializeBooks() {
-        Book book = new Book();
-        Date date = new Date(new java.util.Date().getTime());
-        book.setTitle("Mindset");
-        book.setAuthor("Carol Dweck");
-        book.setImported(date);
-        book.setPublished((short) 2002);
-        bookService.save(book);
-        book = new Book();
-        book.setTitle("Operating System");
-        book.setAuthor("Christen Baun");
-        book.setImported(date);
-        book.setPublished((short) 2002);
-        bookService.save(book);
-        book = new Book();
-        book.setTitle("Computer Network");
-        book.setAuthor("Christen Baun");
-        book.setImported(date);
-        book.setPublished((short) 2002);
-        bookService.save(book);
-        book = new Book();
-        book.setTitle("Around the World in 100 Days");
-        book.setAuthor("Jules Verne");
-        book.setImported(date);
-        book.setPublished((short) 2002);
-        bookService.save(book);
-    }
 
     void initializeUsers() {
         UserDetail user = new UserDetail();
@@ -96,9 +71,9 @@ public class SimpleController {
 
     @PostConstruct
     public void init() {
-        // initializeBooks();
-        // initializeUsers();
-        // bookService.saveTrendingBooks();
+        bookService.initializeBooks();
+        initializeUsers();
+        bookService.saveTrendingBooks();
     }
 
     @GetMapping("/")
@@ -185,11 +160,22 @@ public class SimpleController {
     public String saveBook(@ModelAttribute("book") Book book,
             Model model, HttpServletRequest request) {
         String referer = request.getHeader("Referer");
+        System.out.println(">>> Book" + book.getId() + book.getAuthor() + book.getTitle());
         try {
+            if (book.getImported() == null) {
+                book.setImported(new Date(new java.util.Date().getTime()));
+            }
             bookService.save(book);
             return "redirect:" + referer;
         } catch (Exception e) {
+            System.err.println(">>> e: " + e.getMessage());
             model.addAttribute("error", e.getMessage());
+            if (e.getMessage().contains("ConstraintViolation")) {
+                model.addAttribute("error", "Can not import book with same author and title");
+            }
+            if (e.getMessage().contains("NotBlank")) {
+                model.addAttribute("error", "Author and titles must not be blank");
+            }
             return "error";
         }
     }
@@ -213,20 +199,22 @@ public class SimpleController {
 
     @RequestMapping(value = "/import", method = RequestMethod.POST)
     public String importBook(@RequestParam("file") MultipartFile file, HttpServletRequest request,
-            RedirectAttributes redirectAttributes, Model model) {
+            RedirectAttributes redirectAttributes, Model model) throws IOException, MaxUploadSizeExceededException {
         String referer = request.getHeader("Referer");
-        try {
-            System.out.println(">>> file" + file);
-            if (ExcelService.isXLSX(file)) {
-                redirectAttributes.addFlashAttribute("isExcel", true);
-                bookService.importFromExcel(file.getInputStream());
-            } else {
-                System.out.println(">>> Not Excel");
-                redirectAttributes.addFlashAttribute("isExcel", false);
+        System.out.println(">>> file" + file);
+        if (ExcelService.isXLSX(file)) {
+            redirectAttributes.addFlashAttribute("isExcel", true);
+            try {
+                bookService.importFromExcel(ExcelService.loadBook(file.getInputStream()));
+            } catch (Exception e) {
+                System.err.println(">>> Error Import: " + e.getMessage());
+                redirectAttributes.addFlashAttribute("importError",
+                        "Import has error" + "-Export wrong Excel at /ErrorExcel_" + new java.util.Date().getTime()
+                                + ".xlsx");
             }
-        } catch (Exception e) {
-            System.out.println(">>> Error: " + e.getMessage());
-            return "redirect:" + referer;
+        } else {
+            System.out.println(">>> Not Excel");
+            redirectAttributes.addFlashAttribute("isExcel", false);
         }
         return "redirect:" + referer;
     }
