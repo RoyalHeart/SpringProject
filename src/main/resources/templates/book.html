@@ -27,8 +27,9 @@
                 </form>
                 <form method="post" action="#" th:action="@{/import}" enctype="multipart/form-data">
                     <input type="file" name="file" />
-                    <input type="submit" value="Import"></input>
+                    <input type="submit" value="Import excel"></input>
                     <span th:if="${isExcel} == false">Not an Excel file!</span>
+                    <span th:text="${importError}"></span>
                 </form>
                 <table border="0" cellpadding="10" class="bookList">
                     <thead>
@@ -58,8 +59,8 @@
                             <td th:text="${book.author}" />
                             <td>:</td>
                             <td th:text="${book.title}" />
-                            <td th:if="${book.published} == 0" th:text="Unknown" />
-                            <td th:if="${book.published} != 0" th:text="${book.published}" />
+                            <td th:if="${book.published} == null" th:text="Unknown" />
+                            <td th:if="${book.published}" th:text="${book.published}" />
                             <!-- <td th:text="${book.imported}" /> -->
                             <td><a th:href="@{/edit/{id}(id=${book.id})}">Edit</a></td>
                             <td><a th:href="@{/delete/{id}(id=${book.id})}">Delete</a></td>

@@ -5,7 +5,6 @@
  */
 package com.example.persistence.model;
 
-import java.io.Serializable;
 import java.sql.Date;
 
 import javax.persistence.Column;
@@ -15,28 +14,28 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotBlank;
 
+// import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "title", "author" }) })
-public class Book implements Serializable {
+public class Book {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(nullable = false)
-    // @NotEmpty
+    @NotBlank
     private String title;
 
     @Column(nullable = false)
-    // @NotEmpty
+    @NotBlank
     private String author;
 
     @Column(nullable = true)
