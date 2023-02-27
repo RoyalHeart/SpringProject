@@ -203,7 +203,7 @@ public class SimpleController {
             String filename = "Books_" + currentTime + ".xlsx";
             String exportPath = home + "/Downloads/" + filename;
             ExportToExcel.writeExcel(wrapper.getBooks(), exportPath);
-            redirectAttributes.addFlashAttribute("exportSuccessfully", "Exported at: " + exportPath);
+            redirectAttributes.addFlashAttribute("exportExcelSuccessfully", "Exported at: " + exportPath);
         } catch (Exception e) {
             logger.log(Level.SEVERE, ">>> Export error: " + e.getMessage());
         }
@@ -221,13 +221,38 @@ public class SimpleController {
             String home = System.getProperty("user.home");
             String filename = "Books_" + currentTime + ".docx";
             String exportPath = home + "/Downloads/" + filename;
-            redirectAttributes.addFlashAttribute("exportSuccessfully", "Exported at: " + exportPath);
+            redirectAttributes.addFlashAttribute("exportDocSuccessfully", "Exported at: " + exportPath);
             UserDetail user = new UserDetail();
             logger.log(Level.INFO, ">>> Username:" + auth.getName());
             logger.log(Level.INFO, ">>> Role:" + auth.getAuthorities().iterator().next().getAuthority());
             user.setUsername(auth.getName());
             user.setUser_role(auth.getAuthorities().iterator().next().getAuthority());
             DocPdf.exportDoc(wrapper.getBooks(), user, exportPath);
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, ">>> Export error: " + e.getMessage());
+        }
+        return "redirect:" + referer;
+    }
+
+    @RequestMapping(value = "/exportPdf", method = RequestMethod.POST)
+    public String exportPdf(@ModelAttribute(name = "wrapper") Wrapper wrapper,
+            Model model, HttpServletRequest request, RedirectAttributes redirectAttributes, Authentication auth) {
+        String referer = request.getHeader("Referer");
+        try {
+            SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy_HH.mm.ss");
+            Date date = new Date(new java.util.Date().getTime());
+            String currentTime = formatter.format(date);
+            String home = System.getProperty("user.home");
+            String filenameDoc = "Books_" + currentTime + ".docx";
+            String filenamePdf = "Books_" + currentTime + ".pdf";
+            String inputPath = home + "/Downloads/" + filenameDoc;
+            String exportPath = home + "/Downloads/" + filenamePdf;
+            UserDetail user = new UserDetail();
+            user.setUsername(auth.getName());
+            user.setUser_role(auth.getAuthorities().iterator().next().getAuthority());
+            DocPdf.exportDoc(wrapper.getBooks(), user, inputPath);
+            DocPdf.exportPdf(inputPath, exportPath);
+            redirectAttributes.addFlashAttribute("exportPdfSuccessfully", "Exported at: " + exportPath);
         } catch (Exception e) {
             logger.log(Level.SEVERE, ">>> Export error: " + e.getMessage());
         }
