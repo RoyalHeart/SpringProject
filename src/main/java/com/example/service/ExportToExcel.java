@@ -1,6 +1,7 @@
 package com.example.service;
 
 import java.io.IOException;
+import java.sql.Date;
 import java.util.List;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -130,12 +131,12 @@ public class ExportToExcel {
         cell.setCellValue(book.getAuthor());
 
         cell = row.createCell(COLUMN_INDEX_PUBLISHED);
-        cell.setCellValue(book.getPublished() != null ? 0 : book.getPublished());
+        cell.setCellValue(book.getPublished() != null ? book.getPublished() : 0);
 
         cellStyleFormatNumber.setDataFormat((short) BuiltinFormats.getBuiltinFormat("d-mmm-yy"));
         cell = row.createCell(COLUMN_INDEX_IMPORTED);
         cell.setCellStyle(cellStyleFormatNumber);
-        cell.setCellValue(book.getImported());
+        cell.setCellValue(book.getImported() != null ? book.getImported() : new Date(new java.util.Date().getTime()));
 
         // Create cell formula
         // totalMoney = price * quantity
