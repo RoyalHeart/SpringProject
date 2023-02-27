@@ -1,7 +1,6 @@
 package com.example.service;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.sql.Date;
 import java.util.ArrayList;
@@ -9,7 +8,10 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import org.apache.poi.ss.usermodel.Workbook;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -31,8 +33,37 @@ import com.miragesql.miragesql.SqlResource;
 
 @Service
 public class BookService {
+    static Logger logger = Logger.getLogger(BookService.class.getName());
     @Autowired
     BookRepository bookRepository;
+
+    public void initializeBooks() {
+        Book book = new Book();
+        Date date = new Date(new java.util.Date().getTime());
+        book.setTitle("Mindset");
+        book.setAuthor("Carol Dweck");
+        book.setImported(date);
+        book.setPublished((short) 2002);
+        this.save(book);
+        book = new Book();
+        book.setTitle("Operating System");
+        book.setAuthor("Christen Baun");
+        book.setImported(date);
+        book.setPublished((short) 2002);
+        this.save(book);
+        book = new Book();
+        book.setTitle("Computer Network");
+        book.setAuthor("Christen Baun");
+        book.setImported(date);
+        book.setPublished((short) 2002);
+        this.save(book);
+        book = new Book();
+        book.setTitle("Around the World in 100 Days");
+        book.setAuthor("Jules Verne");
+        book.setImported(date);
+        book.setPublished((short) 2002);
+        this.save(book);
+    }
 
     SqlManager sqlManager = new SqlManagerImpl();
     List<List<Book>> bookPages = new ArrayList<List<Book>>();
@@ -64,7 +95,8 @@ public class BookService {
             try {
                 this.save(trendingBookItorator.next());
             } catch (Exception e) {
-                System.out.println(">>> Error:" + e.getMessage());
+                // System.err.println(">>> Error saving:" + e.getMessage());
+                logger.log(Level.WARNING, ">>> Error saving: " + e.getMessage());
             }
         }
     }
@@ -83,10 +115,9 @@ public class BookService {
                 String title = (String) bookJson.get("title");
                 JSONArray authors;
                 String author = "Anonymous";
-                Short published = 0;
+                Short published = null;
                 try {
                     published = (short) ((Long) bookJson.get("first_publish_year")).intValue();
-                    System.out.println(">>> year: " + published);
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
                 }
@@ -95,15 +126,15 @@ public class BookService {
                     authors = (JSONArray) bookJson.get("author_name");
                     author = (String) authors.get(0);
                 } catch (Exception e) {
-                    System.out.println(e.getMessage());
+                    logger.log(Level.SEVERE, ">>> Error getting author" + e.getMessage());
                 }
-                System.out.println(">>> " + author + " : " + title + "-" + published);
                 Book newBook = new Book();
                 newBook.setTitle(title);
                 newBook.setAuthor(author);
                 newBook.setImported(new Date(new java.util.Date().getTime()));
                 newBook.setPublished(published);
                 trendingBooks.add(newBook);
+                logger.log(Level.INFO, ">>> Save: " + author + " : " + title + "-" + published);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -111,21 +142,23 @@ public class BookService {
         return trendingBooks;
     }
 
-    public void importFromExcel(InputStream inputStream) throws IOException {
+    public void importFromExcel(Workbook workBook) throws IOException {
         try {
-            System.out.println(">>> Excel");
-            List<Book> books = ImportFromExcel.excelToBooks(inputStream);
+            List<Book> books = ImportFromExcel.excelToBooks(workBook);
             for (Book book : books) {
-                System.out.println(">>> Imported books: " + book.getTitle());
                 try {
                     this.save(book);
+                    logger.log(Level.INFO,
+                            ">>> Imported books: " + book.getAuthor() + ":" + book.getTitle() + "-"
+                                    + book.getPublished());
                 } catch (Exception e) {
-                    System.out.println(">>> Error duplicate: " + e.getMessage());
+                    logger.log(Level.SEVERE, ">>> Error duplicate book: " + e.getMessage());
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println(">>> Error: " + e.getMessage());
+            logger.log(Level.SEVERE, ">>> Error importing books: " + e.getMessage());
+            ExcelService.createOutputFile(workBook,
+                    "/ErrorExcel_" + new java.util.Date().getTime() + ".xlsx");
         }
     }
 
@@ -136,8 +169,8 @@ public class BookService {
                     Book.class, sqlResource, book);
             System.out.println(">>> search: " + result);
             return result;
-        } catch (Exception ex) {
-            System.out.println(ex);
+        } catch (Exception e) {
+            logger.log(Level.WARNING, ">>> Error search: " + e.getMessage());
             return null;
         } finally {
         }

@@ -1,8 +1,6 @@
 package com.example.service;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.List;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -60,8 +58,7 @@ public class ExportToExcel {
         autosizeColumn(sheet, numberOfColumn);
 
         // Create file excel
-        createOutputFile(workbook, excelFilePath);
-        System.out.println(">>> Exported!!!");
+        ExcelService.createOutputFile(workbook, excelFilePath);
     }
 
     // Create workbook
@@ -133,7 +130,7 @@ public class ExportToExcel {
         cell.setCellValue(book.getAuthor());
 
         cell = row.createCell(COLUMN_INDEX_PUBLISHED);
-        cell.setCellValue(book.getPublished());
+        cell.setCellValue(book.getPublished() != null ? 0 : book.getPublished());
 
         cellStyleFormatNumber.setDataFormat((short) BuiltinFormats.getBuiltinFormat("d-mmm-yy"));
         cell = row.createCell(COLUMN_INDEX_IMPORTED);
@@ -185,10 +182,4 @@ public class ExportToExcel {
         }
     }
 
-    // Create output file
-    private static void createOutputFile(Workbook workbook, String excelFilePath) throws IOException {
-        try (OutputStream os = new FileOutputStream(excelFilePath)) {
-            workbook.write(os);
-        }
-    }
 }
