@@ -38,31 +38,36 @@ public class BookService {
     BookRepository bookRepository;
 
     public void initializeBooks() {
-        Book book = new Book();
-        Date date = new Date(new java.util.Date().getTime());
-        book.setTitle("Mindset");
-        book.setAuthor("Carol Dweck");
-        book.setImported(date);
-        book.setPublished((short) 2002);
-        this.save(book);
-        book = new Book();
-        book.setTitle("Operating System");
-        book.setAuthor("Christen Baun");
-        book.setImported(date);
-        book.setPublished((short) 2002);
-        this.save(book);
-        book = new Book();
-        book.setTitle("Computer Network");
-        book.setAuthor("Christen Baun");
-        book.setImported(date);
-        book.setPublished((short) 2002);
-        this.save(book);
-        book = new Book();
-        book.setTitle("Around the World in 100 Days");
-        book.setAuthor("Jules Verne");
-        book.setImported(date);
-        book.setPublished((short) 2002);
-        this.save(book);
+        try {
+
+            Book book = new Book();
+            Date date = new Date(new java.util.Date().getTime());
+            book.setTitle("Mindset");
+            book.setAuthor("Carol Dweck");
+            book.setImported(date);
+            book.setPublished((short) 2002);
+            this.save(book);
+            book = new Book();
+            book.setTitle("Operating System");
+            book.setAuthor("Christen Baun");
+            book.setImported(date);
+            book.setPublished((short) 2002);
+            this.save(book);
+            book = new Book();
+            book.setTitle("Computer Network");
+            book.setAuthor("Christen Baun");
+            book.setImported(date);
+            book.setPublished((short) 2002);
+            this.save(book);
+            book = new Book();
+            book.setTitle("Around the World in 100 Days");
+            book.setAuthor("Jules Verne");
+            book.setImported(date);
+            book.setPublished((short) 2002);
+            this.save(book);
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, ">>> Error init:" + e.getMessage());
+        }
     }
 
     SqlManager sqlManager = new SqlManagerImpl();
@@ -95,8 +100,7 @@ public class BookService {
             try {
                 this.save(trendingBookItorator.next());
             } catch (Exception e) {
-                // System.err.println(">>> Error saving:" + e.getMessage());
-                logger.log(Level.WARNING, ">>> Error saving: " + e.getMessage());
+                logger.log(Level.SEVERE, ">>> Error saveTrendingBooks():" + e.getMessage());
             }
         }
     }
@@ -119,14 +123,14 @@ public class BookService {
                 try {
                     published = (short) ((Long) bookJson.get("first_publish_year")).intValue();
                 } catch (Exception e) {
-                    System.out.println(e.getMessage());
+                    logger.log(Level.SEVERE, ">>> Error getting publish year:" + e.getMessage());
                 }
                 // some book have no author
                 try {
                     authors = (JSONArray) bookJson.get("author_name");
                     author = (String) authors.get(0);
                 } catch (Exception e) {
-                    logger.log(Level.SEVERE, ">>> Error getting author" + e.getMessage());
+                    logger.log(Level.SEVERE, ">>> Error getting author:" + e.getMessage());
                 }
                 Book newBook = new Book();
                 newBook.setTitle(title);
@@ -142,23 +146,22 @@ public class BookService {
         return trendingBooks;
     }
 
-    public void importFromExcel(Workbook workBook) throws IOException {
+    public void importFromExcel(Workbook workBook) throws Exception {
+        List<Book> books;
         try {
-            List<Book> books = ImportFromExcel.excelToBooks(workBook);
-            for (Book book : books) {
-                try {
-                    this.save(book);
-                    logger.log(Level.INFO,
-                            ">>> Imported books: " + book.getAuthor() + ":" + book.getTitle() + "-"
-                                    + book.getPublished());
-                } catch (Exception e) {
-                    logger.log(Level.SEVERE, ">>> Error duplicate book: " + e.getMessage());
-                }
-            }
+            books = ImportFromExcel.excelToBooks(workBook);
         } catch (Exception e) {
-            logger.log(Level.SEVERE, ">>> Error importing books: " + e.getMessage());
-            ExcelService.createOutputFile(workBook,
-                    "/ErrorExcel_" + new java.util.Date().getTime() + ".xlsx");
+            throw e;
+        }
+        for (Book book : books) {
+            try {
+                this.save(book);
+                logger.log(Level.INFO,
+                        ">>> Imported books: " + book.getAuthor() + ":" + book.getTitle() + "-"
+                                + book.getPublished());
+            } catch (Exception e) {
+                logger.log(Level.SEVERE, ">>> Error duplicate book:" + e.getMessage());
+            }
         }
     }
 
@@ -170,7 +173,7 @@ public class BookService {
             System.out.println(">>> search: " + result);
             return result;
         } catch (Exception e) {
-            logger.log(Level.WARNING, ">>> Error search: " + e.getMessage());
+            logger.log(Level.SEVERE, ">>> Error searchBook():" + e.getMessage());
             return null;
         } finally {
         }

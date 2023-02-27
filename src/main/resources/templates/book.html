@@ -24,12 +24,14 @@
                     <input th:each="book,stat : *{books}" type="hidden" th:name="*{books[__${stat.index}__]}"
                         th:field="*{books[__${stat.index}__]}" th:value="*{books[__${stat.index}__]}" />
                     <input type="submit" value="Export to XLSX"></input>
+                    <span th:text="${exportSuccessfully}"></span>
                 </form>
                 <form method="post" action="#" th:action="@{/import}" enctype="multipart/form-data">
                     <input type="file" name="file" />
                     <input type="submit" value="Import excel"></input>
                     <span th:if="${isExcel} == false">Not an Excel file!</span>
                     <span th:text="${importError}"></span>
+                    <span th:text="${importSuccessfully}"></span>
                 </form>
                 <table border="0" cellpadding="10" class="bookList">
                     <thead>
