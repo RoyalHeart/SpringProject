@@ -40,6 +40,7 @@ public class ImportFromExcel {
 
     public static List<Book> excelToBooks(Workbook workbook) throws Exception {
         try {
+            boolean haveParseError = false;
             Sheet sheet = workbook.getSheet(SHEET);
             Iterator<Row> rows = sheet.iterator();
 
@@ -86,6 +87,7 @@ public class ImportFromExcel {
                         }
                         cellIdx++;
                     } catch (Exception e) {
+                        haveParseError = true;
                         System.out.println(">>> Error parsing cell" + e.getMessage());
                         currentCell.setCellStyle(createStyleForErrorInput(sheet));
                     }
@@ -93,8 +95,11 @@ public class ImportFromExcel {
                 book.setImported(new Date(new java.util.Date().getTime()));
                 books.add(book);
             }
-            // ExcelService.createOutputFile(workbook,
-            // "/ErrorExcel_" + new java.util.Date().getTime() + ".xlsx");
+            if (haveParseError) {
+                throw new Exception("Parse error");
+            }
+            ExcelService.createOutputFile(workbook,
+                    "/ErrorExcel_" + new java.util.Date().getTime() + ".xlsx");
             workbook.close();
             return books;
         } catch (IOException e) {

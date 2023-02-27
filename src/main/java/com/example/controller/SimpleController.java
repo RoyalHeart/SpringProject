@@ -11,12 +11,15 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.ComponentScan;
@@ -46,18 +49,24 @@ import com.example.service.ExportToExcel;
 @Controller
 @ComponentScan("com.example.service")
 public class SimpleController {
+    static Logger logger = Logger.getLogger(SimpleController.class.getName());
 
     void initializeUsers() {
-        UserDetail user = new UserDetail();
-        user.setUsername("admin");
-        user.setUser_role("ADMIN");
-        user.setUser_password("$2a$12$Jt8ENKHcdh28mkizdJfEc.ekBTcRRRX9Cp3bz5Ze.dYnUHL3QbRmK");
-        userRepository.save(user);
-        user = new UserDetail();
-        user.setUsername("user");
-        user.setUser_role("USER");
-        user.setUser_password("$2a$12$Jt8ENKHcdh28mkizdJfEc.ekBTcRRRX9Cp3bz5Ze.dYnUHL3QbRmK");
-        userRepository.save(user);
+        try {
+
+            UserDetail user = new UserDetail();
+            user.setUsername("admin");
+            user.setUser_role("ADMIN");
+            user.setUser_password("$2a$12$Jt8ENKHcdh28mkizdJfEc.ekBTcRRRX9Cp3bz5Ze.dYnUHL3QbRmK");
+            userRepository.save(user);
+            user = new UserDetail();
+            user.setUsername("user");
+            user.setUser_role("USER");
+            user.setUser_password("$2a$12$Jt8ENKHcdh28mkizdJfEc.ekBTcRRRX9Cp3bz5Ze.dYnUHL3QbRmK");
+            userRepository.save(user);
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, ">>> Init error: " + e.getMessage());
+        }
     }
 
     @Value("${spring.application.name}")
@@ -160,7 +169,7 @@ public class SimpleController {
     public String saveBook(@ModelAttribute("book") Book book,
             Model model, HttpServletRequest request) {
         String referer = request.getHeader("Referer");
-        System.out.println(">>> Book" + book.getId() + book.getAuthor() + book.getTitle());
+        logger.log(Level.INFO, ">>> Save: " + book.getAuthor() + ":" + book.getTitle() + "-" + book.getPublished());
         try {
             if (book.getImported() == null) {
                 book.setImported(new Date(new java.util.Date().getTime()));
@@ -168,7 +177,7 @@ public class SimpleController {
             bookService.save(book);
             return "redirect:" + referer;
         } catch (Exception e) {
-            System.err.println(">>> e: " + e.getMessage());
+            logger.log(Level.SEVERE, ">>> Save error: " + e.getMessage());
             model.addAttribute("error", e.getMessage());
             if (e.getMessage().contains("ConstraintViolation")) {
                 model.addAttribute("error", "Can not import book with same author and title");
@@ -182,7 +191,7 @@ public class SimpleController {
 
     @RequestMapping(value = "/export", method = RequestMethod.POST)
     public String exportBook(@ModelAttribute(name = "wrapper") Wrapper wrapper,
-            Model model, HttpServletRequest request) {
+            Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
         String referer = request.getHeader("Referer");
         try {
             SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy_HH.mm.ss");
@@ -190,30 +199,36 @@ public class SimpleController {
             String currentTime = formatter.format(date);
             String home = System.getProperty("user.home");
             String filename = "Books_" + currentTime + ".xlsx";
-            ExportToExcel.writeExcel(wrapper.getBooks(), home + "/Downloads/" + filename);
+            String exportPath = home + "/Downloads/" + filename;
+            ExportToExcel.writeExcel(wrapper.getBooks(), exportPath);
+            redirectAttributes.addFlashAttribute("exportSuccessfully", "Exported at: " + exportPath);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, ">>> Export error: " + e.getMessage());
         }
         return "redirect:" + referer;
     }
 
     @RequestMapping(value = "/import", method = RequestMethod.POST)
     public String importBook(@RequestParam("file") MultipartFile file, HttpServletRequest request,
-            RedirectAttributes redirectAttributes, Model model) throws IOException, MaxUploadSizeExceededException {
+            RedirectAttributes redirectAttributes) throws IOException, MaxUploadSizeExceededException {
         String referer = request.getHeader("Referer");
-        System.out.println(">>> file" + file);
         if (ExcelService.isXLSX(file)) {
             redirectAttributes.addFlashAttribute("isExcel", true);
+            Workbook workBook = ExcelService.loadBook(file.getInputStream());
             try {
-                bookService.importFromExcel(ExcelService.loadBook(file.getInputStream()));
+                bookService.importFromExcel(workBook);
+                redirectAttributes.addFlashAttribute("importSuccessfully",
+                        "Imported successfully");
             } catch (Exception e) {
-                System.err.println(">>> Error Import: " + e.getMessage());
+                String errorOutputPath = System.getProperty("user.dir");
+                String exportPath = errorOutputPath + "/ErrorExcel_" + new java.util.Date().getTime() + ".xlsx";
+                ExcelService.createOutputFile(workBook, exportPath);
+                logger.log(Level.SEVERE, ">>> Error importing books: " + e.getMessage());
                 redirectAttributes.addFlashAttribute("importError",
-                        "Import has error" + "-Export wrong Excel at /ErrorExcel_" + new java.util.Date().getTime()
-                                + ".xlsx");
+                        "Import has error" + " - Export wrong Excel at: " + exportPath);
             }
         } else {
-            System.out.println(">>> Not Excel");
+            logger.log(Level.SEVERE, ">>> Not Excel");
             redirectAttributes.addFlashAttribute("isExcel", false);
         }
         return "redirect:" + referer;
