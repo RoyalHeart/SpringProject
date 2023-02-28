@@ -243,15 +243,12 @@ public class SimpleController {
             Date date = new Date(new java.util.Date().getTime());
             String currentTime = formatter.format(date);
             String home = System.getProperty("user.home");
-            String filenameDoc = "Books_" + currentTime + ".docx";
             String filenamePdf = "Books_" + currentTime + ".pdf";
-            String inputPath = home + "/Downloads/" + filenameDoc;
             String exportPath = home + "/Downloads/" + filenamePdf;
             UserDetail user = new UserDetail();
             user.setUsername(auth.getName());
             user.setUser_role(auth.getAuthorities().iterator().next().getAuthority());
-            DocPdf.exportDoc(wrapper.getBooks(), user, inputPath);
-            DocPdf.exportPdf(inputPath, exportPath);
+            DocPdf.exportPdf(wrapper.getBooks(), user, exportPath);
             redirectAttributes.addFlashAttribute("exportPdfSuccessfully", "Exported at: " + exportPath);
         } catch (Exception e) {
             logger.log(Level.SEVERE, ">>> Export error: " + e.getMessage());
