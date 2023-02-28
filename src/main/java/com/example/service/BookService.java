@@ -10,11 +10,14 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.poi.ss.usermodel.Workbook;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -22,15 +25,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.example.database.ClasspathSqlResourceImpl;
 import com.example.database.ConnectionProviderImpl;
 import com.example.persistence.model.Book;
 import com.example.persistence.repo.BookRepository;
-import com.miragesql.miragesql.ClasspathSqlResource;
 import com.miragesql.miragesql.SqlManager;
 import com.miragesql.miragesql.SqlManagerImpl;
 import com.miragesql.miragesql.SqlResource;
 
 @Service
+@ComponentScan("com.example.database")
 public class BookService {
     static Logger logger = Logger.getLogger(BookService.class.getName());
     @Autowired
@@ -69,14 +73,20 @@ public class BookService {
     }
 
     SqlManager sqlManager = new SqlManagerImpl();
+    SqlResource sqlResource = new ClasspathSqlResourceImpl("/static/sql/searchBook.sql");
     List<List<Book>> bookPages = new ArrayList<List<Book>>();
-    SqlResource sqlResource = new ClasspathSqlResource("/static/sql/searchBook.sql");
+
+    @PostConstruct
+    public void init() {
+        sqlManager.setConnectionProvider(connProvider);
+    }
+
     ConnectionProviderImpl connProvider = new ConnectionProviderImpl();
     int pageSize = 10;
-    List<Book> books;
+    // List<Book> books;
 
     public Page<Book> getPage(Pageable pageable) {
-        books = bookRepository.findAll();
+        List<Book> books = bookRepository.findAll();
         int pageSize = this.pageSize;
         int currentPage = pageable.getPageNumber();
         int startItem = currentPage * pageSize;
@@ -106,12 +116,12 @@ public class BookService {
     private List<Book> getTrendingBooks() {
         List<Book> trendingBooks = new ArrayList<Book>();
         try {
-            System.out.println(">>> start getting trending books");
+            logger.info(">>> start getting trending books");
             Object response = API.fetch(new URL("https://openlibrary.org/trending/now.json"));
             Object object = new JSONParser().parse(response.toString());
             JSONObject jsonObject = (JSONObject) object;
             JSONArray works = (JSONArray) jsonObject.get("works");
-            System.out.println(">>> content: " + works.get(0));
+            logger.info(">>> content: " + works.get(0));
             for (Object book : works) {
                 JSONObject bookJson = (JSONObject) book;
                 String title = (String) bookJson.get("title");
@@ -164,11 +174,10 @@ public class BookService {
     }
 
     public List<Book> searchBook(Book book) {
-        sqlManager.setConnectionProvider(connProvider);
         try {
             List<Book> result = sqlManager.getResultList(
                     Book.class, sqlResource, book);
-            System.out.println(">>> search: " + result);
+            logger.info(">>> search: " + result);
             return result;
         } catch (Exception e) {
             logger.log(Level.SEVERE, ">>> Error searchBook():" + e.getMessage());

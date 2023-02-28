@@ -45,6 +45,9 @@ a:hover {
   display: none;
 }
 
+.books > form {
+  display: inline-block;
+}
 .bookList {
   width: 80%;
   margin: auto;

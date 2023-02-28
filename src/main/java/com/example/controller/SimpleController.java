@@ -55,7 +55,6 @@ public class SimpleController {
 
     void initializeUsers() {
         try {
-
             UserDetail user = new UserDetail();
             user.setUsername("admin");
             user.setUser_role("ADMIN");
@@ -151,6 +150,7 @@ public class SimpleController {
     public String deleteBook(@PathVariable(name = "id") long id, Model model, HttpServletRequest request) {
         String referer = request.getHeader("Referer");
         bookService.delete(id);
+        logger.info(">>> Delelte book:" + id);
         return "redirect:" + referer;
     }
 
@@ -162,7 +162,7 @@ public class SimpleController {
             model.addAttribute("editBook", editBook);
             return "edit";
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.severe(">>> Edit error:" + e.getMessage());
         }
         return "redirect:" + referer;
     }
@@ -276,7 +276,7 @@ public class SimpleController {
                 ExcelService.createOutputFile(workBook, exportPath);
                 logger.log(Level.SEVERE, ">>> Error importing books: " + e.getMessage());
                 redirectAttributes.addFlashAttribute("importError",
-                        "Import has error" + " - Export wrong Excel at: " + exportPath);
+                        "Import has error - Export wrong Excel at: " + exportPath);
             }
         } else {
             logger.log(Level.SEVERE, ">>> Not Excel");

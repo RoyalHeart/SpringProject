@@ -18,7 +18,7 @@
         </div>
         <div th:switch="${books.size()}">
             <h1 th:case="0">No books here!</h1>
-            <div th:case="*">
+            <div th:case="*" class="books">
                 <h1>List of all books:</h1>
                 <form method="post" action="#" th:action="@{/exportPdf}" th:object="${wrapper}">
                     <input th:each="book,stat : *{books}" type="hidden" th:name="*{books[__${stat.index}__]}"

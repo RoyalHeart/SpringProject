@@ -6,7 +6,7 @@ function validateUsername() {
   if (!isValid) {
     alert(
       "Please enter a valid username:\n" +
-        "Start with alphanumeric characters, then either -._ but not consecutive or alphanumeric and end with an alphanumeric, length from 2 to 20"
+        "Start with alphanumeric characters, then either -._ but not consecutive or an alphanumeric, and end with an alphanumeric, length from 2 to 20"
     );
   }
 }

@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
@@ -19,6 +20,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import com.example.persistence.model.Book;
 
 public class ImportFromExcel {
+    private static Logger logger = Logger.getLogger(ImportFromExcel.class.getName());
     static String SHEET = "Books";
 
     private static CellStyle createStyleForErrorInput(Sheet sheet) {
@@ -88,7 +90,7 @@ public class ImportFromExcel {
                         cellIdx++;
                     } catch (Exception e) {
                         haveParseError = true;
-                        System.out.println(">>> Error parsing cell" + e.getMessage());
+                        logger.severe(">>> Error parsing cell" + e.getMessage());
                         currentCell.setCellStyle(createStyleForErrorInput(sheet));
                     }
                 }
