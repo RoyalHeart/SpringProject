@@ -43,4 +43,9 @@ public class Book {
 
     @Column(nullable = true, length = 4, columnDefinition = "smallint")
     private Short published;
+
+    @Override
+    public String toString() {
+        return this.author + ":" + this.title + "-" + this.published;
+    }
 }
