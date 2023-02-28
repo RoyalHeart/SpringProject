@@ -56,7 +56,8 @@
                 <td th:text="${searchBook.author}" />
                 <td>:</td>
                 <td th:text="${searchBook.title}" />
-                <td th:text="${searchBook.published}" />
+                <td th:if="${searchBook.published}" th:text="${searchBook.published}" />
+                <td th:if="${searchBook.published} == null" th:text="Unknown" />
                 <td><a th:href="@{/edit/{id}(id=${searchBook.id})}">Edit</a></td>
                 <td><a th:href="@{/delete/{id}(id=${searchBook.id})}">Delete</a></td>
             </tr>

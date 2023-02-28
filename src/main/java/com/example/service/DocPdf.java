@@ -16,7 +16,6 @@ import com.example.persistence.model.UserDetail;
 
 import fr.opensagres.poi.xwpf.converter.pdf.PdfConverter;
 import fr.opensagres.poi.xwpf.converter.pdf.PdfOptions;
-import fr.opensagres.xdocreport.converter.Options;
 import fr.opensagres.xdocreport.core.XDocReportException;
 import fr.opensagres.xdocreport.document.IXDocReport;
 import fr.opensagres.xdocreport.document.registry.XDocReportRegistry;
@@ -95,12 +94,10 @@ public class DocPdf {
             userDetail.setUsername("admin");
             userDetail.setUser_role("ADMIN");
             String path = "project_out.docx";
-
-            // DocPdf.exportDoc(books, userDetail, path);
+            DocPdf.exportDoc(books, userDetail, path);
             DocPdf.exportPdf("C:\\Users\\Admin\\Downloads\\Books_27.02.2023_15.33.25.docx", "/hello.pdf");
         } catch (Exception e) {
             e.printStackTrace();
-            // TODO: handle exception
         }
     }
 }
