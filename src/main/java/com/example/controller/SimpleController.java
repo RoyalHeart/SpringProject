@@ -146,6 +146,13 @@ public class SimpleController {
         return "book";
     }
 
+    @RequestMapping(value = "/fetchTrending", method = RequestMethod.POST)
+    public String fetchTrending(HttpServletRequest request) {
+        String referer = request.getHeader("Referer");
+        bookService.saveTrendingBooks();
+        return "redirect:" + referer;
+    }
+
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
     public String deleteBook(@PathVariable(name = "id") long id, Model model, HttpServletRequest request) {
         String referer = request.getHeader("Referer");

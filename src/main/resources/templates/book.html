@@ -18,33 +18,28 @@
         </div>
         <div th:switch="${books.size()}">
             <h1 th:case="0">No books here!</h1>
-            <div th:case="*" class="books">
+            <div th:case="*">
                 <h1>List of all books:</h1>
-                <form method="post" action="#" th:action="@{/exportPdf}" th:object="${wrapper}">
-                    <input th:each="book,stat : *{books}" type="hidden" th:name="*{books[__${stat.index}__]}"
-                        th:field="*{books[__${stat.index}__]}" th:value="*{books[__${stat.index}__]}" />
-                    <input type="submit" value="Export to PDF"></input>
-                    <span th:text="${exportPdfSuccessfully}"></span>
-                </form>
-                <form method="post" action="#" th:action="@{/exportDoc}" th:object="${wrapper}">
-                    <input th:each="book,stat : *{books}" type="hidden" th:name="*{books[__${stat.index}__]}"
-                        th:field="*{books[__${stat.index}__]}" th:value="*{books[__${stat.index}__]}" />
-                    <input type="submit" value="Export to DOCX"></input>
-                    <span th:text="${exportDocSuccessfully}"></span>
-                </form>
-                <form method="post" action="#" th:action="@{/export}" th:object="${wrapper}">
-                    <input th:each="book,stat : *{books}" type="hidden" th:name="*{books[__${stat.index}__]}"
-                        th:field="*{books[__${stat.index}__]}" th:value="*{books[__${stat.index}__]}" />
-                    <input type="submit" value="Export to XLSX"></input>
-                    <span th:text="${exportExcelSuccessfully}"></span>
-                </form>
-                <form method="post" action="#" th:action="@{/import}" enctype="multipart/form-data">
-                    <input type="file" name="file" />
-                    <input type="submit" value="Import excel"></input>
-                    <span th:if="${isExcel} == false">Not an Excel file!</span>
-                    <span th:text="${importError}"></span>
-                    <span th:text="${importSuccessfully}"></span>
-                </form>
+                <div class="export-import">
+                    <form method="post" action="#" th:action="@{/exportPdf}" th:object="${wrapper}">
+                        <input th:each="book,stat : *{books}" type="hidden" th:name="*{books[__${stat.index}__]}"
+                            th:field="*{books[__${stat.index}__]}" th:value="*{books[__${stat.index}__]}" />
+                        <input type="submit" value="Export to PDF"></input>
+                        <span th:text="${exportPdfSuccessfully}"></span>
+                    </form>
+                    <form method="post" action="#" th:action="@{/exportDoc}" th:object="${wrapper}">
+                        <input th:each="book,stat : *{books}" type="hidden" th:name="*{books[__${stat.index}__]}"
+                            th:field="*{books[__${stat.index}__]}" th:value="*{books[__${stat.index}__]}" />
+                        <input type="submit" value="Export to DOCX"></input>
+                        <span th:text="${exportDocSuccessfully}"></span>
+                    </form>
+                    <form method="post" action="#" th:action="@{/export}" th:object="${wrapper}">
+                        <input th:each="book,stat : *{books}" type="hidden" th:name="*{books[__${stat.index}__]}"
+                            th:field="*{books[__${stat.index}__]}" th:value="*{books[__${stat.index}__]}" />
+                        <input type="submit" value="Export to XLSX"></input>
+                        <span th:text="${exportExcelSuccessfully}"></span>
+                    </form>
+                </div>
                 <table border="0" cellpadding="10" class="bookList">
                     <thead>
                         <tr>
