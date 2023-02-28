@@ -17,6 +17,16 @@
             </form>
         </div>
         <h1>Add new book</h1>
+        <form method="post" action="#" th:action="@{/fetchTrending}">
+            <input type="submit" value="Fetch trending books"></input>
+        </form>
+        <form method="post" action="#" th:action="@{/import}" enctype="multipart/form-data">
+            <input type="file" name="file" />
+            <input type="submit" value="Import excel"></input>
+            <span th:if="${isExcel} == false">Not an Excel file!</span>
+            <span th:text="${importError}"></span>
+            <span th:text="${importSuccessfully}"></span>
+        </form>
         <form method="post" action="#" th:action="@{/save}" th:object="${newBook}">
             <table border="0" cellpadding="10">
                 <tr>

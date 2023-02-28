@@ -45,7 +45,7 @@ a:hover {
   display: none;
 }
 
-.books > form {
+.export-import > form {
   display: inline-block;
 }
 .bookList {

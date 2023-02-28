@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +18,8 @@ import fr.opensagres.xdocreport.converter.ConverterTypeVia;
 import fr.opensagres.xdocreport.converter.Options;
 import fr.opensagres.xdocreport.core.XDocReportException;
 import fr.opensagres.xdocreport.document.IXDocReport;
+import fr.opensagres.xdocreport.document.images.ClassPathImageProvider;
+import fr.opensagres.xdocreport.document.images.IImageProvider;
 import fr.opensagres.xdocreport.document.registry.XDocReportRegistry;
 import fr.opensagres.xdocreport.template.IContext;
 import fr.opensagres.xdocreport.template.TemplateEngineKind;
@@ -45,15 +48,24 @@ public class DocPdf {
     public static void exportPdf(List<Book> books, UserDetail userDetail, String exportPath)
             throws IOException, XDocReportException {
         InputStream in = DocPdf.class
-                .getResourceAsStream("/books.docx");
+                .getResourceAsStream("/velocityBookTemplate.docx");
         IXDocReport report = XDocReportRegistry.getRegistry().loadReport(in,
                 TemplateEngineKind.Velocity);
         FieldsMetadata fieldsMetadata = report.createFieldsMetadata();
         fieldsMetadata.load("user", UserDetail.class);
         fieldsMetadata.load("books", Book.class, true);
+        IImageProvider logo = new ClassPathImageProvider(DocPdf.class, "/static/images/logo.png");
+        fieldsMetadata.addFieldAsImage("logo");
+        fieldsMetadata.addFieldAsImage("logo");
+        fieldsMetadata.addFieldAsList("books.Author");
+        fieldsMetadata.addFieldAsList("books.Id");
+        fieldsMetadata.addFieldAsList("books.Title");
+        fieldsMetadata.addFieldAsList("books.Published");
         IContext context = report.createContext();
         context.put("books", books);
         context.put("user", userDetail);
+        context.put("logo", logo);
+        context.put("exportDate", new Date(new java.util.Date().getTime()));
         OutputStream out = new FileOutputStream(new File(exportPath));
         PdfOptions pdfOptions = PdfOptions.create();
         Options options = Options.getTo(ConverterTypeTo.PDF).via(ConverterTypeVia.XWPF).subOptions(pdfOptions);
@@ -63,15 +75,24 @@ public class DocPdf {
     public static void exportDoc(List<Book> books, UserDetail userDetail, String path)
             throws IOException, XDocReportException {
         InputStream in = DocPdf.class
-                .getResourceAsStream("/books.docx");
+                .getResourceAsStream("/velocityBookTemplate.docx");
         IXDocReport report = XDocReportRegistry.getRegistry().loadReport(in,
                 TemplateEngineKind.Velocity);
         FieldsMetadata fieldsMetadata = report.createFieldsMetadata();
         fieldsMetadata.load("user", UserDetail.class);
         fieldsMetadata.load("books", Book.class, true);
+        IImageProvider logo = new ClassPathImageProvider(DocPdf.class, "/static/images/logo.png");
+        fieldsMetadata.addFieldAsImage("logo");
+        fieldsMetadata.addFieldAsList("books.Author");
+        fieldsMetadata.addFieldAsList("books.Id");
+        fieldsMetadata.addFieldAsList("books.Title");
+        fieldsMetadata.addFieldAsList("books.Published");
+        // report.setFieldsMetadata(fieldsMetadata);
         IContext context = report.createContext();
         context.put("books", books);
         context.put("user", userDetail);
+        context.put("logo", logo);
+        context.put("exportDate", new Date(new java.util.Date().getTime()));
         OutputStream out = new FileOutputStream(new File(path));
         report.process(context, out);
     }
@@ -92,10 +113,10 @@ public class DocPdf {
             UserDetail userDetail = new UserDetail();
             userDetail.setUsername("admin");
             userDetail.setUser_role("ADMIN");
-            String path = "project_out.docx";
-            DocPdf.exportDoc(books, userDetail, path);
-            // DocPdf.exportPdf("C:\\Users\\Admin\\Downloads\\Books_27.02.2023_15.33.25.docx",
-            // "/hello.pdf");
+            String pathDoc = "project_out.docx";
+            String pathPdf = "project_out.pdf";
+            DocPdf.exportDoc(books, userDetail, pathDoc);
+            DocPdf.exportPdf(books, userDetail, pathPdf);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -16,11 +16,25 @@
         </form>
     </div>
     <h1>Search Book</h1>
-    <form method="post" action="#" th:action="@{/export}" th:object="${wrapper}">
-        <input th:each="book,stat : *{books}" type="hidden" th:name="*{books[__${stat.index}__]}"
-            th:field="*{books[__${stat.index}__]}" th:value="*{books[__${stat.index}__]}" />
-        <input type="submit" value="Export to XLSX"></input>
-    </form>
+    <div class="export-import">
+        <form method="post" action="#" th:action="@{/exportPdf}" th:object="${wrapper}">
+            <input th:each="book,stat : *{books}" type="hidden" th:name="*{books[__${stat.index}__]}"
+                th:field="*{books[__${stat.index}__]}" th:value="*{books[__${stat.index}__]}" />
+            <input type="submit" value="Export to PDF"></input>
+            <span th:text="${exportPdfSuccessfully}"></span>
+        </form>
+        <form method="post" action="#" th:action="@{/exportDoc}" th:object="${wrapper}">
+            <input th:each="book,stat : *{books}" type="hidden" th:name="*{books[__${stat.index}__]}"
+                th:field="*{books[__${stat.index}__]}" th:value="*{books[__${stat.index}__]}" />
+            <input type="submit" value="Export to DOCX"></input>
+            <span th:text="${exportDocSuccessfully}"></span>
+        </form>
+        <form method="post" action="#" th:action="@{/export}" th:object="${wrapper}">
+            <input th:each="book,stat : *{books}" type="hidden" th:name="*{books[__${stat.index}__]}"
+                th:field="*{books[__${stat.index}__]}" th:value="*{books[__${stat.index}__]}" />
+            <input type="submit" value="Export to XLSX"></input>
+        </form>
+    </div>
     <form action="#" th:action="@{/search}" th:object="${newBook}" method="post">
         <table border="0" cellpadding="10">
             <tr>
