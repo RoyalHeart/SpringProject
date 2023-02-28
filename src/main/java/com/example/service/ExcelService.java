@@ -4,6 +4,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.logging.Logger;
 
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -12,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class ExcelService {
+    private static Logger logger = Logger.getLogger(ExcelService.class.getName());
 
     public static String TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
     static String[] HEADERs = { "Id", "Title", "Description", "Published" };
@@ -23,11 +25,10 @@ public class ExcelService {
         return false;
     }
 
-    // Create output file
     public static void createOutputFile(Workbook workbook, String excelFilePath) throws IOException {
         try (OutputStream os = new FileOutputStream(excelFilePath)) {
             workbook.write(os);
-            System.out.println(">>> Exported at:" + excelFilePath);
+            logger.info(">>> Exported at:" + excelFilePath);
         }
     }
 

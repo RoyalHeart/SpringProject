@@ -3,10 +3,12 @@ package com.example.database;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.logging.Logger;
 
 import com.miragesql.miragesql.provider.ConnectionProvider;
 
 public class ConnectionProviderImpl implements ConnectionProvider {
+    private Logger logger = Logger.getLogger(ConnectionProviderImpl.class.getName());
     private DatabaseConfiguration databaseConfiguration = new DatabaseConfiguration();
 
     private String url = "jdbc:postgresql://localhost:5432/postgres";
@@ -19,14 +21,10 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     public Connection getConnection() {
         Connection conn = null;
         try {
-            System.out.println(databaseConfiguration.getUrl());
-            // System.out.println(url);
-            // System.out.println(user);
-            // System.out.println(password);
+            logger.info(">>> getConnection(): connected to PostgreSQL");
             conn = DriverManager.getConnection(url, username, password);
-            System.out.println(">>> connected to PostgreSQL");
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.severe(">>> getConnection() error:" + e.getMessage());
         }
         return conn;
     }
