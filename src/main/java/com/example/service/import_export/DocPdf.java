@@ -9,6 +9,8 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.poi.openxml4j.util.ZipSecureFile;
+
 import com.example.persistence.model.Book;
 import com.example.persistence.model.UserDetail;
 
@@ -47,6 +49,7 @@ public class DocPdf {
 
     public static void exportPdf(List<Book> books, UserDetail userDetail, String exportPath)
             throws IOException, XDocReportException {
+                ZipSecureFile.setMinInflateRatio(0.001); // increase max file size
         InputStream in = DocPdf.class
                 .getResourceAsStream("/velocityBookTemplate.docx");
         IXDocReport report = XDocReportRegistry.getRegistry().loadReport(in,
@@ -105,17 +108,19 @@ public class DocPdf {
             book.setTitle("Hello world");
             book.setPublished((short) 2002);
             books.add(book);
-            book = new Book();
-            book.setAuthor("Lily");
-            book.setTitle("World");
-            book.setPublished((short) 2002);
-            books.add(book);
+            for (int i = 0; i < 400; i++) {
+                book = new Book();
+                book.setAuthor("Lily");
+                book.setTitle("World");
+                book.setPublished((short) 2002);
+                books.add(book);
+            }
             UserDetail userDetail = new UserDetail();
             userDetail.setUsername("admin");
             userDetail.setUser_role("ADMIN");
             String pathDoc = "project_out.docx";
             String pathPdf = "project_out.pdf";
-            DocPdf.exportDoc(books, userDetail, pathDoc);
+            // DocPdf.exportDoc(books, userDetail, pathDoc);
             DocPdf.exportPdf(books, userDetail, pathPdf);
         } catch (Exception e) {
             e.printStackTrace();
