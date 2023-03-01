@@ -17,12 +17,12 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.example.persistence.model.Book;
@@ -36,7 +36,6 @@ import com.miragesql.miragesql.SqlManagerImpl;
 import com.miragesql.miragesql.SqlResource;
 
 @Service
-@ComponentScan("com.example.database")
 public class BookService {
     static Logger logger = Logger.getLogger(BookService.class.getName());
     @Autowired
@@ -103,6 +102,7 @@ public class BookService {
         return bookPage;
     }
 
+    // @Scheduled(fixedRate = 30 * 60 * 1000 )
     public void saveTrendingBooks() {
         Iterator<Book> trendingBookItorator = getTrendingBooks().iterator();
         while (trendingBookItorator.hasNext()) {
@@ -112,6 +112,11 @@ public class BookService {
                 logger.log(Level.SEVERE, ">>> Error saveTrendingBooks():" + e.getMessage());
             }
         }
+    }
+
+    @Scheduled(fixedRate = 10000)
+    public void logCurrentTime() throws InterruptedException{
+        logger.info(new java.util.Date().toString());
     }
 
     private List<Book> getTrendingBooks() {
