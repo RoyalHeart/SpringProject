@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -104,19 +105,50 @@ public class BookService {
 
     // @Scheduled(fixedRate = 30 * 60 * 1000 )
     public void saveTrendingBooks() {
-        Iterator<Book> trendingBookItorator = getTrendingBooks().iterator();
-        while (trendingBookItorator.hasNext()) {
-            try {
-                this.save(trendingBookItorator.next());
-            } catch (Exception e) {
-                logger.log(Level.SEVERE, ">>> Error saveTrendingBooks():" + e.getMessage());
+        CompletableFuture.runAsync(() -> {
+            Iterator<Book> trendingBookItorator = getTrendingBooks().iterator();
+            while (trendingBookItorator.hasNext()) {
+                try {
+                    this.save(trendingBookItorator.next());
+                } catch (Exception e) {
+                    logger.log(Level.SEVERE, ">>> Error saveTrendingBooks():" + e.getMessage());
+                }
             }
-        }
+        });
     }
 
-    @Scheduled(fixedRate = 10000)
-    public void logCurrentTime() throws InterruptedException{
-        logger.info(new java.util.Date().toString());
+    // @Scheduled(fixedRate = 10000)
+    // public void logCurrentTime() throws InterruptedException {
+    // logger.info(new java.util.Date().toString());
+    // }
+
+    @Scheduled(fixedRate = 1 * 60 * 1000)
+    public void testAsync() {
+        logger.info("Task1");
+        CompletableFuture.supplyAsync(this::getTrendingBooks).thenAccept((List<Book> books) -> {
+            books.forEach(System.out::println);
+        });
+        Thread thread = new Thread(()->{
+            getTrendingBooks();
+        });
+        thread.start();
+        CompletableFuture.runAsync(() -> {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            logger.info("Task2");
+        }).thenRun(() -> {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            logger.info("Task3");
+        });
+        logger.info("Task4");
     }
 
     private List<Book> getTrendingBooks() {
@@ -152,7 +184,7 @@ public class BookService {
                 newBook.setImported(new Date(new java.util.Date().getTime()));
                 newBook.setPublished(published);
                 trendingBooks.add(newBook);
-                logger.log(Level.INFO, ">>> Save: " + author + " : " + title + "-" + published);
+                logger.log(Level.INFO, ">>> Get: " + newBook);
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -41,7 +41,6 @@ import com.example.persistence.model.UserDetail;
 import com.example.persistence.model.Wrapper;
 import com.example.persistence.repo.UserRepository;
 import com.example.service.BookService;
-import com.example.service.scheduler.PriorityJobScheduler;
 
 @Controller
 @ComponentScan("com.example.service")
