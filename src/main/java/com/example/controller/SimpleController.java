@@ -29,7 +29,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -68,6 +70,15 @@ public class SimpleController {
         } catch (Exception e) {
             logger.log(Level.SEVERE, ">>> Init error: " + e.getMessage());
         }
+    }
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAutoGrowCollectionLimit(1000);
+        // SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        // dateFormat.setLenient(false);
+        // binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat,
+        // true));
     }
 
     @Value("${spring.application.name}")
@@ -118,8 +129,9 @@ public class SimpleController {
     }
 
     @GetMapping("/home")
-    public String getHome(Model model) {
+    public String getHome(Model model, Authentication auth) {
         model.addAttribute("appName", appName);
+        model.addAttribute("username", auth.getName());
         return "home";
     }
 
@@ -317,12 +329,12 @@ public class SimpleController {
             toShort = Short.parseShort(to);
         }
         // if only have "to", and no "from", change from to 1
-        if(toShort != 0){
-            if(fromShort == 0){
+        if (toShort != 0) {
+            if (fromShort == 0) {
                 fromShort = 1;
             }
         }
-        List<Book> books = bookService.searchBook(searchBook,fromShort, toShort);
+        List<Book> books = bookService.searchBook(searchBook, fromShort, toShort);
         Wrapper wrapper = new Wrapper();
         wrapper.setBooks(books);
         model.addAttribute("wrapper", wrapper);
