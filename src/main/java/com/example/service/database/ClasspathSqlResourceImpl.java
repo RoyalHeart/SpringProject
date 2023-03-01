@@ -1,4 +1,4 @@
-package com.example.database;
+package com.example.service.database;
 
 import java.io.IOException;
 import java.io.InputStream;

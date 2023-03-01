@@ -1,0 +1,69 @@
+body {
+  margin: 20px;
+  background-color: rgb(67, 63, 63);
+  color: rgb(235, 235, 228);
+}
+a {
+  color: white;
+}
+a:hover {
+  color: hotpink;
+  cursor: pointer;
+}
+.login {
+  float: center;
+  max-width: 400px;
+  margin: 0 auto;
+}
+.navigation {
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+}
+.navigation form {
+  float: right;
+  position: fixed;
+  right: 20px;
+}
+.navigation input {
+  right: 20px;
+  border-radius: 10px;
+  font-size: 20px;
+  background-color: gray;
+}
+.navigation a {
+  text-decoration: none;
+  margin: 5px;
+  width: 150px;
+  text-align: center;
+  background-color: rgba(120, 6, 27, 0.66);
+  border-radius: 30px;
+  font-size: 20px;
+}
+
+.navigation a.icon {
+  display: none;
+}
+
+.export-import > form {
+  display: inline-block;
+}
+.bookList {
+  width: 80%;
+  margin: auto;
+}
+
+.pagination {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  float: right;
+  margin: 0 10%;
+}
+.pagination > div {
+  margin: 10px;
+}
+
+.active {
+  color: hotpink;
+}
