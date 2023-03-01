@@ -46,9 +46,9 @@ import com.example.persistence.model.UserDetail;
 import com.example.persistence.model.Wrapper;
 import com.example.persistence.repo.UserRepository;
 import com.example.service.BookService;
-import com.example.service.DocPdf;
-import com.example.service.ExcelService;
-import com.example.service.ExportToExcel;
+import com.example.service.import_export.DocPdf;
+import com.example.service.import_export.ExcelService;
+import com.example.service.import_export.ExportToExcel;
 
 @Controller
 @ComponentScan("com.example.service")
