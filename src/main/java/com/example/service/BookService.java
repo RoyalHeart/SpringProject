@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import com.example.database.ClasspathSqlResourceImpl;
 import com.example.database.ConnectionProviderImpl;
 import com.example.persistence.model.Book;
+import com.example.persistence.model.BookParam;
 import com.example.persistence.repo.BookRepository;
 import com.miragesql.miragesql.SqlManager;
 import com.miragesql.miragesql.SqlManagerImpl;
@@ -173,11 +174,18 @@ public class BookService {
         }
     }
 
-    public List<Book> searchBook(Book book) {
+    public List<Book> searchBook(Book book, short from, short to) {
+        logger.info(">>> search book:" + book);
+        BookParam bookParam = new BookParam();
+        bookParam.setAuthor(book.getAuthor());
+        bookParam.setTitle(book.getTitle());
+        bookParam.setPublished(book.getPublished());
+        bookParam.setFrom(from);
+        bookParam.setTo(to);
         try {
             List<Book> result = sqlManager.getResultList(
-                    Book.class, sqlResource, book);
-            logger.info(">>> search: " + result);
+                    Book.class, sqlResource, bookParam);
+            // logger.info(">>> search: " + result);
             return result;
         } catch (Exception e) {
             logger.log(Level.SEVERE, ">>> Error searchBook():" + e.getMessage());
