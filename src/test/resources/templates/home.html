@@ -1,0 +1,62 @@
+<html>
+
+<head>
+    <title>Home Page</title>
+    <link rel="stylesheet" href="/css/style.css" />
+</head>
+
+<body>
+    <div>
+        <div class="navigation">
+            <a href="/home">Home</a>
+            <a href="/book">Book</a>
+            <a href="/add">Add</a>
+            <a href="/search">Search</a>
+            <form th:action="@{/logout}" method="post">
+                <input type="submit" value="Logout" />
+            </form>
+        </div>
+        <h1>Hi <span th:if="${username}" th:text="${username}" text="Welcome"></span>!</h1>
+        <p>Welcome to <span th:text="${appName}"></span></p>
+        <p>This template contains:</p>
+        <ul>
+            <li>
+                <a href="https://projects.spring.io/spring-boot/">Spring boot</a>
+            </li>
+            <li>
+                An example of
+                <a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html">Spring MVC</a>
+                (model/view/controller)
+            </li>
+            <li>
+                <a href="http://www.thymeleaf.org/">Thymeleaf</a> integration for the
+                views
+            </li>
+            <li>
+                Persistence
+                <a href="https://projects.spring.io/spring-data-jpa/">Spring data jpa</a>
+            </li>
+            <!-- <li>Spring boot <a
+                    href="https://docs.spring.io/spring-boot/docs/current/reference/html/using-boot-devtools.html">devtools</a>
+                to make development easier</li> -->
+            <li><a href="https://www.postgresql.org">PostgreSQL</a></li>
+            <li>
+                <a href="https://github.com/mirage-sql/mirage">
+                    Mirage SQL, 2Way SQL</a>
+            </li>
+            <li>
+                <a href="https://www.baeldung.com/spring-thymeleaf-pagination">Pagination</a>
+            </li>
+            <li>
+                <a
+                    href="https://viblo.asia/p/huong-dan-doc-va-ghi-file-excel-trong-java-su-dung-thu-vien-apache-poi-RQqKLENpZ7z">Export
+                    to XLSX</a>
+            </li>
+            <li>
+                <a href="https://spring.io/guides/gs/uploading-files/">Import from XLSX</a>
+            </li>
+        </ul>
+    </div>
+</body>
+
+</html>
