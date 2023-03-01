@@ -64,15 +64,6 @@ public class SimpleController {
         }
     }
 
-    // max form input can only receive 255 Object, increase to 1000
-    @InitBinder
-    public void initBinder(WebDataBinder binder) {
-        binder.setAutoGrowCollectionLimit(1000);
-        // SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        // dateFormat.setLenient(false);
-        // binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat,
-        // true));
-    }
 
     @Value("${spring.application.name}")
     String appName;

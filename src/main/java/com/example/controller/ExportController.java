@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,6 +25,15 @@ import com.example.service.import_export.ExportToExcel;
 @Controller
 public class ExportController {
     
+    // max form input can only receive 255 Object, increase to 1000
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAutoGrowCollectionLimit(1000);
+        // SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        // dateFormat.setLenient(false);
+        // binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat,
+        // true));
+    }
     static Logger logger = Logger.getLogger(ExportController.class.getName());
         @RequestMapping(value = "/export", method = RequestMethod.POST)
     public String exportBook(@ModelAttribute(name = "wrapper") Wrapper wrapper,
