@@ -305,8 +305,24 @@ public class SimpleController {
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.POST)
-    public String searchBook(@ModelAttribute("book") Book searchBook, Model model) {
-        List<Book> books = bookService.searchBook(searchBook);
+    public String searchBook(@ModelAttribute("book") Book searchBook, Model model,
+            @RequestParam(required = false) String from, @RequestParam(required = false) String to) {
+        logger.info(">>> from:" + from + " to:" + to);
+        short fromShort = 0;
+        short toShort = 0;
+        if (from != "") {
+            fromShort = Short.parseShort(from);
+        }
+        if (to != "") {
+            toShort = Short.parseShort(to);
+        }
+        // if only have "to", and no "from", change from to 1
+        if(toShort != 0){
+            if(fromShort == 0){
+                fromShort = 1;
+            }
+        }
+        List<Book> books = bookService.searchBook(searchBook,fromShort, toShort);
         Wrapper wrapper = new Wrapper();
         wrapper.setBooks(books);
         model.addAttribute("wrapper", wrapper);
