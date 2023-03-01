@@ -13,11 +13,10 @@
             <a href="/add">Add</a>
             <a href="/search">Search</a>
             <form th:action="@{/logout}" method="post">
-                <span th:if="${username}" th:text="${username}"></span>
                 <input type="submit" value="Logout" />
             </form>
         </div>
-        <h1>Hi!</h1>
+        <h1>Hi <span th:if="${username}" th:text="${username}" text="Welcome"></span>!</h1>
         <p>Welcome to <span th:text="${appName}"></span></p>
         <p>This template contains:</p>
         <ul>
