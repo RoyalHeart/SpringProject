@@ -124,7 +124,6 @@ public class SimpleController {
 
     @GetMapping("/home")
     public String getHome(Model model, Authentication auth) throws InterruptedException {
-        PriorityJobScheduler.test();
         model.addAttribute("appName", appName);
         model.addAttribute("username", auth.getName());
         return "home";
