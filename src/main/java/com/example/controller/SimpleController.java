@@ -213,10 +213,10 @@ public class SimpleController {
         logger.info(">>> from:" + from + " to:" + to);
         short fromShort = 0;
         short toShort = 0;
-        if (from != "") {
+        if (!from.isEmpty()) {
             fromShort = Short.parseShort(from);
         }
-        if (to != "") {
+        if (!to.isEmpty()) {
             toShort = Short.parseShort(to);
         }
         // if only have "to", and no "from", change from to 1
