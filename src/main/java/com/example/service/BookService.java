@@ -122,7 +122,7 @@ public class BookService {
     // logger.info(new java.util.Date().toString());
     // }
 
-    @Scheduled(fixedRate = 1 * 60 * 1000)
+    // @Scheduled(fixedRate = 1 * 60 * 1000)
     public void testAsync() {
         logger.info("Task1");
         CompletableFuture.supplyAsync(this::getTrendingBooks).thenAccept((List<Book> books) -> {
