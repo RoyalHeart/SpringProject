@@ -14,7 +14,9 @@ public class TestApi {
     private static Logger logger = Logger.getLogger(TestApi.class.getName());
     @Test
     public void testFetch() throws MalformedURLException{
-        Object response = API.fetch(new URL("https://openlibrary.org/trending/now.json"));
+        logger.info(">>> fetch openlibrary");
+        String openlibraryTrendingUrl = "https://openlibrary.org/trending/now.json";
+        Object response = API.fetch(new URL(openlibraryTrendingUrl));
         logger.info(response.toString());
         assertTrue( response != null);
     } 
