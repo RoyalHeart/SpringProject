@@ -24,11 +24,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -38,6 +40,7 @@ import com.example.persistence.model.Book;
 import com.example.persistence.model.UserDetail;
 import com.example.persistence.model.Wrapper;
 import com.example.persistence.repo.UserRepository;
+import com.example.security.Validate;
 import com.example.service.BookService;
 
 @Controller
@@ -61,7 +64,6 @@ public class SimpleController {
             logger.log(Level.SEVERE, ">>> Init error: " + e.getMessage());
         }
     }
-
 
     @Value("${spring.application.name}")
     String appName;
@@ -108,6 +110,54 @@ public class SimpleController {
         model.addAttribute("passwordError", null);
         model.addAttribute("error", "");
         return "login";
+    }
+
+    @GetMapping("/signup")
+    public String getSignup(
+            @RequestParam(required = false) Optional<String> username, Model model) {
+        model.addAttribute("usernameError", null);
+        model.addAttribute("username", "");
+        model.addAttribute("passwordError", null);
+        model.addAttribute("error", "");
+        model.addAttribute("newUser", new UserDetail());
+        return "signup";
+    }
+
+    @PostMapping("/signup")
+    public String signup(@ModelAttribute("newUser") UserDetail newUser, Model model) {
+        String username = newUser.getUsername();
+        if (!Validate.isUsernameValid(username)) {
+            model.addAttribute("usernameError", "Invalid username");
+            return "/signup";
+        }
+        ;
+        String plainPassword = "";
+        try {
+            logger.info(newUser.toString());
+            plainPassword = newUser.getUser_password();
+        } catch (Exception e) {
+            logger.severe(">>> Password Error" + e.getMessage());
+            model.addAttribute("passwordError", "Invalid password");
+            return "/signup";
+        }
+        try {
+            logger.info(">>> plain password:" + plainPassword);
+            String hashPassword = BCrypt.hashpw(plainPassword, BCrypt.gensalt());
+            logger.info(">>> hash password:" + hashPassword);
+            newUser.setUser_password(hashPassword);
+            newUser.setUser_role("USER");
+        } catch (Exception e) {
+            logger.severe(">>> Password Error:" + e.getMessage());
+            return "/signup";
+        }
+        try {
+            userRepository.save(newUser);
+        } catch (Exception e) {
+            logger.severe(">>> Username error:" + e.getMessage());
+            model.addAttribute("usernameError", "Username already exist");
+            return "/signup";
+        }
+        return "/login";
     }
 
     @GetMapping("/home")

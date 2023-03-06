@@ -25,4 +25,9 @@ public class UserDetail implements Serializable {
 
     @Column
     private String user_role;
+
+    @Override
+    public String toString() {
+        return id + ": " + username + "-" + user_password + user_role;
+    }
 }
