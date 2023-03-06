@@ -37,35 +37,42 @@ SELECT u.username, b.author, b.title FROM Borrow bo
     JOIN user_detail u on u.id = userId
         WHERE userId = 2;
 
-CREATE PROCEDURE get_borrower_name_book AS 
+drop PROCEDURE usp_GetBorrowerNameBook;
+CREATE PROCEDURE usp_GetBorrowerNameBook AS 
 SELECT u.username, b.author, b.title FROM Borrow bo
     JOIN book b on bookId = b.id
     JOIN user_detail u on u.id = userId
 GO;
 
-drop PROCEDURE get_borrower_name_book;
-EXEC get_borrower_name_book;
 
-CREATE FUNCTION get_admin_borrow_book()
+EXEC usp_GetBorrowerNameBook;
+
+drop function fn_GetAdminBorrowBooks;
+CREATE FUNCTION fn_GetAdminBorrowBooks()
 RETURNS TABLE 
 AS
 RETURN 
-SELECT u.username, b.author, b.title FROM Borrow bo
+SELECT u.username, b.author, b.title, l.name as library FROM Borrow bo
     JOIN book b on bookId = b.id
     JOIN user_detail u on u.id = userId
+    JOIN library l on b.libraryId = l.id
         WHERE userId = 1;
 
-CREATE FUNCTION get_year_diff(@published SMALLINT)
+
+drop function fn_GetYearDiff;
+CREATE FUNCTION fn_GetYearDiff(@published SMALLINT)
 RETURNS SMALLINT
 AS
 BEGIN
     RETURN Year(GETDATE()) - @published
 END;
 
-SELECT dbo.get_year_diff(b.published) from book b;
-SELECT avg(b.published),  max(b.published), min(b.published) from book b;
+SELECT * , dbo.fn_GetYearDiff(b.published) as Book_age from book b
+ORDER BY Book_age;
 
-SELECT * FROM get_admin_borrow_book();
+SELECT avg(b.published) as Average_year,  max(b.published) as max_year, min(b.published) as min_year from book b;
+
+SELECT * FROM fn_GetAdminBorrowBooks();
 
 SELECT * FROM book where published < 300;
 
