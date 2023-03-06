@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -106,7 +107,7 @@ public class BookService {
     // @Scheduled(fixedRate = 30 * 60 * 1000 )
     public void saveTrendingBooks() {
         CompletableFuture.runAsync(() -> {
-            Iterator<Book> trendingBookItorator = getTrendingBooks().iterator();
+            Iterator<Book> trendingBookItorator = getOpenlibraryTrendingBooks().iterator();
             while (trendingBookItorator.hasNext()) {
                 try {
                     this.save(trendingBookItorator.next());
@@ -122,14 +123,17 @@ public class BookService {
     // logger.info(new java.util.Date().toString());
     // }
 
-    // @Scheduled(fixedRate = 1 * 60 * 1000)
+    @Scheduled(fixedRate = 1 * 60 * 1000)
     public void testAsync() {
         logger.info("Task1");
-        CompletableFuture.supplyAsync(this::getTrendingBooks).thenAccept((List<Book> books) -> {
-            books.forEach(System.out::println);
-        });
-        Thread thread = new Thread(()->{
-            getTrendingBooks();
+        // CompletableFuture.supplyAsync(this::getOpenlibraryTrendingBooks).thenAccept((List<Book>
+        // books) -> {
+        // books.forEach(System.out::println);
+        // });
+        Thread thread = new Thread(() -> {
+            // getOpenlibraryTrendingBooks();
+            // getGutenbergTrendingBooks();
+            getCrossrefTrendingBooks();
         });
         thread.start();
         CompletableFuture.runAsync(() -> {
@@ -143,7 +147,6 @@ public class BookService {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
             logger.info("Task3");
@@ -151,7 +154,102 @@ public class BookService {
         logger.info("Task4");
     }
 
-    private List<Book> getTrendingBooks() {
+    private List<Book> getCrossrefTrendingBooks() {
+        List<Book> trendingBooks = new ArrayList<Book>();
+        try {
+            logger.info(">>> start getting Crossref trending books");
+            Object response = API
+                    .fetch(new URL("https://api.crossref.org/works?sample=50&select=title,author,published"));
+            Object object = new JSONParser().parse(response.toString());
+            JSONObject jsonObject = (JSONObject) object;
+            JSONObject message = (JSONObject) jsonObject.get("message");
+            JSONArray items = (JSONArray) message.get("items");
+            logger.info(">>> content: " + items.get(0));
+            ;
+            for (Object book : items) {
+                JSONObject bookJson = (JSONObject) book;
+                JSONArray titleJsonArray = (JSONArray) bookJson.get("title");
+                String title = "";
+                try {
+                    title = (String) titleJsonArray.get(0);
+                } catch (Exception e) {
+                    logger.severe(e.getMessage());
+                }
+                JSONArray authors;
+                String author = "Anonymous";
+                Short published = null;
+                try {
+                    JSONObject publishedJsonObject = (JSONObject) bookJson.get("published");
+                    JSONArray dateJsonArray = (JSONArray) publishedJsonObject.get("date-parts");
+                    JSONArray yearJsonArray = (JSONArray) dateJsonArray.get(0);
+                    published = (short) ((Long) yearJsonArray.get(0)).intValue();
+                } catch (Exception e) {
+                    logger.log(Level.SEVERE, ">>> Error getting publish year:" + e.getMessage());
+                }
+                // some book have no author
+                try {
+                    authors = (JSONArray) bookJson.get("author");
+                    JSONObject authorJsonObject = (JSONObject) authors.get(0);
+                    author = (String) authorJsonObject.get("given");
+                    author += " ";
+                    author += (String) authorJsonObject.get("family");
+                } catch (Exception e) {
+                    logger.log(Level.SEVERE, ">>> Error getting author:" + e.getMessage());
+                }
+                Book newBook = new Book();
+                newBook.setTitle(title);
+                newBook.setAuthor(author);
+                newBook.setImported(new Date(new java.util.Date().getTime()));
+                newBook.setPublished(published);
+                trendingBooks.add(newBook);
+                logger.log(Level.INFO, ">>> Get: " + newBook);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return trendingBooks;
+    }
+
+    private List<Book> getGutenbergTrendingBooks() {
+        List<Book> trendingBooks = new ArrayList<Book>();
+        try {
+            logger.info(">>> start getting Gutenberg trending books");
+            int randomPage = new Random().nextInt() % 2191 + 1;
+            randomPage = (randomPage > 0) ? randomPage : -randomPage;
+            Object response = API.fetch(new URL("https://gutendex.com/books/?page=" + randomPage));
+            Object object = new JSONParser().parse(response.toString());
+            JSONObject jsonObject = (JSONObject) object;
+            JSONArray results = (JSONArray) jsonObject.get("results");
+            logger.info(">>> content: " + results.get(0));
+            for (Object book : results) {
+                JSONObject bookJson = (JSONObject) book;
+                String title = (String) bookJson.get("title");
+                JSONArray authors;
+                String author = "Anonymous";
+                Short published = null;
+                // some book have no author
+                try {
+                    authors = (JSONArray) bookJson.get("authors");
+                    JSONObject authorJsonObject = (JSONObject) authors.get(0);
+                    author = (String) authorJsonObject.get("name");
+                } catch (Exception e) {
+                    logger.log(Level.SEVERE, ">>> Error getting author:" + e.getMessage());
+                }
+                Book newBook = new Book();
+                newBook.setTitle(title);
+                newBook.setAuthor(author);
+                newBook.setImported(new Date(new java.util.Date().getTime()));
+                newBook.setPublished(published);
+                trendingBooks.add(newBook);
+                logger.log(Level.INFO, ">>> Get: " + newBook);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return trendingBooks;
+    }
+
+    private List<Book> getOpenlibraryTrendingBooks() {
         List<Book> trendingBooks = new ArrayList<Book>();
         try {
             logger.info(">>> start getting trending books");
