@@ -1,30 +1,29 @@
 <html>
 
 <head>
-    <title>Login Screen</title>
+    <title>Sign up</title>
     <link rel="stylesheet" href="/css/style.css" />
     <script src="/js/validate.js"></script>
 </head>
 
 <body>
-    <form th:action="@{/login}" method="post" class="login" onsubmit="return validateUsername()">
+    <form th:action="@{/signup}" method="post" action="#" class="login" th:object="${newUser}" onsubmit="return validateUsername()">
         <div>
-            <p>Login</p>
+            <p>Sign up</p>
             <p th:if="${usernameError}" style="color: red">Username:</p>
             <p th:if="${usernameError} == null">Username:</p>
-            <input placeholder="Username" type="username" name="username" id="username" th:value="${username}"
+            <input placeholder="Username" type="username" name="username" id="username" th:field="*{username}"
                  />
             <span th:text="${usernameError}"></span>
 
             <p th:if="${passwordError}" style="color: red">Password:</p>
             <p th:if="${passwordError} == null">Password:</p>
-            <input placeholder="Password" type="password" name="password" id="password" />
+            <input placeholder="Password" type="password" name="password" id="password" th:field = "*{user_password}"/>
             <span th:text="${passwordError}"></span>
             <p>
-                <input type="submit" onclick="validateUsername()" value="Login" />
-                <span><button onclick="location.href='/signup'" type="button">Sign up</button></span>
+                <input type="submit" value="Create" />
+                <span><button onclick="location.href='/login'" type="button">Back to login</button></span>
             </p>
-            <span th:text="${logout}" style="color: green"></span>
         </div>
     </form>
 </body>
