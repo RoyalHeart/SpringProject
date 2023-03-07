@@ -9,13 +9,12 @@ import com.miragesql.miragesql.provider.ConnectionProvider;
 
 public class ConnectionProviderImpl implements ConnectionProvider {
     private Logger logger = Logger.getLogger(ConnectionProviderImpl.class.getName());
-    private DatabaseConfiguration databaseConfiguration = new DatabaseConfiguration();
 
-    private String postgreUrl = "jdbc:postgresql://localhost:5432/postgres";
+    // private String postgreUrl = "jdbc:postgresql://localhost:5432/postgres";
 
-    private String postgreUsername = "postgres";
+    // private String postgreUsername = "postgres";
 
-    private String postgrePassword = "admin";
+    // private String postgrePassword = "admin";
 
     private String sqlServerUrl = "jdbc:sqlserver://localhost:1433;DatabaseName=BookDatabase";
 

@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.Date;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.openxml4j.util.ZipSecureFile;
@@ -49,7 +48,9 @@ public class DocPdf {
 
     public static void exportPdf(List<Book> books, UserDetail userDetail, String exportPath)
             throws IOException, XDocReportException {
-                ZipSecureFile.setMinInflateRatio(0.001); // increase max file size
+        // increase max file size
+        ZipSecureFile.setMinInflateRatio(0.001);
+
         InputStream in = DocPdf.class
                 .getResourceAsStream("/velocityBookTemplate.docx");
         IXDocReport report = XDocReportRegistry.getRegistry().loadReport(in,
@@ -90,7 +91,6 @@ public class DocPdf {
         fieldsMetadata.addFieldAsList("books.Id");
         fieldsMetadata.addFieldAsList("books.Title");
         fieldsMetadata.addFieldAsList("books.Published");
-        // report.setFieldsMetadata(fieldsMetadata);
         IContext context = report.createContext();
         context.put("books", books);
         context.put("user", userDetail);

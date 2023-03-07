@@ -131,8 +131,8 @@ public class BookService {
         // books.forEach(System.out::println);
         // });
         Thread thread = new Thread(() -> {
-            // getOpenlibraryTrendingBooks();
-            // getGutenbergTrendingBooks();
+            getOpenlibraryTrendingBooks();
+            getGutenbergTrendingBooks();
             getCrossrefTrendingBooks();
         });
         thread.start();
@@ -170,6 +170,7 @@ public class BookService {
                 JSONObject bookJson = (JSONObject) book;
                 JSONArray titleJsonArray = (JSONArray) bookJson.get("title");
                 String title = "";
+                // some Crossref has no title
                 try {
                     title = (String) titleJsonArray.get(0);
                 } catch (Exception e) {
@@ -252,7 +253,7 @@ public class BookService {
     private List<Book> getOpenlibraryTrendingBooks() {
         List<Book> trendingBooks = new ArrayList<Book>();
         try {
-            logger.info(">>> start getting trending books");
+            logger.info(">>> start getting Openlibrary trending books");
             Object response = API.fetch(new URL("https://openlibrary.org/trending/now.json"));
             Object object = new JSONParser().parse(response.toString());
             JSONObject jsonObject = (JSONObject) object;
