@@ -192,10 +192,24 @@ public class SimpleController {
         return "book";
     }
 
-    @PostMapping("/fetchTrending")
-    public String fetchTrending(HttpServletRequest request) {
+    @PostMapping("/fetchOpenlibraryTrending")
+    public String fetchOpenlibraryTrending(HttpServletRequest request) {
         String referer = request.getHeader("Referer");
-        bookService.saveTrendingBooks();
+        bookService.saveOpenlibraryTrendingBooks();
+        return "redirect:" + referer;
+    }
+
+    @PostMapping("/fetchGutendexTrending")
+    public String fetchGutendexTrending(HttpServletRequest request) {
+        String referer = request.getHeader("Referer");
+        bookService.saveGutendexTrendingBooks();
+        return "redirect:" + referer;
+    }
+
+    @PostMapping("/fetchCrossrefTrending")
+    public String fetchCrossrefTrending(HttpServletRequest request) {
+        String referer = request.getHeader("Referer");
+        bookService.saveCrossrefTrendingBooks();
         return "redirect:" + referer;
     }
 
