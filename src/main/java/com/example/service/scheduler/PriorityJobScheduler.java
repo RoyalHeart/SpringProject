@@ -6,8 +6,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.logging.Logger;
 
-import org.springframework.stereotype.Service;
-
 import com.example.service.scheduler.Job.JobPriority;
 
 public class PriorityJobScheduler {
@@ -31,6 +29,7 @@ public class PriorityJobScheduler {
 
     public void scheduleJob(Job job) {
         priorityQueue.add(job);
+        logger.info("add " + job);
     }
 
     public static void test() throws InterruptedException {
