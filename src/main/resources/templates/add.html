@@ -17,8 +17,14 @@
             </form>
         </div>
         <h1>Add new book</h1>
-        <form method="post" action="#" th:action="@{/fetchTrending}">
-            <input type="submit" value="Fetch trending books"></input>
+        <form method="post" action="#" th:action="@{/fetchOpenlibraryTrending}">
+            <input type="submit" value="Fetch trending books from Openlibrary"></input>
+        </form>
+        <form method="post" action="#" th:action="@{/fetchGutendexTrending}">
+            <input type="submit" value="Fetch trending books from Gutendex (no published year)"></input>
+        </form>
+        <form method="post" action="#" th:action="@{/fetchCrossrefTrending}">
+            <input type="submit" value="Fetch trending books from Crossref"></input>
         </form>
         <form method="post" action="#" th:action="@{/import}" enctype="multipart/form-data">
             <input type="file" name="file" />
