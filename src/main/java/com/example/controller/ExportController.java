@@ -13,8 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.persistence.model.UserDetail;
@@ -24,7 +23,7 @@ import com.example.service.import_export.ExportToExcel;
 
 @Controller
 public class ExportController {
-    
+
     // max form input can only receive 255 Object, increase to 1000
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -34,8 +33,10 @@ public class ExportController {
         // binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat,
         // true));
     }
+
     static Logger logger = Logger.getLogger(ExportController.class.getName());
-        @RequestMapping(value = "/export", method = RequestMethod.POST)
+
+    @PostMapping("/export")
     public String exportBook(@ModelAttribute(name = "wrapper") Wrapper wrapper,
             Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
         String referer = request.getHeader("Referer");
@@ -53,7 +54,8 @@ public class ExportController {
         }
         return "redirect:" + referer;
     }
-        @RequestMapping(value = "/exportDoc", method = RequestMethod.POST)
+
+    @PostMapping("/exportDoc")
     public String exportDoc(@ModelAttribute(name = "wrapper") Wrapper wrapper,
             Model model, HttpServletRequest request, RedirectAttributes redirectAttributes, Authentication auth) {
         String referer = request.getHeader("Referer");
@@ -77,7 +79,7 @@ public class ExportController {
         return "redirect:" + referer;
     }
 
-    @RequestMapping(value = "/exportPdf", method = RequestMethod.POST)
+    @PostMapping("/exportPdf")
     public String exportPdf(@ModelAttribute(name = "wrapper") Wrapper wrapper,
             Model model, HttpServletRequest request, RedirectAttributes redirectAttributes, Authentication auth) {
         String referer = request.getHeader("Referer");

@@ -31,8 +31,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -57,6 +55,10 @@ public class SimpleController {
             userRepository.save(user);
             user = new UserDetail();
             user.setUsername("user");
+            user.setUser_role("USER");
+            user.setUser_password("$2a$12$Jt8ENKHcdh28mkizdJfEc.ekBTcRRRX9Cp3bz5Ze.dYnUHL3QbRmK");
+            user = new UserDetail();
+            user.setUsername("u..");
             user.setUser_role("USER");
             user.setUser_password("$2a$12$Jt8ENKHcdh28mkizdJfEc.ekBTcRRRX9Cp3bz5Ze.dYnUHL3QbRmK");
             userRepository.save(user);
@@ -167,7 +169,7 @@ public class SimpleController {
         return "home";
     }
 
-    @RequestMapping(value = "/book", method = RequestMethod.GET)
+    @GetMapping("/book")
     public String getBook(Model model, @RequestParam("page") Optional<Integer> page) {
         int currentPage = page.orElse(1);
         int pageSize = 10;
@@ -190,14 +192,14 @@ public class SimpleController {
         return "book";
     }
 
-    @RequestMapping(value = "/fetchTrending", method = RequestMethod.POST)
+    @PostMapping("/fetchTrending")
     public String fetchTrending(HttpServletRequest request) {
         String referer = request.getHeader("Referer");
         bookService.saveTrendingBooks();
         return "redirect:" + referer;
     }
 
-    @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
+    @GetMapping("/delete/{id}")
     public String deleteBook(@PathVariable(name = "id") long id, Model model, HttpServletRequest request) {
         String referer = request.getHeader("Referer");
         bookService.delete(id);
@@ -205,7 +207,7 @@ public class SimpleController {
         return "redirect:" + referer;
     }
 
-    @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
+    @GetMapping("/edit/{id}")
     public String editBook(@PathVariable(name = "id") long id, Model model, HttpServletRequest request) {
         String referer = request.getHeader("Referer");
         try {
@@ -218,7 +220,7 @@ public class SimpleController {
         return "redirect:" + referer;
     }
 
-    @RequestMapping(value = "/save", method = RequestMethod.POST)
+    @PostMapping("/save")
     public String saveBook(@ModelAttribute("book") Book book,
             Model model, HttpServletRequest request) {
         String referer = request.getHeader("Referer");
@@ -242,14 +244,14 @@ public class SimpleController {
         }
     }
 
-    @RequestMapping(value = "/add", method = RequestMethod.GET)
+    @GetMapping("/add")
     public String addBook(
             Model model) {
         model.addAttribute("newBook", new Book());
         return "add";
     }
 
-    @RequestMapping(value = "/search", method = RequestMethod.GET)
+    @GetMapping("/search")
     public String getSearchBook(Model model) {
         Wrapper wrapper = new Wrapper();
         model.addAttribute("wrapper", wrapper);
@@ -257,7 +259,7 @@ public class SimpleController {
         return "search";
     }
 
-    @RequestMapping(value = "/search", method = RequestMethod.POST)
+    @PostMapping("/search")
     public String searchBook(@ModelAttribute("book") Book searchBook, Model model,
             @RequestParam(required = false) String from, @RequestParam(required = false) String to) {
         logger.info(">>> from:" + from + " to:" + to);
