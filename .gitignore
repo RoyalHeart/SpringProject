@@ -1,5 +1,18 @@
+# VSCode
 .vscode
+
+# Eclipse
+.settings
+.project
+
+# Maven
 target
+
+# Java annotation processor (APT)
+.factorypath
+
+# Output
 *.xlsx
 *.docx
 *.pdf
+logs
