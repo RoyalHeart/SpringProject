@@ -281,6 +281,8 @@ public class SimpleController {
         short toShort = 0;
         if (!from.isEmpty()) {
             fromShort = Short.parseShort(from);
+            if (fromShort == 0)
+                fromShort = 1; // change from to 1 for sql to work
         }
         if (!to.isEmpty()) {
             toShort = Short.parseShort(to);
