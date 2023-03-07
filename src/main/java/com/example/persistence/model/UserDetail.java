@@ -8,6 +8,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import com.example.annotation.ValidUsername;
+
 import lombok.Data;
 
 @Entity
@@ -18,6 +20,7 @@ public class UserDetail implements Serializable {
     private long id;
 
     @Column(nullable = false, unique = true)
+    @ValidUsername
     private String username;
 
     @Column
