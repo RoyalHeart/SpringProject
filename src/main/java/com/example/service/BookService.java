@@ -40,6 +40,10 @@ import com.miragesql.miragesql.SqlResource;
 @Service
 public class BookService {
     static Logger logger = Logger.getLogger(BookService.class.getName());
+    private long OPENLIBRARY_ID = 1;
+    private long GUTENDEX_ID = 2;
+    private long CROSSREF_ID = 3;
+
     @Autowired
     BookRepository bookRepository;
 
@@ -105,7 +109,7 @@ public class BookService {
     }
 
     // @Scheduled(fixedRate = 30 * 60 * 1000 )
-    public void saveTrendingBooks() {
+    public void saveOpenlibraryTrendingBooks() {
         CompletableFuture.runAsync(() -> {
             Iterator<Book> trendingBookItorator = getOpenlibraryTrendingBooks().iterator();
             while (trendingBookItorator.hasNext()) {
@@ -118,12 +122,37 @@ public class BookService {
         });
     }
 
+    public void saveGutendexTrendingBooks() {
+        CompletableFuture.runAsync(() -> {
+            Iterator<Book> trendingBookItorator = getGutenbergTrendingBooks().iterator();
+            while (trendingBookItorator.hasNext()) {
+                try {
+                    this.save(trendingBookItorator.next());
+                } catch (Exception e) {
+                    logger.severe(">>> Error saveGutendexTrendingBooks():" + e.getMessage());
+                }
+            }
+        });
+    }
+
+    public void saveCrossrefTrendingBooks() {
+        CompletableFuture.runAsync(() -> {
+            Iterator<Book> trendingBookItorator = getCrossrefTrendingBooks().iterator();
+            while (trendingBookItorator.hasNext()) {
+                try {
+                    this.save(trendingBookItorator.next());
+                } catch (Exception e) {
+                    logger.severe(">>> Error saveCrossrefTrendingBooks():" + e.getMessage());
+                }
+            }
+        });
+    }
     // @Scheduled(fixedRate = 10000)
     // public void logCurrentTime() throws InterruptedException {
     // logger.info(new java.util.Date().toString());
     // }
 
-    @Scheduled(fixedRate = 1 * 60 * 1000)
+    // @Scheduled(fixedRate = 1 * 60 * 1000)
     public void testAsync() {
         logger.info("Task1");
         // CompletableFuture.supplyAsync(this::getOpenlibraryTrendingBooks).thenAccept((List<Book>
@@ -185,7 +214,7 @@ public class BookService {
                     JSONArray yearJsonArray = (JSONArray) dateJsonArray.get(0);
                     published = (short) ((Long) yearJsonArray.get(0)).intValue();
                 } catch (Exception e) {
-                    logger.log(Level.SEVERE, ">>> Error getting publish year:" + e.getMessage());
+                    logger.severe(">>> Error getting publish year:" + e.getMessage());
                 }
                 // some book have no author
                 try {
@@ -202,8 +231,9 @@ public class BookService {
                 newBook.setAuthor(author);
                 newBook.setImported(new Date(new java.util.Date().getTime()));
                 newBook.setPublished(published);
+                newBook.setLibraryId(CROSSREF_ID);
                 trendingBooks.add(newBook);
-                logger.log(Level.INFO, ">>> Get: " + newBook);
+                logger.info(">>> Get: " + newBook);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -241,6 +271,7 @@ public class BookService {
                 newBook.setAuthor(author);
                 newBook.setImported(new Date(new java.util.Date().getTime()));
                 newBook.setPublished(published);
+                newBook.setLibraryId(GUTENDEX_ID);
                 trendingBooks.add(newBook);
                 logger.log(Level.INFO, ">>> Get: " + newBook);
             }
@@ -282,6 +313,7 @@ public class BookService {
                 newBook.setAuthor(author);
                 newBook.setImported(new Date(new java.util.Date().getTime()));
                 newBook.setPublished(published);
+                newBook.setLibraryId(OPENLIBRARY_ID);
                 trendingBooks.add(newBook);
                 logger.log(Level.INFO, ">>> Get: " + newBook);
             }
@@ -301,11 +333,10 @@ public class BookService {
         for (Book book : books) {
             try {
                 this.save(book);
-                logger.log(Level.INFO,
-                        ">>> Imported books: " + book.getAuthor() + ":" + book.getTitle() + "-"
-                                + book.getPublished());
+                logger.info(
+                        ">>> Imported books: " + book.getAuthor() + ":" + book.getTitle() + "-" + book.getPublished());
             } catch (Exception e) {
-                logger.log(Level.SEVERE, ">>> Error duplicate book:" + e.getMessage());
+                logger.severe(">>> Error duplicate book:" + e.getMessage());
             }
         }
     }
@@ -321,10 +352,9 @@ public class BookService {
         try {
             List<Book> result = sqlManager.getResultList(
                     Book.class, sqlResource, bookParam);
-            // logger.info(">>> search: " + result);
             return result;
         } catch (Exception e) {
-            logger.log(Level.SEVERE, ">>> Error searchBook():" + e.getMessage());
+            logger.severe(">>> Error searchBook():" + e.getMessage());
             return null;
         } finally {
         }
