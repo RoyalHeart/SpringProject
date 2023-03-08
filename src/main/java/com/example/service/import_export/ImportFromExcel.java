@@ -95,6 +95,7 @@ public class ImportFromExcel {
                     }
                 }
                 book.setImported(new Date(new java.util.Date().getTime()));
+                book.setLibraryId(7);
                 books.add(book);
             }
             if (haveParseError) {
