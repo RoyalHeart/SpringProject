@@ -243,6 +243,7 @@ public class SimpleController {
             if (book.getImported() == null) {
                 book.setImported(new Date(new java.util.Date().getTime()));
             }
+            book.setLibraryId(7);
             bookService.save(book);
             return "redirect:" + referer;
         } catch (Exception e) {
