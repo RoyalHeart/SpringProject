@@ -12,8 +12,7 @@
             <p>Login</p>
             <p th:if="${usernameError}" style="color: red">Username:</p>
             <p th:if="${usernameError} == null">Username:</p>
-            <input placeholder="Username" type="username" name="username" id="username" th:value="${username}"
-                 />
+            <input placeholder="Username" type="username" name="username" id="username" th:value="${username}" />
             <span th:text="${usernameError}"></span>
 
             <p th:if="${passwordError}" style="color: red">Password:</p>
@@ -21,7 +20,7 @@
             <input placeholder="Password" type="password" name="password" id="password" />
             <span th:text="${passwordError}"></span>
             <p>
-                <input type="submit" onclick="validateUsername()" value="Login" />
+                <input type="submit" value="Login" />
                 <span><button onclick="location.href='/signup'" type="button">Sign up</button></span>
             </p>
             <span th:text="${logout}" style="color: green"></span>
