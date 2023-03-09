@@ -23,6 +23,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.expression.spel.ast.OpEQ;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Controller;
@@ -175,12 +176,13 @@ public class SimpleController {
         int pageSize = 10;
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize);
         Page<Book> bookPage = bookService.getPage(pageable);
-        model.addAttribute("bookPage", bookPage);
         List<Book> exportBooks = new ArrayList<Book>();
         exportBooks.addAll(bookPage.getContent());
         Wrapper wrapper = new Wrapper();
         wrapper.setBooks(exportBooks);
+        model.addAttribute("bookPage", bookPage);
         model.addAttribute("wrapper", wrapper);
+        model.addAttribute("searchBook", new Book());
         int totalPages = bookPage.getTotalPages();
         if (totalPages > 0) {
             List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
@@ -188,7 +190,8 @@ public class SimpleController {
                     .collect(Collectors.toList());
             model.addAttribute("pageNumbers", pageNumbers);
         }
-        model.addAttribute("books", bookPage.getContent());
+        boolean haveBook = (bookPage.getContent().size() > 0) ? true : false;
+        model.addAttribute("haveBook", haveBook);
         return "book";
     }
 
@@ -267,17 +270,32 @@ public class SimpleController {
     }
 
     @GetMapping("/search")
-    public String getSearchBook(Model model) {
+    public String getSearchBook(Model model,
+            @RequestParam("page") Optional<Integer> page) {
+        int currentPage = page.orElse(1);
+        int pageSize = 10;
+        Pageable pageable = PageRequest.of(currentPage - 1, pageSize);
+        Page<Book> searchBookPage = bookService.getSearchPage(pageable);
+        int totalPages = searchBookPage.getTotalPages();
+        if (totalPages > 0) {
+            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+                    .boxed()
+                    .collect(Collectors.toList());
+            model.addAttribute("pageNumbers", pageNumbers);
+        }
         Wrapper wrapper = new Wrapper();
+        wrapper.setBooks(searchBookPage.getContent());
+        model.addAttribute("searchBookPage", searchBookPage);
         model.addAttribute("wrapper", wrapper);
-        model.addAttribute("newBook", new Book());
-        return "search";
+        model.addAttribute("searchBook", new Book());
+        return "book";
     }
 
     @PostMapping("/search")
-    public String searchBook(@ModelAttribute("book") Book searchBook, Model model,
-            @RequestParam(required = false) String from, @RequestParam(required = false) String to) {
-        logger.info(">>> from:" + from + " to:" + to);
+    public String searchBook(@ModelAttribute("searchBook") Book searchBook, Model model,
+            @RequestParam(required = false) String from, @RequestParam(required = false) String to,
+            @RequestParam(name = "page", required = false) Optional<Integer> page,
+            @RequestParam(name = "searchPage", required = false) Optional<Integer> searchPage) {
         short fromShort = 0;
         short toShort = 0;
         if (!from.isEmpty()) {
@@ -294,12 +312,22 @@ public class SimpleController {
                 fromShort = 1;
             }
         }
-        List<Book> books = bookService.searchBook(searchBook, fromShort, toShort);
+        int currentPage = searchPage.orElse(1);
+        int pageSize = 10;
+        Pageable pageable = PageRequest.of(currentPage - 1, pageSize);
+        Page<Book> searchBookPage = bookService.searchBook(searchBook, fromShort, toShort, pageable);
+        int totalPages = searchBookPage.getTotalPages();
+        if (totalPages > 0) {
+            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+                    .boxed()
+                    .collect(Collectors.toList());
+            model.addAttribute("pageNumbers", pageNumbers);
+        }
         Wrapper wrapper = new Wrapper();
-        wrapper.setBooks(books);
+        wrapper.setBooks(searchBookPage.getContent());
         model.addAttribute("wrapper", wrapper);
-        model.addAttribute("newBook", new Book());
-        model.addAttribute("searchBooks", books);
-        return "search";
+        model.addAttribute("search", new Book());
+        model.addAttribute("searchBookPage", searchBookPage);
+        return "book";
     }
 }

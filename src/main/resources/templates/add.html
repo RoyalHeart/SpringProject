@@ -3,6 +3,7 @@
 <head>
     <title>Add book</title>
     <link rel="stylesheet" href="/css/style.css" />
+    <script src="/js/validate.js"></script>
 </head>
 
 <body>
@@ -33,25 +34,26 @@
             <span th:text="${importError}"></span>
             <span th:text="${importSuccessfully}"></span>
         </form>
-        <form method="post" action="#" th:action="@{/save}" th:object="${newBook}">
+        <form id="form" method="post" action="#" th:action="@{/save}" th:object="${newBook}"
+            onsubmit="return validateInput()">
             <table border="0" cellpadding="10">
                 <tr>
-                    <td>
-                        <p>Book author: </p>
+                    <td id="authorcell">
+                        <p>Book author:<span style="color: red">*</span></p>
                     </td>
                     <td>
-                        <input type="text" th:field="*{author}" />
+                        <input id="author" type="text" th:field="*{author}" />
                     </td>
-                </tr>
-                <tr>
+                    <!-- </tr>
+                <tr> -->
+                    <td id="titlecell">
+                        <p>Book title:<span style="color: red">*</span></p>
+                    </td>
                     <td>
-                        <p>Book title: </p>
+                        <input id="title" type="text" th:field="*{title}" />
                     </td>
-                    <td>
-                        <input type="text" th:field="*{title}" />
-                    </td>
-                </tr>
-                <tr>
+                    <!-- </tr>
+                <tr> -->
                     <td>
                         <p>Book published year: </p>
                     </td>
@@ -61,7 +63,7 @@
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <button type="submit">Save</button>
+                        <input type="submit" value="Add" />
                     </td>
                 </tr>
             </table>

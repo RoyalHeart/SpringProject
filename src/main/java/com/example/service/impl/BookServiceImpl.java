@@ -25,7 +25,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,7 +35,7 @@ import com.example.service.API;
 import com.example.service.BookService;
 import com.example.service.database.ClasspathSqlResourceImpl;
 import com.example.service.database.ConnectionProviderImpl;
-import com.example.service.import_export.ImportFromExcel;
+import com.example.service.export_import.ImportFromExcel;
 
 import jp.sf.amateras.mirage.SqlManager;
 import jp.sf.amateras.mirage.SqlManagerImpl;
@@ -50,6 +49,7 @@ public class BookServiceImpl implements BookService {
     private long OPENLIBRARY_ID = 1;
     private long GUTENDEX_ID = 2;
     private long CROSSREF_ID = 3;
+    List<Book> searchBooks;
 
     @Autowired
     BookRepo bookRepository;
@@ -87,15 +87,6 @@ public class BookServiceImpl implements BookService {
         } catch (Exception e) {
             logger.log(Level.SEVERE, ">>> Error init:" + e.getMessage());
         }
-    }
-
-    SqlManager sqlManager = new SqlManagerImpl();
-    SqlResource sqlResource = new ClasspathSqlResourceImpl("/static/sql/searchBook.sql");
-    List<List<Book>> bookPages = new ArrayList<List<Book>>();
-
-    @PostConstruct
-    private void init() {
-        sqlManager.setConnectionProvider(connProvider);
     }
 
     ConnectionProviderImpl connProvider = new ConnectionProviderImpl();
@@ -158,12 +149,7 @@ public class BookServiceImpl implements BookService {
         });
     }
 
-    // @Scheduled(fixedRate = 10000)
-    // public void logCurrentTime() throws InterruptedException {
-    // logger.info(new java.util.Date().toString());
-    // }
-
-    @Scheduled(fixedRate = 1 * 60 * 1000)
+    // @Scheduled(fixedRate = 1 * 60 * 1000)
     protected void testAsync() {
         logger.info(bookRepository.findByTitle("Demo").get(0).getTitle());
         // logger.info("Task1");
@@ -353,22 +339,50 @@ public class BookServiceImpl implements BookService {
         }
     }
 
-    public List<Book> searchBook(Book book, short from, short to) {
-        logger.info(">>> search book:" + book);
-        BookParam bookParam = new BookParam();
-        bookParam.setAuthor(book.getAuthor());
-        bookParam.setTitle(book.getTitle());
-        bookParam.setPublished(book.getPublished());
-        bookParam.setFrom(from);
-        bookParam.setTo(to);
-        try {
-            List<Book> result = sqlManager.getResultList(
-                    Book.class, sqlResource, bookParam);
-            return result;
-        } catch (Exception e) {
-            logger.severe(">>> Error searchBook():" + e.getMessage());
-            return null;
+    public Page<Book> getSearchPage(Pageable pageable) {
+        int pageSize = this.pageSize;
+        int currentPage = pageable.getPageNumber();
+        int startItem = currentPage * pageSize;
+        List<Book> list;
+        if (searchBooks.size() < startItem) {
+            list = Collections.emptyList();
+        } else {
+            int toIndex = Math.min(startItem + pageSize, searchBooks.size());
+            list = searchBooks.subList(startItem, toIndex);
         }
+        Page<Book> bookPage = new PageImpl<Book>(list, PageRequest.of(currentPage,
+                pageSize, Sort.unsorted()), searchBooks.size());
+        return bookPage;
+    }
+
+    public Page<Book> searchBook(Book book, short from, short to, Pageable pageable) {
+        int pageSize = this.pageSize;
+        int currentPage = pageable.getPageNumber();
+        int startItem = currentPage * pageSize;
+        logger.info(">>> search book:" + book);
+        // BookParam bookParam = new BookParam();
+        // bookParam.setAuthor(book.getAuthor());
+        // bookParam.setTitle(book.getTitle());
+        // bookParam.setPublished(book.getPublished());
+        // bookParam.setFrom(from);
+        // bookParam.setTo(to);
+        try {
+            List<Book> result = bookRepository.searchBook(book, from, to);
+            searchBooks = result;
+            List<Book> list;
+            if (result.size() < startItem) {
+                list = Collections.emptyList();
+            } else {
+                int toIndex = Math.min(startItem + pageSize, result.size());
+                list = result.subList(startItem, toIndex);
+            }
+            Page<Book> bookPage = new PageImpl<Book>(list, PageRequest.of(currentPage,
+                    pageSize, Sort.unsorted()), result.size());
+            return bookPage;
+        } catch (Exception e) {
+            logger.severe(e.getMessage());
+        }
+        return null;
     }
 
     public void save(Book book) {

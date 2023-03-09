@@ -19,12 +19,43 @@ function validateUsername() {
     return true;
   }
 }
-
+var isAuthorInputWarningShow = false;
+var isTitleInputWarningShow = false;
+var form = document.getElementById("form");
 function validateInput() {
+  var form = document.getElementById("form");
   var author = document.getElementById("author").value;
-  if (author == null) {
+  var title = document.getElementById("title").value;
+  var authorcell = document.getElementById("authorcell");
+  var titlecell = document.getElementById("titlecell");
+  var authorWarning = document.createElement("p");
+  var titleWarning = document.createElement("p");
+  var success = document.createElement("p");
+  success.style.color = "green";
+  success.innerHTML = "Successfully";
+  authorWarning.innerHTML = "Author can not be empty";
+  authorWarning.style.fontSize = 10;
+  titleWarning.style.fontSize = 10;
+  titleWarning.innerHTML = "Title can not be empty";
+  if (author == "") {
+    if (!isAuthorInputWarningShow) {
+      authorcell.append(authorWarning);
+      isAuthorInputWarningShow = true;
+    }
     return false;
-  } else {
-    return true;
   }
+  if (title == "") {
+    if (!isTitleInputWarningShow) {
+      titlecell.append(titleWarning);
+      isTitleInputWarningShow = true;
+    }
+    return false;
+  }
+
+  form.append(success);
+  return true;
+}
+
+function delay(time) {
+  return new Promise((resolve) => setTimeout(resolve, time));
 }
