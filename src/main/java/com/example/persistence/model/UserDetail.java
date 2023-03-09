@@ -2,31 +2,55 @@ package com.example.persistence.model;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import org.springframework.data.annotation.Id;
 
 import com.example.annotation.ValidUsername;
 
-import lombok.Data;
+import jp.sf.amateras.mirage.annotation.Column;
+import jp.sf.amateras.mirage.annotation.PrimaryKey;
+import jp.sf.amateras.mirage.annotation.PrimaryKey.GenerationType;
+import jp.sf.amateras.mirage.annotation.Table;
+import lombok.Getter;
+import lombok.Setter;
 
-@Entity
-@Data
+// @Entity
+// @Data
+// public class UserDetail implements Serializable {
+//     @Id
+//     @GeneratedValue(strategy = GenerationType.IDENTITY)
+//     private long id;
+
+//     @Column(nullable = false, unique = true)
+//     @ValidUsername
+//     private String username;
+
+//     @Column
+//     private String user_password;
+
+//     @Column
+//     private String user_role;
+
+//     @Override
+//     public String toString() {
+//         return id + ": " + username + "-" + user_password + user_role;
+//     }
+// }
+@Getter
+@Setter
+@Table(name = "USER_DETAIL")
 public class UserDetail implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @PrimaryKey(generationType = GenerationType.SEQUENCE, generator = "SEQ_USER_DETAIL")
     private long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "username")
     @ValidUsername
     private String username;
 
-    @Column
+    @Column(name = "user_password")
     private String user_password;
 
-    @Column
+    @Column(name = "user_role")
     private String user_role;
 
     @Override
