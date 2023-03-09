@@ -188,7 +188,7 @@ public class SimpleController {
                     .collect(Collectors.toList());
             model.addAttribute("pageNumbers", pageNumbers);
         }
-        model.addAttribute("books", bookService.findAll());
+        model.addAttribute("books", bookPage.getContent());
         return "book";
     }
 

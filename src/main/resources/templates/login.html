@@ -7,11 +7,11 @@
 </head>
 
 <body>
-    <form th:action="@{/login}" method="post" class="login" onsubmit="return validateUsername()">
+    <form id="loginform" th:action="@{/login}" method="post" class="login" onsubmit="return validateUsername()">
         <div>
             <p>Login</p>
-            <p th:if="${usernameError}" style="color: red">Username:</p>
-            <p th:if="${usernameError} == null">Username:</p>
+            <p th:if="${usernameError}" style="color: red">Username:<span style="color: red">*</span></p>
+            <p th:if="${usernameError} == null">Username:<span style="color: red">*</span></p>
             <input placeholder="Username" type="username" name="username" id="username" th:value="${username}" />
             <span th:text="${usernameError}"></span>
 
