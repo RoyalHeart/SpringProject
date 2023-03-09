@@ -1,14 +1,19 @@
+var isUsernameGuideShow = false;
 function validateUsername() {
   var usernameRegex =
     /^[a-zA-Z0-9]([._-](?![._-])|[a-zA-Z0-9]){0,18}[a-zA-Z0-9]$/;
   var username = document.getElementById("username").value;
+  var loginform = document.getElementById("loginform");
   var isValidUsername = usernameRegex.test(username);
   var p = document.createElement("p");
+  p.innerHTML =
+    "Please enter a valid username:\n" +
+    "Start with alphanumeric characters, then either -._ but not consecutive or an alphanumeric, and end with an alphanumeric, length from 2 to 20";
   if (!isValidUsername) {
-    p.innerHTML =
-      "Please enter a valid username:\n" +
-      "Start with alphanumeric characters, then either -._ but not consecutive or an alphanumeric, and end with an alphanumeric, length from 2 to 20";
-    username.append(p);
+    if (!isUsernameGuideShow) {
+      loginform.append(p);
+      isUsernameGuideShow = true;
+    }
     return false;
   } else {
     return true;
