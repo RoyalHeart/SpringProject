@@ -1,11 +1,12 @@
 SELECT *
 FROM book
 
-/*BEGIN*/
 WHERE
+	isDeleted IS NULL	
 	/*IF id != null*/
-	id = /*id*/1
+	AND id = /*id*/1
 	/*END*/
+
 
 	/*IF ids != null*/
 	AND user_id IN /*ids*/(1, 2, 3)
@@ -14,7 +15,7 @@ WHERE
 	/*IF title != null*/
 	AND title = /*title*/'miyamoto'
 	/*END*/
-/*END*/
+
 
 /*IF orders != null*/
 ORDER BY /*$orders*/user_id

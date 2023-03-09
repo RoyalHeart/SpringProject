@@ -16,7 +16,7 @@
                 <input type="submit" value="Logout" />
             </form>
         </div>
-        <div th:switch="${books.size()}">
+        <div th:switch="${haveBook}">
             <h1 th:case="0">No books here!</h1>
             <div th:case="*">
                 <h1>List of all books:</h1>
@@ -40,7 +40,20 @@
                         <span th:text="${exportExcelSuccessfully}"></span>
                     </form>
                 </div>
-                <table border="0" cellpadding="10" class="bookList">
+                <form action="#" th:action="@{/search}" th:object="${searchBook}" method="post">
+                    <table border="0" cellpadding="5">
+                        <tr>
+                            <td>Author:<input type="text" th:field="*{author}" /></td>
+                            <td>Title:<input type="text" th:field="*{title}" /></td>
+                            <td>Published year:<input type="number" th:field="*{published}" /></td>
+                            <td>Published From <input type="number" name="from" field="from" /></td>
+                            <td>Published To <input type="number" name="to" field="to" /></td>
+                            <td><input type="button" href="redirect:/book" value="clear" /></td>
+                            <td><input type="submit" value="search" /></td>
+                        </tr>
+                    </table>
+                </form>
+                <table border="0" cellpadding="10" class="bookList" th:if="${bookPage}">
                     <thead>
                         <tr>
                             <th>
@@ -57,9 +70,9 @@
                             <th>
                                 Published Year
                             </th>
-                            <!-- <th>
+                            <th>
                                 Imported Date
-                            </th> -->
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -70,7 +83,7 @@
                             <td th:text="${book.title}" />
                             <td th:if="${book.published} == null" th:text="Unknown" />
                             <td th:if="${book.published}" th:text="${book.published}" />
-                            <!-- <td th:text="${book.imported}" /> -->
+                            <td th:text="${book.imported}" />
                             <td><a th:href="@{/edit/{id}(id=${book.id})}">Edit</a></td>
                             <td><a onclick="return confirm('Delete this book')"
                                     th:href="@{/delete/{id}(id=${book.id})}">Delete</a></td>
@@ -78,7 +91,43 @@
                     </tbody>
 
                 </table>
-                <div class="pagination">
+                <table border="0" cellpadding="10" class="bookList" th:if="${searchBookPage}">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Author</th>
+                            <th></th>
+                            <th>Title</th>
+                            <th>Published year</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="searchBook: ${searchBookPage.content}">
+                            <td th:text="${searchBook.id}" />
+                            <td th:text="${searchBook.author}" />
+                            <td>:</td>
+                            <td th:text="${searchBook.title}" />
+                            <td th:if="${searchBook.published}" th:text="${searchBook.published}" />
+                            <td th:if="${searchBook.published} == null" th:text="Unknown" />
+                            <td><a th:href="@{/edit/{id}(id=${searchBook.id})}">Edit</a></td>
+                            <td><a onclick="return confirm('Delete this book')"
+                                    th:href="@{/delete/{id}(id=${searchBook.id})}">Delete</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="pagination" th:if="${searchBookPage}">
+
+                    <div th:if=" ${searchBookPage.getTotalPages()> 0}" th:each="pageNumber : ${pageNumbers}">
+                        <a th:href="@{/search(page=${pageNumber})}" th:text="${pageNumber}"
+                            th:class="${pageNumber==searchBookPage.getNumber() + 1} ? active"></a>
+                        <!-- <form action="#" method="post" th:object="${searchBook}"
+                            th:action="@{/search(searchPage=${pageNumber})}"> -->
+                        <!-- <input type="submit" th:value="${pageNumber}"
+                                th:class="${pageNumber==searchBookPage.getNumber() + 1} ? active"></input> -->
+                        <!-- </form> -->
+                    </div>
+                </div>
+                <div class="pagination" th:if="${bookPage}">
                     <div th:if="${bookPage.getTotalPages() > 0}" th:each="pageNumber : ${pageNumbers}">
                         <a th:href="@{/book(page=${pageNumber})}" th:text="${pageNumber}"
                             th:class="${pageNumber==bookPage.getNumber() + 1} ? active"></a>

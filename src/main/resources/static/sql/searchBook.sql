@@ -2,10 +2,10 @@ SELECT * FROM book
 /*BEGIN*/
   WHERE
   /*IF author != null */
-  author = /*author*/'Tom'
+  author = /*author*/
   /*END*/
   /*IF title != null */
-  OR title = /*title*/'Mindset'
+  OR title = /*title*/
   /*END*/
   /*IF published != null */
    OR published =/*published*/2002

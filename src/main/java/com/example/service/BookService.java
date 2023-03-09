@@ -14,6 +14,8 @@ public interface BookService {
 
     public Page<Book> getPage(Pageable pageable);
 
+    public Page<Book> getSearchPage(Pageable pageable);
+
     public void saveOpenlibraryTrendingBooks();
 
     public void saveGutendexTrendingBooks();
@@ -22,7 +24,7 @@ public interface BookService {
 
     public void importFromExcel(Workbook workBook) throws Exception;
 
-    public List<Book> searchBook(Book book, short from, short to);
+    public Page<Book> searchBook(Book book, short from, short to, Pageable pageable);
 
     public void save(Book book);
 
