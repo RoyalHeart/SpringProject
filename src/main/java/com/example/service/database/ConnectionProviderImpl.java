@@ -5,7 +5,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.logging.Logger;
 
-import com.miragesql.miragesql.provider.ConnectionProvider;
+import jp.sf.amateras.mirage.provider.ConnectionProvider;
+
+// import com.miragesql.miragesql.provider.ConnectionProvider;
 
 public class ConnectionProviderImpl implements ConnectionProvider {
     private Logger logger = Logger.getLogger(ConnectionProviderImpl.class.getName());
@@ -27,7 +29,8 @@ public class ConnectionProviderImpl implements ConnectionProvider {
         Connection conn = null;
         try {
             // logger.info(">>> getConnection(): connected to PostgreSQL");
-            // conn = DriverManager.getConnection(postgreUrl, postgreUsername, postgrePassword);
+            // conn = DriverManager.getConnection(postgreUrl, postgreUsername,
+            // postgrePassword);
             logger.info(">>> getConnection(): connected to SqlServer");
             conn = DriverManager.getConnection(sqlServerUrl, sqlServerUsername, sqlServerPassword);
         } catch (SQLException e) {

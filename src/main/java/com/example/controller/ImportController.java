@@ -14,15 +14,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.example.service.BookService;
+import com.example.service.impl.BookServiceImpl;
 import com.example.service.import_export.ExcelService;
 
 @Controller
 public class ImportController {
-    
+
     static Logger logger = Logger.getLogger(ImportController.class.getName());
     @Autowired
-    private BookService bookService;
+    private BookServiceImpl bookService;
 
     @PostMapping("/import")
     public String importBook(@RequestParam("file") MultipartFile file, HttpServletRequest request,

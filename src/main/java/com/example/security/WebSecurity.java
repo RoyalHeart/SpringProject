@@ -11,7 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
-import com.example.service.UserDetailsServiceImpl;
+import com.example.service.impl.UserDetailsServiceImpl;
 
 @Configuration
 @EnableWebSecurity
@@ -52,7 +52,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/edit/**", "/delete/**")
                 .hasAuthority("ADMIN")
-                .antMatchers("/login/**", "/signup/**","/css/**", "/js/**").permitAll()
+                .antMatchers("/login/**", "/signup/**", "/css/**", "/js/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().loginPage("/login")
