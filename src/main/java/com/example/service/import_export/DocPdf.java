@@ -60,7 +60,6 @@ public class DocPdf {
         fieldsMetadata.load("books", Book.class, true);
         IImageProvider logo = new ClassPathImageProvider(DocPdf.class, "/static/images/logo.png");
         fieldsMetadata.addFieldAsImage("logo");
-        fieldsMetadata.addFieldAsImage("logo");
         fieldsMetadata.addFieldAsList("books.Author");
         fieldsMetadata.addFieldAsList("books.Id");
         fieldsMetadata.addFieldAsList("books.Title");

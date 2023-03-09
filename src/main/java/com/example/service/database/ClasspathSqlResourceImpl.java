@@ -3,7 +3,7 @@ package com.example.service.database;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.miragesql.miragesql.SqlResource;
+import jp.sf.amateras.mirage.SqlResource;
 
 public class ClasspathSqlResourceImpl implements SqlResource {
 

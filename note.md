@@ -34,3 +34,7 @@ mvn clean install
 ```
 
 to clean target folder and generate the war file and go to jboss server to add deployment
+
+# To change from JPA to Mirage
+
+Override dependency `spring data common` to version 2.0.12.RELEASE

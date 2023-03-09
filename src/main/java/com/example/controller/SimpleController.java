@@ -34,10 +34,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.example.persistence.mirageRepo.UserDetailRepository;
 import com.example.persistence.model.Book;
 import com.example.persistence.model.UserDetail;
 import com.example.persistence.model.Wrapper;
-import com.example.persistence.repo.UserRepository;
 import com.example.security.Validate;
 import com.example.service.BookService;
 
@@ -74,7 +74,7 @@ public class SimpleController {
     private BookService bookService;
 
     @Autowired
-    UserRepository userRepository;
+    private UserDetailRepository userRepository;
 
     @PostConstruct
     public void init() {

@@ -6,9 +6,9 @@
 
     <groupId>com.example</groupId>
     <artifactId>demo</artifactId>
-    <version>0.10.45</version>
-    <packaging>jar</packaging>
-    <!-- <packaging>war</packaging> -->
+    <version>0.10.46</version>
+    <!-- <packaging>jar</packaging> -->
+    <packaging>war</packaging>
 
     <name>demo</name>
     <description>Demo project for Spring Boot</description>
@@ -42,10 +42,10 @@
             <artifactId>spring-boot-devtools</artifactId>
             <optional>true</optional>
         </dependency>
-        <dependency>
+        <!-- <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
-        </dependency>
+        </dependency> -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -68,7 +68,16 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+        <!-- <dependency>
+            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency> -->
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-commons</artifactId>
+            <version>2.0.12.RELEASE</version><!-- $NO-MVN-MAN-VER$ -->
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
         <dependency>
@@ -82,21 +91,41 @@
             <scope>runtime</scope>
         </dependency>
         <!-- https://mvnrepository.com/artifact/net.sourceforge.jtds/jtds -->
-        <dependency>
+        <!-- <dependency>
             <groupId>net.sourceforge.jtds</groupId>
             <artifactId>jtds</artifactId>
             <version>1.3.1</version>
-        </dependency>
+        </dependency> -->
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
         <dependency>
+            <groupId>jp.xet.springframework.data.mirage</groupId>
+            <artifactId>spring-data-mirage</artifactId>
+            <version>0.11.1.RELEASE</version>
+        </dependency>
+        <!-- <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-mirage</artifactId>
+            <version>0.10.2.RELEASE</version>
+        </dependency> -->
+        <dependency>
+            <groupId>jp.xet.spar-wings</groupId>
+            <artifactId>spar-wings-spring-data-chunk</artifactId>
+            <version>0.35</version>
+        </dependency>
+        <!-- <dependency>
             <groupId>com.miragesql</groupId>
             <artifactId>miragesql</artifactId>
             <version>2.1.2</version>
-        </dependency>
+        </dependency> -->
+        <!-- <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-commons</artifactId>
+            <version>2.4.2</version>
+        </dependency> -->
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-web</artifactId>
@@ -109,15 +138,18 @@
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-taglibs</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-commons</artifactId>
-        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-validator -->
         <!-- <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-mirage</artifactId>
-            <version>0.10.2.RELEASE</version>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>6.2.0.Final</version>
         </dependency> -->
+        <!-- https://mvnrepository.com/artifact/jakarta.validation/jakarta.validation-api -->
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+            <version>2.0.2</version>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple -->
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
@@ -129,18 +161,6 @@
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
             <version>4.1.2</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-validator -->
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-validator</artifactId>
-            <version>6.2.0.Final</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/jakarta.validation/jakarta.validation-api -->
-        <dependency>
-            <groupId>jakarta.validation</groupId>
-            <artifactId>jakarta.validation-api</artifactId>
-            <version>2.0.2</version>
         </dependency>
 
         <!-- DOCX, PDF export, convert -->
