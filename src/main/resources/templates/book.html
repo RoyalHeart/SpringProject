@@ -72,7 +72,8 @@
                             <td th:if="${book.published}" th:text="${book.published}" />
                             <!-- <td th:text="${book.imported}" /> -->
                             <td><a th:href="@{/edit/{id}(id=${book.id})}">Edit</a></td>
-                            <td><a th:href="@{/delete/{id}(id=${book.id})}">Delete</a></td>
+                            <td><a onclick="return confirm('Delete this book')"
+                                    th:href="@{/delete/{id}(id=${book.id})}">Delete</a></td>
                         </tr>
                     </tbody>
 
