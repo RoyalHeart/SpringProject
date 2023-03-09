@@ -2,8 +2,9 @@ DROP TABLE book;
 DROP TABLE user;
 CREATE TABLE book(
     id serial unique,
-    title varchar(255) unique not null,
-    author varchar(255) unique not null
+    title varchar(255) not null,
+    author varchar(255) not null,
+    unique(title,author)
 );
 CREATE TABLE user_detail (
   id serial NOT NULL,

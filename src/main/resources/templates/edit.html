@@ -3,6 +3,7 @@
 <head>
     <title>Edit book</title>
     <link rel="stylesheet" href="/css/style.css" />
+    <script src="/js/validate.js"></script>
 </head>
 
 <body>
@@ -17,30 +18,33 @@
             </form>
         </div>
         <h1>Edit book</h1>
-        <form method="post" action="#" th:action="@{/save}" th:object="${editBook}">
+        <form id="form" method="post" action="#" th:action="@{/save}" th:object="${editBook}"
+            onsubmit="return validateInput()">
             <table>
                 <tr>
                     <td>
                         <p>Book ID:</p>
                     </td>
                     <td>
-                        <input type="text" th:field="*{id}" readonly="True" width="0" />
+                        <input type="text" th:value="*{id}" readonly="True" width="0" disabled
+                            style="color: white; background-color: dimgray;" />
+                        <input th:field="*{id}" hidden />
                     </td>
                 </tr>
                 <tr>
-                    <td>
-                        <p>Book author:</p>
+                    <td id="authorcell">
+                        <p>Book author:<span style="color: red">*</span></p>
                     </td>
                     <td>
-                        <input type="text" th:field="*{author}" />
+                        <input id="author" type="text" th:field="*{author}" />
                     </td>
                 </tr>
                 <tr>
-                    <td>
-                        <p>Book title:</p>
+                    <td id="titlecell">
+                        <p>Book title:<span style="color: red">*</span></p>
                     </td>
                     <td>
-                        <input type="text" th:field="*{title}" />
+                        <input id="title" type="text" th:field="*{title}" />
                     </td>
                 </tr>
                 <tr>
