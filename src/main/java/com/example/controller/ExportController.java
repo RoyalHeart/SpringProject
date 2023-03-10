@@ -2,6 +2,7 @@ package com.example.controller;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.example.persistence.model.Book;
 import com.example.persistence.model.UserDetail;
 import com.example.persistence.model.Wrapper;
 import com.example.service.BookService;
@@ -107,11 +109,27 @@ public class ExportController {
             user.setUsername(auth.getName());
             user.setUser_role(auth.getAuthorities().iterator().next().getAuthority());
             if (referer.contains("search")) {
-                DocPdf.exportDoc(wrapper.getBooks(), user, exportPath);
+                DocPdf.exportPdf(wrapper.getBooks(), user, exportPath);
             } else if (referer.contains("book")) {
-                DocPdf.exportDoc(bookService.findAll(), user, exportPath);
+                DocPdf.exportPdf(bookService.findAll(), user, exportPath);
             }
             redirectAttributes.addFlashAttribute("exportPdfSuccessfully", "Exported at: " + exportPath);
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, ">>> Export error: " + e.getMessage());
+        }
+        return "redirect:" + referer;
+    }
+
+    @PostMapping("/downloadImportTemplate")
+    public String downloadImportTemplate(HttpServletRequest request, RedirectAttributes redirectAttributes) {
+        String referer = request.getHeader("Referer");
+        try {
+            String home = System.getProperty("user.home");
+            String filename = "ImportTemplate" + ".xlsx";
+            String exportPath = home + "/Downloads/" + filename;
+            ExportToExcel.writeExcel(new ArrayList<Book>(), exportPath);
+            redirectAttributes.addFlashAttribute("exportExcelSuccessfully",
+                    "Import template download at:" + exportPath);
         } catch (Exception e) {
             logger.log(Level.SEVERE, ">>> Export error: " + e.getMessage());
         }
