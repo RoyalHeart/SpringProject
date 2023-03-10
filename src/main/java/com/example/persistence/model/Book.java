@@ -79,6 +79,9 @@ public class Book {
     @Column(name = "library_id")
     private long libraryId;
 
+    @Column(name = "is_deleted")
+    private boolean isDeleted;
+
     @Override
     public String toString() {
         return this.author + ":" + this.title + "-" + this.published;
