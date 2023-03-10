@@ -6,7 +6,6 @@ import java.util.Optional;
 import org.springframework.data.repository.query.Param;
 
 import com.example.persistence.model.Book;
-import com.example.persistence.model.BookParam;
 import com.example.service.database.DbRepository;
 
 import jp.xet.springframework.data.mirage.repository.query.Modifying;
@@ -14,16 +13,22 @@ import jp.xet.springframework.data.mirage.repository.query.Modifying;
 public interface BookRepo extends DbRepository<Book, Long> {
     List<Book> findAll();
 
+    int getBooksSize();
+
     Optional<Book> findById(@Param("id") long id);
+
+    List<Book> findByTitle(@Param("title") String title);
+
+    List<Book> getPage(@Param("startItem") int startItem, @Param("endItem") int endItem);
+
+    List<Book> searchBook(Book book, short from, short to);
 
     @Modifying
     void deleteById(@Param("id") long id);
 
-    List<Book> findByTitle(@Param("title") String title);
+    @Modifying
+    void insert(Book book);
 
-    List<Book> findByComplexCondition(
-            @Param("complex_param1") String cp1, @Param("complex_param2") int cp2);
-
-    List<Book> searchBook(Book book, short from, short to);
-
+    @Modifying
+    void updateBook(Book book);
 }

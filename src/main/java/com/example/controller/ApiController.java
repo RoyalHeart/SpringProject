@@ -42,7 +42,7 @@ public class ApiController {
         if (book.getImported() == null) {
             book.setImported(new Date(new java.util.Date().getTime()));
         }
-        bookService.save(book);
+        bookService.insert(book);
         return book;
     }
 

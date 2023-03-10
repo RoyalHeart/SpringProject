@@ -16,6 +16,8 @@ public interface BookService {
 
     public Page<Book> getSearchPage(Pageable pageable);
 
+    public List<Book> getSearchBooks();
+
     public void saveOpenlibraryTrendingBooks();
 
     public void saveGutendexTrendingBooks();
@@ -26,11 +28,11 @@ public interface BookService {
 
     public Page<Book> searchBook(Book book, short from, short to, Pageable pageable);
 
-    public void save(Book book);
+    public void updateBook(Book book);
+
+    public void insert(Book book);
 
     public List<Book> findAll();
-
-    public void delete(Book book);
 
     public void delete(long id);
 

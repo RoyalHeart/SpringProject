@@ -3,6 +3,7 @@
 <head>
     <title>Book Screen</title>
     <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <script src="/js/toggleLink.js"></script>
 </head>
 
 <body>
@@ -11,7 +12,6 @@
             <a href="/home">Home</a>
             <a href="/book">Book</a>
             <a href="/add">Add</a>
-            <a href="/search">Search</a>
             <form th:action="@{/logout}" method="post">
                 <input type="submit" value="Logout" />
             </form>
@@ -22,20 +22,41 @@
                 <h1>List of all books:</h1>
                 <div class="export-import">
                     <form method="post" action="#" th:action="@{/exportPdf}" th:object="${wrapper}">
-                        <input th:each="book,stat : *{books}" type="hidden" th:name="*{books[__${stat.index}__]}"
-                            th:field="*{books[__${stat.index}__]}" th:value="*{books[__${stat.index}__]}" />
+                        <input hidden="true" th:each="book,stat : *{books}" th:field="*{books[__${stat.index}__].id}" />
+                        <input hidden="true" th:each="book,stat : *{books}"
+                            th:field="*{books[__${stat.index}__].author}" />
+                        <input hidden="true" th:each="book,stat : *{books}" th:field="*{books[__${stat.index}__].title}"
+                            type="hidden" />
+                        <input hidden="true" th:each="book,stat : *{books}"
+                            th:field="*{books[__${stat.index}__].published}" type="hidden" />
+                        <input hidden="true" th:each="book,stat : *{books}"
+                            th:field="*{books[__${stat.index}__].imported}" type="hidden" />
                         <input type="submit" value="Export to PDF"></input>
                         <span th:text="${exportPdfSuccessfully}"></span>
                     </form>
                     <form method="post" action="#" th:action="@{/exportDoc}" th:object="${wrapper}">
-                        <input th:each="book,stat : *{books}" type="hidden" th:name="*{books[__${stat.index}__]}"
-                            th:field="*{books[__${stat.index}__]}" th:value="*{books[__${stat.index}__]}" />
+                        <input hidden="true" th:each="book,stat : *{books}" th:field="*{books[__${stat.index}__].id}" />
+                        <input hidden="true" th:each="book,stat : *{books}"
+                            th:field="*{books[__${stat.index}__].author}" />
+                        <input hidden="true" th:each="book,stat : *{books}" th:field="*{books[__${stat.index}__].title}"
+                            type="hidden" />
+                        <input hidden="true" th:each="book,stat : *{books}"
+                            th:field="*{books[__${stat.index}__].published}" type="hidden" />
+                        <input hidden="true" th:each="book,stat : *{books}"
+                            th:field="*{books[__${stat.index}__].imported}" type="hidden" />
                         <input type="submit" value="Export to DOCX"></input>
                         <span th:text="${exportDocSuccessfully}"></span>
                     </form>
                     <form method="post" action="#" th:action="@{/export}" th:object="${wrapper}">
-                        <input th:each="book,stat : *{books}" type="hidden" th:name="*{books[__${stat.index}__]}"
-                            th:field="*{books[__${stat.index}__]}" th:value="*{books[__${stat.index}__]}" />
+                        <input hidden="true" th:each="book,stat : *{books}" th:field="*{books[__${stat.index}__].id}" />
+                        <input hidden="true" th:each="book,stat : *{books}"
+                            th:field="*{books[__${stat.index}__].author}" />
+                        <input hidden="true" th:each="book,stat : *{books}" th:field="*{books[__${stat.index}__].title}"
+                            type="hidden" />
+                        <input hidden="true" th:each="book,stat : *{books}"
+                            th:field="*{books[__${stat.index}__].published}" type="hidden" />
+                        <input hidden="true" th:each="book,stat : *{books}"
+                            th:field="*{books[__${stat.index}__].imported}" type="hidden" />
                         <input type="submit" value="Export to XLSX"></input>
                         <span th:text="${exportExcelSuccessfully}"></span>
                     </form>
@@ -48,12 +69,12 @@
                             <td>Published year:<input type="number" th:field="*{published}" /></td>
                             <td>Published From <input type="number" name="from" field="from" /></td>
                             <td>Published To <input type="number" name="to" field="to" /></td>
-                            <td><input type="button" href="redirect:/book" value="clear" /></td>
+                            <td><input onclick="location.href='/book'" type="button" value="clear" /></td>
                             <td><input type="submit" value="search" /></td>
                         </tr>
                     </table>
                 </form>
-                <table border="0" cellpadding="10" class="bookList" th:if="${bookPage}">
+                <table border="1" cellpadding="10" class="bookList" th:if="${bookPage}">
                     <thead>
                         <tr>
                             <th>
@@ -61,8 +82,6 @@
                             </th>
                             <th>
                                 Author
-                            </th>
-                            <th>
                             </th>
                             <th>
                                 Title
@@ -79,9 +98,8 @@
                         <tr th:each="book,stat : ${bookPage.content}">
                             <td th:text="${book.id}" />
                             <td th:text="${book.author}" />
-                            <td>:</td>
                             <td th:text="${book.title}" />
-                            <td th:if="${book.published} == null" th:text="Unknown" />
+                            <td th:if="${book.published} == null" text="" />
                             <td th:if="${book.published}" th:text="${book.published}" />
                             <td th:text="${book.imported}" />
                             <td><a th:href="@{/edit/{id}(id=${book.id})}">Edit</a></td>
@@ -91,46 +109,70 @@
                     </tbody>
 
                 </table>
-                <table border="0" cellpadding="10" class="bookList" th:if="${searchBookPage}">
+                <table border="1" cellpadding="10" class="bookList" th:if="${searchBookPage}">
                     <thead>
                         <tr>
                             <th>ID</th>
                             <th>Author</th>
-                            <th></th>
                             <th>Title</th>
                             <th>Published year</th>
+                            <th>Imported date</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr th:each="searchBook: ${searchBookPage.content}">
                             <td th:text="${searchBook.id}" />
                             <td th:text="${searchBook.author}" />
-                            <td>:</td>
                             <td th:text="${searchBook.title}" />
                             <td th:if="${searchBook.published}" th:text="${searchBook.published}" />
-                            <td th:if="${searchBook.published} == null" th:text="Unknown" />
-                            <td><a th:href="@{/edit/{id}(id=${searchBook.id})}">Edit</a></td>
+                            <td th:if="${searchBook.published} == null" text="" />
+                            <td th:text="${searchBook.imported}" />
+                            <td><a th:href=" @{/edit/{id}(id=${searchBook.id})}">Edit</a></td>
                             <td><a onclick="return confirm('Delete this book')"
                                     th:href="@{/delete/{id}(id=${searchBook.id})}">Delete</a></td>
                         </tr>
                     </tbody>
                 </table>
                 <div class="pagination" th:if="${searchBookPage}">
-
-                    <div th:if=" ${searchBookPage.getTotalPages()> 0}" th:each="pageNumber : ${pageNumbers}">
-                        <a th:href="@{/search(page=${pageNumber})}" th:text="${pageNumber}"
+                    <p>
+                        <a style="text-decoration: none" th:if=" ${searchBookPage.getNumber() !=0}"
+                            th:href="@{/search(page=${searchBookPage.getNumber()})}">
+                            < </a>
+                                Page
+                                <span th:text="${searchBookPage.getNumber() + 1}" /> of
+                                <span th:text="${searchBookPage.getTotalPages()}" />
+                                <a style="text-decoration: none"
+                                    th:if="${searchBookPage.getNumber() + 1 < searchBookPage.getTotalPages()}"
+                                    th:href="@{/search(page=${searchBookPage.getNumber() + 2})}">
+                                    >
+                                </a>
+                    </p>
+                    <button class="dropbtn" onclick="toggleLink()">v</button>
+                    <div id="dropdown" th:if=" ${searchBookPage.getTotalPages()> 0}" class="dropdown-content">
+                        <a th:each="pageNumber : ${pageNumbers}" th:href="@{/search(page=${pageNumber})}"
+                            th:text="${pageNumber}"
                             th:class="${pageNumber==searchBookPage.getNumber() + 1} ? active"></a>
-                        <!-- <form action="#" method="post" th:object="${searchBook}"
-                            th:action="@{/search(searchPage=${pageNumber})}"> -->
-                        <!-- <input type="submit" th:value="${pageNumber}"
-                                th:class="${pageNumber==searchBookPage.getNumber() + 1} ? active"></input> -->
-                        <!-- </form> -->
                     </div>
                 </div>
+
                 <div class="pagination" th:if="${bookPage}">
-                    <div th:if="${bookPage.getTotalPages() > 0}" th:each="pageNumber : ${pageNumbers}">
-                        <a th:href="@{/book(page=${pageNumber})}" th:text="${pageNumber}"
-                            th:class="${pageNumber==bookPage.getNumber() + 1} ? active"></a>
+                    <p>
+                        <a style="text-decoration: none" th:if=" ${bookPage.getNumber() !=0}"
+                            th:href="@{/book(page=${bookPage.getNumber()})}">
+                            < </a>
+
+                                Page <span th:text="${bookPage.getNumber() + 1}"></span> of <span
+                                    th:text="${bookPage.getTotalPages()}"></span>
+                                <a style="text-decoration: none"
+                                    th:if="${bookPage.getNumber() + 1 < bookPage.getTotalPages()}"
+                                    th:href="@{/book(page=${bookPage.getNumber() + 2})}">
+                                    >
+                                </a>
+                    </p>
+                    <button class="dropbtn" onclick="toggleLink()">v</button>
+                    <div id="dropdown" th:if="${bookPage.getTotalPages() > 0}" class="dropdown-content">
+                        <a th:each="pageNumber : ${pageNumbers}" th:href="@{/book(page=${pageNumber})}"
+                            th:text="${pageNumber}" th:class="${pageNumber==bookPage.getNumber() + 1} ? active"></a>
                     </div>
                 </div>
             </div>
