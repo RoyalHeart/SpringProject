@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,11 +19,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.persistence.model.UserDetail;
 import com.example.persistence.model.Wrapper;
+import com.example.service.BookService;
 import com.example.service.export_import.DocPdf;
 import com.example.service.export_import.ExportToExcel;
 
 @Controller
 public class ExportController {
+    @Autowired
+    BookService bookService;
 
     // max form input can only receive 255 Object, increase to 1000
     @InitBinder
@@ -47,7 +51,11 @@ public class ExportController {
             String home = System.getProperty("user.home");
             String filename = "Books_" + currentTime + ".xlsx";
             String exportPath = home + "/Downloads/" + filename;
-            ExportToExcel.writeExcel(wrapper.getBooks(), exportPath);
+            if (referer.contains("search")) {
+                ExportToExcel.writeExcel(wrapper.getBooks(), exportPath);
+            } else if (referer.contains("book")) {
+                ExportToExcel.writeExcel(bookService.findAll(), exportPath);
+            }
             redirectAttributes.addFlashAttribute("exportExcelSuccessfully", "Exported at: " + exportPath);
         } catch (Exception e) {
             logger.log(Level.SEVERE, ">>> Export error: " + e.getMessage());
@@ -59,6 +67,7 @@ public class ExportController {
     public String exportDoc(@ModelAttribute(name = "wrapper") Wrapper wrapper,
             Model model, HttpServletRequest request, RedirectAttributes redirectAttributes, Authentication auth) {
         String referer = request.getHeader("Referer");
+        logger.info(referer);
         try {
             SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy_HH.mm.ss");
             Date date = new Date(new java.util.Date().getTime());
@@ -72,7 +81,11 @@ public class ExportController {
             logger.log(Level.INFO, ">>> Role:" + auth.getAuthorities().iterator().next().getAuthority());
             user.setUsername(auth.getName());
             user.setUser_role(auth.getAuthorities().iterator().next().getAuthority());
-            DocPdf.exportDoc(wrapper.getBooks(), user, exportPath);
+            if (referer.contains("search")) {
+                DocPdf.exportDoc(wrapper.getBooks(), user, exportPath);
+            } else if (referer.contains("book")) {
+                DocPdf.exportDoc(bookService.findAll(), user, exportPath);
+            }
         } catch (Exception e) {
             logger.log(Level.SEVERE, ">>> Export error: " + e.getMessage());
         }
@@ -93,7 +106,11 @@ public class ExportController {
             UserDetail user = new UserDetail();
             user.setUsername(auth.getName());
             user.setUser_role(auth.getAuthorities().iterator().next().getAuthority());
-            DocPdf.exportPdf(wrapper.getBooks(), user, exportPath);
+            if (referer.contains("search")) {
+                DocPdf.exportDoc(wrapper.getBooks(), user, exportPath);
+            } else if (referer.contains("book")) {
+                DocPdf.exportDoc(bookService.findAll(), user, exportPath);
+            }
             redirectAttributes.addFlashAttribute("exportPdfSuccessfully", "Exported at: " + exportPath);
         } catch (Exception e) {
             logger.log(Level.SEVERE, ">>> Export error: " + e.getMessage());

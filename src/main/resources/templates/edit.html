@@ -12,13 +12,12 @@
             <a href="/home">Home</a>
             <a href="/book">Book</a>
             <a href="/add">Add</a>
-            <a href="/search">Search</a>
             <form th:action="@{/logout}" method="post">
                 <input type="submit" value="Logout" />
             </form>
         </div>
         <h1>Edit book</h1>
-        <form id="form" method="post" action="#" th:action="@{/save}" th:object="${editBook}"
+        <form id="form" method="post" action="#" th:action="@{/update}" th:object="${editBook}"
             onsubmit="return validateInput()">
             <table>
                 <tr>
@@ -61,6 +60,8 @@
                     </td>
                 </tr>
             </table>
+            <p style="color: green" th:if="${success}" th:text="${success}" />
+            <p style="color: red" th:if="${error}" th:text="${error}" />
         </form>
     </div>
 </body>

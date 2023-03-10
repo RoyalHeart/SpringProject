@@ -12,14 +12,11 @@ import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.poi.ss.usermodel.Workbook;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -30,19 +27,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.persistence.mirageRepo.BookRepo;
 import com.example.persistence.model.Book;
-import com.example.persistence.model.BookParam;
 import com.example.service.API;
 import com.example.service.BookService;
-import com.example.service.database.ClasspathSqlResourceImpl;
 import com.example.service.database.ConnectionProviderImpl;
 import com.example.service.export_import.ImportFromExcel;
 
-import jp.sf.amateras.mirage.SqlManager;
-import jp.sf.amateras.mirage.SqlManagerImpl;
-import jp.sf.amateras.mirage.SqlResource;
-
 @Service
-@Primary
 @Transactional(readOnly = false, rollbackFor = Exception.class)
 public class BookServiceImpl implements BookService {
     static Logger logger = Logger.getLogger(BookServiceImpl.class.getName());
@@ -65,25 +55,25 @@ public class BookServiceImpl implements BookService {
             book.setAuthor("Carol Dweck");
             book.setImported(date);
             book.setPublished((short) 2002);
-            this.save(book);
+            this.insert(book);
             book = new Book();
             book.setTitle("Operating System");
             book.setAuthor("Christen Baun");
             book.setImported(date);
             book.setPublished((short) 2002);
-            this.save(book);
+            this.insert(book);
             book = new Book();
             book.setTitle("Computer Network");
             book.setAuthor("Christen Baun");
             book.setImported(date);
             book.setPublished((short) 2002);
-            this.save(book);
+            this.insert(book);
             book = new Book();
             book.setTitle("Around the World in 100 Days");
             book.setAuthor("Jules Verne");
             book.setImported(date);
             book.setPublished((short) 2002);
-            this.save(book);
+            this.insert(book);
         } catch (Exception e) {
             logger.log(Level.SEVERE, ">>> Error init:" + e.getMessage());
         }
@@ -93,19 +83,15 @@ public class BookServiceImpl implements BookService {
     int pageSize = 10;
 
     public Page<Book> getPage(Pageable pageable) {
-        List<Book> books = bookRepository.findAll();
         int pageSize = this.pageSize;
         int currentPage = pageable.getPageNumber();
         int startItem = currentPage * pageSize;
-        List<Book> list;
-        if (books.size() < startItem) {
-            list = Collections.emptyList();
-        } else {
-            int toIndex = Math.min(startItem + pageSize, books.size());
-            list = books.subList(startItem, toIndex);
-        }
-        Page<Book> bookPage = new PageImpl<Book>(list, PageRequest.of(currentPage,
-                pageSize, Sort.unsorted()), books.size());
+        List<Book> list = bookRepository.getPage(startItem, startItem + pageSize);
+        logger.info(list.toString());
+        Page<Book> bookPage = new PageImpl<Book>(
+                list,
+                PageRequest.of(currentPage, pageSize, Sort.unsorted()),
+                bookRepository.getBooksSize());
         return bookPage;
     }
 
@@ -115,7 +101,7 @@ public class BookServiceImpl implements BookService {
             Iterator<Book> trendingBookItorator = getOpenlibraryTrendingBooks().iterator();
             while (trendingBookItorator.hasNext()) {
                 try {
-                    this.save(trendingBookItorator.next());
+                    this.insert(trendingBookItorator.next());
                 } catch (Exception e) {
                     logger.log(Level.SEVERE, ">>> Error saveTrendingBooks():" + e.getMessage());
                 }
@@ -128,7 +114,7 @@ public class BookServiceImpl implements BookService {
             Iterator<Book> trendingBookItorator = getGutenbergTrendingBooks().iterator();
             while (trendingBookItorator.hasNext()) {
                 try {
-                    this.save(trendingBookItorator.next());
+                    this.insert(trendingBookItorator.next());
                 } catch (Exception e) {
                     logger.severe(">>> Error saveGutendexTrendingBooks():" + e.getMessage());
                 }
@@ -141,7 +127,7 @@ public class BookServiceImpl implements BookService {
             Iterator<Book> trendingBookItorator = getCrossrefTrendingBooks().iterator();
             while (trendingBookItorator.hasNext()) {
                 try {
-                    this.save(trendingBookItorator.next());
+                    this.insert(trendingBookItorator.next());
                 } catch (Exception e) {
                     logger.severe(">>> Error saveCrossrefTrendingBooks():" + e.getMessage());
                 }
@@ -330,7 +316,7 @@ public class BookServiceImpl implements BookService {
         }
         for (Book book : books) {
             try {
-                this.save(book);
+                this.insert(book);
                 logger.info(
                         ">>> Imported books: " + book.getAuthor() + ":" + book.getTitle() + "-" + book.getPublished());
             } catch (Exception e) {
@@ -353,6 +339,11 @@ public class BookServiceImpl implements BookService {
         Page<Book> bookPage = new PageImpl<Book>(list, PageRequest.of(currentPage,
                 pageSize, Sort.unsorted()), searchBooks.size());
         return bookPage;
+    }
+
+    @Override
+    public List<Book> getSearchBooks() {
+        return this.searchBooks;
     }
 
     public Page<Book> searchBook(Book book, short from, short to, Pageable pageable) {
@@ -385,16 +376,16 @@ public class BookServiceImpl implements BookService {
         return null;
     }
 
-    public void save(Book book) {
-        bookRepository.save(book);
-    }
-
     public List<Book> findAll() {
         return bookRepository.findAll();
     }
 
-    public void delete(Book book) {
-        bookRepository.delete(book);
+    public void updateBook(Book book) {
+        bookRepository.updateBook(book);
+    }
+
+    public void insert(Book book) {
+        bookRepository.insert(book);
     }
 
     public void delete(long id) {
@@ -404,4 +395,5 @@ public class BookServiceImpl implements BookService {
     public Optional<Book> findOne(long id) {
         return bookRepository.findById(id);
     }
+
 }

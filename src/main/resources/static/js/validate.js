@@ -51,8 +51,7 @@ function validateInput() {
     }
     return false;
   }
-
-  form.append(success);
+  // form.append(success);
   return true;
 }
 

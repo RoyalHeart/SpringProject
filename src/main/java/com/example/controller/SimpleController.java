@@ -6,7 +6,6 @@
 package com.example.controller;
 
 import java.sql.Date;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -23,7 +22,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.expression.spel.ast.OpEQ;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Controller;
@@ -176,13 +174,8 @@ public class SimpleController {
         int pageSize = 10;
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize);
         Page<Book> bookPage = bookService.getPage(pageable);
-        List<Book> exportBooks = new ArrayList<Book>();
-        exportBooks.addAll(bookPage.getContent());
         Wrapper wrapper = new Wrapper();
-        wrapper.setBooks(exportBooks);
-        model.addAttribute("bookPage", bookPage);
-        model.addAttribute("wrapper", wrapper);
-        model.addAttribute("searchBook", new Book());
+        wrapper.setBooks(bookPage.getContent());
         int totalPages = bookPage.getTotalPages();
         if (totalPages > 0) {
             List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
@@ -191,6 +184,9 @@ public class SimpleController {
             model.addAttribute("pageNumbers", pageNumbers);
         }
         boolean haveBook = (bookPage.getContent().size() > 0) ? true : false;
+        model.addAttribute("bookPage", bookPage);
+        model.addAttribute("wrapper", wrapper);
+        model.addAttribute("searchBook", new Book());
         model.addAttribute("haveBook", haveBook);
         return "book";
     }
@@ -237,9 +233,36 @@ public class SimpleController {
         return "redirect:" + referer;
     }
 
+    @PostMapping("/update")
+    public String update(@ModelAttribute("editBook") Book book,
+            Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
+        String referer = request.getHeader("Referer");
+        logger.log(Level.INFO, ">>> Update: " + book.getAuthor() + ":" + book.getTitle() + "-" + book.getPublished());
+        try {
+            if (book.getImported() == null) {
+                book.setImported(new Date(new java.util.Date().getTime()));
+            }
+            book.setLibraryId(7);
+            bookService.updateBook(book);
+            redirectAttributes.addFlashAttribute("success", "Update successfully");
+            return "redirect:" + referer;
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, ">>> Save error: " + e.getMessage());
+            model.addAttribute("error", e.getMessage());
+            if (e.getMessage().contains("UNIQUE")) {
+                redirectAttributes.addFlashAttribute("error", "Can not import book with same author and title");
+            }
+            if (e.getMessage().contains("NotBlank")) {
+                redirectAttributes.addFlashAttribute("error", "Author and titles must not be blank");
+            }
+            return "redirect:" + referer;
+            // return "error";
+        }
+    }
+
     @PostMapping("/save")
     public String saveBook(@ModelAttribute("book") Book book,
-            Model model, HttpServletRequest request) {
+            Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
         String referer = request.getHeader("Referer");
         logger.log(Level.INFO, ">>> Save: " + book.getAuthor() + ":" + book.getTitle() + "-" + book.getPublished());
         try {
@@ -247,25 +270,26 @@ public class SimpleController {
                 book.setImported(new Date(new java.util.Date().getTime()));
             }
             book.setLibraryId(7);
-            bookService.save(book);
+            bookService.insert(book);
+            redirectAttributes.addFlashAttribute("success", "Add successfully");
             return "redirect:" + referer;
         } catch (Exception e) {
             logger.log(Level.SEVERE, ">>> Save error: " + e.getMessage());
-            model.addAttribute("error", e.getMessage());
-            if (e.getMessage().contains("ConstraintViolation")) {
-                model.addAttribute("error", "Can not import book with same author and title");
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            if (e.getMessage().contains("UNIQUE")) {
+                redirectAttributes.addFlashAttribute("error", "Can not import book with same author and title");
             }
             if (e.getMessage().contains("NotBlank")) {
-                model.addAttribute("error", "Author and titles must not be blank");
+                redirectAttributes.addFlashAttribute("error", "Author and titles must not be blank");
             }
-            return "error";
+            return "redirect:" + referer;
         }
     }
 
     @GetMapping("/add")
     public String addBook(
             Model model) {
-        model.addAttribute("newBook", new Book());
+        model.addAttribute("book", new Book());
         return "add";
     }
 
@@ -284,7 +308,7 @@ public class SimpleController {
             model.addAttribute("pageNumbers", pageNumbers);
         }
         Wrapper wrapper = new Wrapper();
-        wrapper.setBooks(searchBookPage.getContent());
+        wrapper.setBooks(bookService.getSearchBooks());
         model.addAttribute("searchBookPage", searchBookPage);
         model.addAttribute("wrapper", wrapper);
         model.addAttribute("searchBook", new Book());
@@ -301,7 +325,7 @@ public class SimpleController {
         if (!from.isEmpty()) {
             fromShort = Short.parseShort(from);
             if (fromShort == 0)
-                fromShort = 1; // change from to 1 for sql to work
+                fromShort = 1; // change from 0 to 1 for sql to work
         }
         if (!to.isEmpty()) {
             toShort = Short.parseShort(to);
@@ -324,9 +348,9 @@ public class SimpleController {
             model.addAttribute("pageNumbers", pageNumbers);
         }
         Wrapper wrapper = new Wrapper();
-        wrapper.setBooks(searchBookPage.getContent());
+        wrapper.setBooks(bookService.getSearchBooks());
         model.addAttribute("wrapper", wrapper);
-        model.addAttribute("search", new Book());
+        model.addAttribute("searchBook", new Book());
         model.addAttribute("searchBookPage", searchBookPage);
         return "book";
     }
