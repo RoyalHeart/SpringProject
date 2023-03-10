@@ -1,7 +1,5 @@
 package com.example;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,10 +7,10 @@ import org.junit.jupiter.api.Test;
 
 import com.example.persistence.model.Book;
 import com.example.persistence.model.UserDetail;
-import com.example.service.import_export.DocPdf;
+import com.example.service.export_import.DocPdf;
 
 public class TestDocPdf {
-    
+
     @Test
     public void testDocPdf() {
         try {
