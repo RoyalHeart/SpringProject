@@ -6,9 +6,9 @@ SELECT * FROM (
 /*BEGIN*/
 WHERE 
     /*IF startItem != null*/
-    a.row > /*startItem*/ 
+    a.row > /*startItem*/0
     /*END*/
     /*IF endItem != null */
-    AND a.row <= /*endItem*/
+    AND a.row <= /*endItem*/10
     /*END*/
 /*END*/

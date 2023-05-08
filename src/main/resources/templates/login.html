@@ -12,7 +12,8 @@
             <p>Login</p>
             <p th:if="${usernameError}" style="color: red">Username:<span style="color: red">*</span></p>
             <p th:if="${usernameError} == null">Username:<span style="color: red">*</span></p>
-            <input placeholder="Username" type="username" name="username" id="username" th:value="${username}" />
+            <input placeholder="Username" type="username" name="username" id="username" th:value="${username}"
+                minlength="2" required />
             <span th:text="${usernameError}"></span>
 
             <p th:if="${passwordError}" style="color: red">Password:</p>

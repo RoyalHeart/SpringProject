@@ -1,0 +1,40 @@
+management:
+  endpoints:
+    jmx:
+      exposure:
+        include: \*
+  endpoint:
+    info:
+      enabled: true
+
+server:
+  port: 8083
+  error:
+    whitelabel:
+      enabled: false
+spring:
+  thymeleaf:
+    cache: false
+    enabled: true
+    prefix: classpath:/templates/
+    suffix: .html
+  application:
+    name: Spring boot, mvc, security, mirage, thymeleaf
+  servlet:
+    multipart.max-file-size: 1MB
+  devtools:
+    livereload:
+      enabled: true
+  main:
+    allow-bean-definition-overriding: true
+  # SQL server
+  datasource:
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    url: jdbc:sqlserver://localhost:1433;databaseName=BookDatabase
+    username: sqlserver
+    password: admin
+# To initialize database, create table
+#   jpa:
+#     hibernate:
+#       ddl-auto: create
+#     show-sql: true
