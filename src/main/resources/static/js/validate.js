@@ -42,7 +42,6 @@ function validateInput() {
       authorcell.append(authorWarning);
       isAuthorInputWarningShow = true;
     }
-    return false;
   }
   if (title == "") {
     if (!isTitleInputWarningShow) {

@@ -64,6 +64,7 @@ public class DocPdf {
                 fieldsMetadata.addFieldAsList("books.Id");
                 fieldsMetadata.addFieldAsList("books.Title");
                 fieldsMetadata.addFieldAsList("books.Published");
+                fieldsMetadata.addFieldAsList("books.Imported");
                 IContext context = report.createContext();
                 context.put("books", books);
                 context.put("user", userDetail);
@@ -90,6 +91,7 @@ public class DocPdf {
                 fieldsMetadata.addFieldAsList("books.Id");
                 fieldsMetadata.addFieldAsList("books.Title");
                 fieldsMetadata.addFieldAsList("books.Published");
+                fieldsMetadata.addFieldAsList("books.Imported");
                 IContext context = report.createContext();
                 context.put("books", books);
                 context.put("user", userDetail);
