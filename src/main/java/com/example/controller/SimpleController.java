@@ -131,7 +131,6 @@ public class SimpleController {
             model.addAttribute("usernameError", "Invalid username");
             return "/signup";
         }
-        ;
         String plainPassword = "";
         try {
             logger.info(newUser.toString());

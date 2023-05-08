@@ -29,7 +29,6 @@ import com.example.persistence.mirageRepo.BookRepo;
 import com.example.persistence.model.Book;
 import com.example.service.API;
 import com.example.service.BookService;
-import com.example.service.database.ConnectionProviderImpl;
 import com.example.service.export_import.ImportFromExcel;
 
 @Service
@@ -79,7 +78,6 @@ public class BookServiceImpl implements BookService {
         }
     }
 
-    ConnectionProviderImpl connProvider = new ConnectionProviderImpl();
     int pageSize = 10;
 
     public Page<Book> getPage(Pageable pageable) {
@@ -351,12 +349,6 @@ public class BookServiceImpl implements BookService {
         int currentPage = pageable.getPageNumber();
         int startItem = currentPage * pageSize;
         logger.info(">>> search book:" + book);
-        // BookParam bookParam = new BookParam();
-        // bookParam.setAuthor(book.getAuthor());
-        // bookParam.setTitle(book.getTitle());
-        // bookParam.setPublished(book.getPublished());
-        // bookParam.setFrom(from);
-        // bookParam.setTo(to);
         try {
             List<Book> result = bookRepository.searchBook(book, from, to);
             searchBooks = result;
@@ -367,8 +359,9 @@ public class BookServiceImpl implements BookService {
                 int toIndex = Math.min(startItem + pageSize, result.size());
                 list = result.subList(startItem, toIndex);
             }
-            Page<Book> bookPage = new PageImpl<Book>(list, PageRequest.of(currentPage,
-                    pageSize, Sort.unsorted()), result.size());
+            Page<Book> bookPage = new PageImpl<Book>(list,
+                    PageRequest.of(currentPage, pageSize, Sort.unsorted()),
+                    result.size());
             return bookPage;
         } catch (Exception e) {
             logger.severe(e.getMessage());

@@ -146,13 +146,15 @@
                                     th:href="@{/search(page=${searchBookPage.getNumber() + 2})}">
                                     >
                                 </a>
+                                <button text="vv" value="vv" class="dropbtn" onclick="toggleLink()"></button>
+                                <div id="dropdown" th:if=" ${searchBookPage.getTotalPages()> 0}"
+                                    class="dropdown-content">
+                                    <a th:each="pageNumber : ${pageNumbers}" th:href="@{/search(page=${pageNumber})}"
+                                        th:text="${pageNumber}"
+                                        th:class="${pageNumber==searchBookPage.getNumber() + 1} ? active"></a>
+                                </div>
                     </p>
-                    <button class="dropbtn" onclick="toggleLink()">v</button>
-                    <div id="dropdown" th:if=" ${searchBookPage.getTotalPages()> 0}" class="dropdown-content">
-                        <a th:each="pageNumber : ${pageNumbers}" th:href="@{/search(page=${pageNumber})}"
-                            th:text="${pageNumber}"
-                            th:class="${pageNumber==searchBookPage.getNumber() + 1} ? active"></a>
-                    </div>
+
                 </div>
 
                 <div class="pagination" th:if="${bookPage}">
@@ -168,12 +170,14 @@
                                     th:href="@{/book(page=${bookPage.getNumber() + 2})}">
                                     >
                                 </a>
+                                <button type="button" value="v" text="v" class="dropbtn"
+                                    onclick="toggleLink()">v</button>
+                                <div id="dropdown" th:if="${bookPage.getTotalPages() > 0}" class="dropdown-content">
+                                    <a th:each="pageNumber : ${pageNumbers}" th:href="@{/book(page=${pageNumber})}"
+                                        th:text="${pageNumber}"
+                                        th:class="${pageNumber==bookPage.getNumber() + 1} ? active"></a>
+                                </div>
                     </p>
-                    <button class="dropbtn" onclick="toggleLink()">v</button>
-                    <div id="dropdown" th:if="${bookPage.getTotalPages() > 0}" class="dropdown-content">
-                        <a th:each="pageNumber : ${pageNumbers}" th:href="@{/book(page=${pageNumber})}"
-                            th:text="${pageNumber}" th:class="${pageNumber==bookPage.getNumber() + 1} ? active"></a>
-                    </div>
                 </div>
             </div>
         </div>

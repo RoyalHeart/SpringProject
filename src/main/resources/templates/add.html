@@ -4,6 +4,8 @@
     <title>Add book</title>
     <link rel="stylesheet" href="/css/style.css" />
     <script src="/js/validate.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"></script>
 </head>
 
 <body>
@@ -41,21 +43,17 @@
             <table border="0" cellpadding="10">
                 <tr>
                     <td id="authorcell">
-                        <p>Book author:<span style="color: red">*</span></p>
+                        <label>Book author:<span style="color: red">*</span></label>
                     </td>
                     <td>
-                        <input id="author" type="text" th:field="*{author}" />
+                        <input id="author" type="text" th:field="*{author}" required />
                     </td>
-                    <!-- </tr>
-                <tr> -->
                     <td id="titlecell">
                         <p>Book title:<span style="color: red">*</span></p>
                     </td>
                     <td>
-                        <input id="title" type="text" th:field="*{title}" />
+                        <input id="title" type="text" th:field="*{title}" required />
                     </td>
-                    <!-- </tr>
-                <tr> -->
                     <td>
                         <p>Book published year: </p>
                     </td>

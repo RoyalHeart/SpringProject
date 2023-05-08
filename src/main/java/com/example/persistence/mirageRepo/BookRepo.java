@@ -21,14 +21,14 @@ public interface BookRepo extends DbRepository<Book, Long> {
 
     List<Book> getPage(@Param("startItem") int startItem, @Param("endItem") int endItem);
 
-    List<Book> searchBook(Book book, short from, short to);
+    List<Book> searchBook(@Param("book") Book book, @Param("from") short from, @Param("to") short to);
 
     @Modifying
     void deleteById(@Param("id") long id);
 
     @Modifying
-    void insert(Book book);
+    void insert(@Param("book") Book book);
 
     @Modifying
-    void updateBook(Book book);
+    void updateBook(@Param("book") Book book);
 }
