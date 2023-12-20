@@ -46,7 +46,7 @@ public class DocPdf {
                 fieldsMetadata.saveXML(new FileOutputStream(xmlFieldsFile), true);
         }
 
-        public static void exportPdf(List<Book> books, UserDetail userDetail, String exportPath)
+        public static void exportPdf(Iterable<Book> books, UserDetail userDetail, String exportPath)
                         throws IOException, XDocReportException {
                 // increase max file size
                 ZipSecureFile.setMinInflateRatio(0.001);
@@ -76,7 +76,7 @@ public class DocPdf {
                 report.convert(context, options, out);
         }
 
-        public static void exportDoc(List<Book> books, UserDetail userDetail, String path)
+        public static void exportDoc(Iterable<Book> books, UserDetail userDetail, String path)
                         throws IOException, XDocReportException {
                 InputStream in = DocPdf.class
                                 .getResourceAsStream("/velocityBookTemplate.docx");

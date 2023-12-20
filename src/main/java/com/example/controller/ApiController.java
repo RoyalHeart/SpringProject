@@ -13,14 +13,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.persistence.model.Book;
-import com.example.service.BookService;
+import com.example.service.book.IBookService;
 
 @RestController
 public class ApiController {
     private static Logger logger = Logger.getLogger(ApiController.class.getName());
 
     @Autowired
-    BookService bookService;
+    IBookService bookService;
 
     @GetMapping("/api")
     public String hello() {
@@ -32,7 +32,7 @@ public class ApiController {
     }
 
     @GetMapping("/api/books")
-    public List<Book> getAllBooks() {
+    public Iterable<Book> getAllBooks() {
         return bookService.findAll();
     }
 

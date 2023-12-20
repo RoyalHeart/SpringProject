@@ -8,7 +8,7 @@ management:
       enabled: true
 
 server:
-  port: 8083
+  port: 8085
   error:
     whitelabel:
       enabled: false
@@ -29,12 +29,24 @@ spring:
     allow-bean-definition-overriding: true
   # SQL server
   datasource:
-    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
-    url: jdbc:sqlserver://localhost:1433;databaseName=BookDatabase
-    username: sqlserver
-    password: admin
-# To initialize database, create table
+    # driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    # url: jdbc:sqlserver://localhost:1433;databaseName=BookDatabase
+    # username: sqlserver
+    # password: admin
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://tiny.db.elephantsql.com:5432/efmygsrb
+    username: efmygsrb
+    password: q1EXqJFi2x6RJEcM1ab33aQVOBc_VNDv
+    hikari:
+      schema: public
+logging:
+  level:
+    '[org.springframework]': ERROR
+    # '[org.apache.logging.slf4j]': 
+    
 #   jpa:
 #     hibernate:
 #       ddl-auto: create
 #     show-sql: true
+
+# To initialize database, create table

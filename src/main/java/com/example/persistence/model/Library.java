@@ -1,14 +1,8 @@
 package com.example.persistence.model;
 
-import java.io.Serializable;
-
 import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Table;
 
-import jp.sf.amateras.mirage.annotation.Column;
-import jp.sf.amateras.mirage.annotation.PrimaryKey;
-import jp.sf.amateras.mirage.annotation.PrimaryKey.GenerationType;
-import jp.sf.amateras.mirage.annotation.Table;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -26,15 +20,11 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Data
-@Table(name = "LIBRARY")
-public class Library implements Serializable {
+@Table("LIBRARY")
+public class Library {
 
     @Id
-    @PrimaryKey(generationType = GenerationType.SEQUENCE, generator = "SEQ_LIBRARY")
-    @Column(name = "id")
     private long id;
 
-    @Column(name = "name")
     private String name;
 }

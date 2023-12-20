@@ -1,4 +1,4 @@
-package com.example.service.impl;
+package com.example.service.book.impl;
 
 import java.net.URL;
 import java.sql.Date;
@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.apache.poi.ss.usermodel.Workbook;
 import org.json.simple.JSONArray;
@@ -25,56 +23,69 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.persistence.mirageRepo.BookRepo;
 import com.example.persistence.model.Book;
+import com.example.persistence.model.Library;
+import com.example.persistence.repository.LibraryRepository;
+import com.example.persistence.repository.BookRepository;
 import com.example.service.API;
-import com.example.service.BookService;
+import com.example.service.book.IBookService;
 import com.example.service.export_import.ImportFromExcel;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Transactional(readOnly = false, rollbackFor = Exception.class)
-public class BookServiceImpl implements BookService {
-    static Logger logger = Logger.getLogger(BookServiceImpl.class.getName());
+@Slf4j
+public class BookServiceImpl implements IBookService {
+    // static Logger log = Logger.getLogger(BookServiceImpl.class.getName());
     private long OPENLIBRARY_ID = 1;
     private long GUTENDEX_ID = 2;
     private long CROSSREF_ID = 3;
     List<Book> searchBooks;
 
     @Autowired
-    BookRepo bookRepository;
+    BookRepository bookRepository;
 
-    // @Autowired
-    // BookRepo bookRepo;
+    @Autowired
+    LibraryRepository libraryRepository;
 
     public void initializeBooks() {
         try {
+            Library userLibrary = new Library();
+            userLibrary.setName("user library");
+            userLibrary = libraryRepository.save(userLibrary);
             Book book = new Book();
             Date date = new Date(new java.util.Date().getTime());
             book.setTitle("Mindset");
             book.setAuthor("Carol Dweck");
             book.setImported(date);
-            book.setPublished((short) 2002);
-            this.insert(book);
+            book.setPublished(2002);
+            book.setLibraryId((long) 1);
+            bookRepository.save(book);
             book = new Book();
             book.setTitle("Operating System");
             book.setAuthor("Christen Baun");
             book.setImported(date);
-            book.setPublished((short) 2002);
+            book.setPublished(2002);
+            book.setLibraryId((long) 1);
             this.insert(book);
             book = new Book();
             book.setTitle("Computer Network");
             book.setAuthor("Christen Baun");
             book.setImported(date);
-            book.setPublished((short) 2002);
+            book.setPublished(2002);
+            book.setLibraryId((long) 1);
             this.insert(book);
             book = new Book();
             book.setTitle("Around the World in 100 Days");
             book.setAuthor("Jules Verne");
             book.setImported(date);
-            book.setPublished((short) 2002);
+            book.setPublished(2002);
+            book.setLibraryId((long) 1);
             this.insert(book);
         } catch (Exception e) {
-            logger.log(Level.SEVERE, ">>> Error init:" + e.getMessage());
+            e.printStackTrace();
+            log.error(">>> Error init:" + e.getMessage());
         }
     }
 
@@ -85,11 +96,11 @@ public class BookServiceImpl implements BookService {
         int currentPage = pageable.getPageNumber();
         int startItem = currentPage * pageSize;
         List<Book> list = bookRepository.getPage(startItem, startItem + pageSize);
-        logger.info(list.toString());
+        log.info(list.toString());
         Page<Book> bookPage = new PageImpl<Book>(
                 list,
                 PageRequest.of(currentPage, pageSize, Sort.unsorted()),
-                bookRepository.getBooksSize());
+                bookRepository.count());
         return bookPage;
     }
 
@@ -101,7 +112,7 @@ public class BookServiceImpl implements BookService {
                 try {
                     this.insert(trendingBookItorator.next());
                 } catch (Exception e) {
-                    logger.log(Level.SEVERE, ">>> Error saveTrendingBooks():" + e.getMessage());
+                    log.error(">>> Error saveTrendingBooks():" + e.getMessage());
                 }
             }
         });
@@ -114,7 +125,7 @@ public class BookServiceImpl implements BookService {
                 try {
                     this.insert(trendingBookItorator.next());
                 } catch (Exception e) {
-                    logger.severe(">>> Error saveGutendexTrendingBooks():" + e.getMessage());
+                    log.error(">>> Error saveGutendexTrendingBooks():" + e.getMessage());
                 }
             }
         });
@@ -127,7 +138,7 @@ public class BookServiceImpl implements BookService {
                 try {
                     this.insert(trendingBookItorator.next());
                 } catch (Exception e) {
-                    logger.severe(">>> Error saveCrossrefTrendingBooks():" + e.getMessage());
+                    log.error(">>> Error saveCrossrefTrendingBooks():" + e.getMessage());
                 }
             }
         });
@@ -135,7 +146,7 @@ public class BookServiceImpl implements BookService {
 
     // @Scheduled(fixedRate = 1 * 60 * 1000)
     protected void testAsync() {
-        logger.info(bookRepository.findByTitle("Demo").get(0).getTitle());
+        log.info(bookRepository.findByTitle("Demo").get(0).getTitle());
         // logger.info("Task1");
         // CompletableFuture.supplyAsync(this::getOpenlibraryTrendingBooks).thenAccept((List<Book>
         // books) -> {
@@ -168,14 +179,14 @@ public class BookServiceImpl implements BookService {
     private List<Book> getCrossrefTrendingBooks() {
         List<Book> trendingBooks = new ArrayList<Book>();
         try {
-            logger.info(">>> start getting Crossref trending books");
+            log.info(">>> start getting Crossref trending books");
             Object response = API
                     .fetch(new URL("https://api.crossref.org/works?sample=50&select=title,author,published"));
             Object object = new JSONParser().parse(response.toString());
             JSONObject jsonObject = (JSONObject) object;
             JSONObject message = (JSONObject) jsonObject.get("message");
             JSONArray items = (JSONArray) message.get("items");
-            logger.info(">>> content: " + items.get(0));
+            log.info(">>> content: " + items.get(0));
             ;
             for (Object book : items) {
                 JSONObject bookJson = (JSONObject) book;
@@ -185,18 +196,18 @@ public class BookServiceImpl implements BookService {
                 try {
                     title = (String) titleJsonArray.get(0);
                 } catch (Exception e) {
-                    logger.severe(e.getMessage());
+                    log.error(e.getMessage());
                 }
                 JSONArray authors;
                 String author = "Anonymous";
-                Short published = null;
+                Integer published = null;
                 try {
                     JSONObject publishedJsonObject = (JSONObject) bookJson.get("published");
                     JSONArray dateJsonArray = (JSONArray) publishedJsonObject.get("date-parts");
                     JSONArray yearJsonArray = (JSONArray) dateJsonArray.get(0);
-                    published = (short) ((Long) yearJsonArray.get(0)).intValue();
+                    published = (Integer) yearJsonArray.get(0);
                 } catch (Exception e) {
-                    logger.severe(">>> Error getting publish year:" + e.getMessage());
+                    log.error(">>> Error getting publish year:" + e.getMessage());
                 }
                 // some book have no author
                 try {
@@ -206,7 +217,7 @@ public class BookServiceImpl implements BookService {
                     author += " ";
                     author += (String) authorJsonObject.get("family");
                 } catch (Exception e) {
-                    logger.log(Level.SEVERE, ">>> Error getting author:" + e.getMessage());
+                    log.error(">>> Error getting author:" + e.getMessage());
                 }
                 Book newBook = new Book();
                 newBook.setTitle(title);
@@ -215,7 +226,7 @@ public class BookServiceImpl implements BookService {
                 newBook.setPublished(published);
                 newBook.setLibraryId(CROSSREF_ID);
                 trendingBooks.add(newBook);
-                logger.info(">>> Get: " + newBook);
+                log.info(">>> Get: " + newBook);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -226,27 +237,27 @@ public class BookServiceImpl implements BookService {
     private List<Book> getGutenbergTrendingBooks() {
         List<Book> trendingBooks = new ArrayList<Book>();
         try {
-            logger.info(">>> start getting Gutenberg trending books");
+            log.info(">>> start getting Gutenberg trending books");
             int randomPage = new Random().nextInt() % 2191 + 1;
             randomPage = (randomPage > 0) ? randomPage : -randomPage;
             Object response = API.fetch(new URL("https://gutendex.com/books/?page=" + randomPage));
             Object object = new JSONParser().parse(response.toString());
             JSONObject jsonObject = (JSONObject) object;
             JSONArray results = (JSONArray) jsonObject.get("results");
-            logger.info(">>> content: " + results.get(0));
+            log.info(">>> content: " + results.get(0));
             for (Object book : results) {
                 JSONObject bookJson = (JSONObject) book;
                 String title = (String) bookJson.get("title");
                 JSONArray authors;
                 String author = "Anonymous";
-                Short published = null;
+                Integer published = null;
                 // some book have no author
                 try {
                     authors = (JSONArray) bookJson.get("authors");
                     JSONObject authorJsonObject = (JSONObject) authors.get(0);
                     author = (String) authorJsonObject.get("name");
                 } catch (Exception e) {
-                    logger.log(Level.SEVERE, ">>> Error getting author:" + e.getMessage());
+                    log.error(">>> Error getting author:" + e.getMessage());
                 }
                 Book newBook = new Book();
                 newBook.setTitle(title);
@@ -255,7 +266,7 @@ public class BookServiceImpl implements BookService {
                 newBook.setPublished(published);
                 newBook.setLibraryId(GUTENDEX_ID);
                 trendingBooks.add(newBook);
-                logger.log(Level.INFO, ">>> Get: " + newBook);
+                log.info(">>> Get: " + newBook);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -266,29 +277,29 @@ public class BookServiceImpl implements BookService {
     private List<Book> getOpenlibraryTrendingBooks() {
         List<Book> trendingBooks = new ArrayList<Book>();
         try {
-            logger.info(">>> start getting Openlibrary trending books");
+            log.info(">>> start getting Openlibrary trending books");
             Object response = API.fetch(new URL("https://openlibrary.org/trending/now.json"));
             Object object = new JSONParser().parse(response.toString());
             JSONObject jsonObject = (JSONObject) object;
             JSONArray works = (JSONArray) jsonObject.get("works");
-            logger.info(">>> content: " + works.get(0));
+            log.info(">>> content: " + works.get(0));
             for (Object book : works) {
                 JSONObject bookJson = (JSONObject) book;
                 String title = (String) bookJson.get("title");
                 JSONArray authors;
                 String author = "Anonymous";
-                Short published = null;
+                Integer published = null;
                 try {
-                    published = (short) ((Long) bookJson.get("first_publish_year")).intValue();
+                    published = ((Long) bookJson.get("first_publish_year")).intValue();
                 } catch (Exception e) {
-                    logger.log(Level.SEVERE, ">>> Error getting publish year:" + e.getMessage());
+                    log.error(">>> Error getting publish year:" + e.getMessage());
                 }
                 // some book have no author
                 try {
                     authors = (JSONArray) bookJson.get("author_name");
                     author = (String) authors.get(0);
                 } catch (Exception e) {
-                    logger.log(Level.SEVERE, ">>> Error getting author:" + e.getMessage());
+                    log.error(">>> Error getting author:" + e.getMessage());
                 }
                 Book newBook = new Book();
                 newBook.setTitle(title);
@@ -297,7 +308,7 @@ public class BookServiceImpl implements BookService {
                 newBook.setPublished(published);
                 newBook.setLibraryId(OPENLIBRARY_ID);
                 trendingBooks.add(newBook);
-                logger.log(Level.INFO, ">>> Get: " + newBook);
+                log.info(">>> Get: " + newBook);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -315,10 +326,10 @@ public class BookServiceImpl implements BookService {
         for (Book book : books) {
             try {
                 this.insert(book);
-                logger.info(
+                log.info(
                         ">>> Imported books: " + book.getAuthor() + ":" + book.getTitle() + "-" + book.getPublished());
             } catch (Exception e) {
-                logger.severe(">>> Error duplicate book:" + e.getMessage());
+                log.error(">>> Error duplicate book:" + e.getMessage());
             }
         }
     }
@@ -348,7 +359,7 @@ public class BookServiceImpl implements BookService {
         int pageSize = this.pageSize;
         int currentPage = pageable.getPageNumber();
         int startItem = currentPage * pageSize;
-        logger.info(">>> search book:" + book);
+        log.info(">>> search book:" + book);
         try {
             List<Book> result = bookRepository.searchBook(book, from, to);
             searchBooks = result;
@@ -364,21 +375,21 @@ public class BookServiceImpl implements BookService {
                     result.size());
             return bookPage;
         } catch (Exception e) {
-            logger.severe(e.getMessage());
+            log.error(e.getMessage());
         }
         return null;
     }
 
-    public List<Book> findAll() {
+    public Iterable<Book> findAll() {
         return bookRepository.findAll();
     }
 
     public void updateBook(Book book) {
-        bookRepository.updateBook(book);
+        bookRepository.save(book);
     }
 
     public void insert(Book book) {
-        bookRepository.insert(book);
+        bookRepository.save(book);
     }
 
     public void delete(long id) {

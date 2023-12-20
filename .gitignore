@@ -16,3 +16,6 @@ target
 *.docx
 *.pdf
 logs
+.classpath
+.factorypath
+.settings/org.eclipse.jdt.core.prefs
