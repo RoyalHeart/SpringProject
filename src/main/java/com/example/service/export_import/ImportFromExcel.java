@@ -19,6 +19,9 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 import com.example.persistence.model.Book;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class ImportFromExcel {
     private static Logger logger = Logger.getLogger(ImportFromExcel.class.getName());
     static String SHEET = "Books";
@@ -81,7 +84,7 @@ public class ImportFromExcel {
                                 break;
 
                             case 3:
-                                book.setPublished((short) currentCell.getNumericCellValue());
+                                book.setPublished((int) currentCell.getNumericCellValue());
                                 break;
 
                             default:
@@ -90,12 +93,12 @@ public class ImportFromExcel {
                         cellIdx++;
                     } catch (Exception e) {
                         haveParseError = true;
-                        logger.severe(">>> Error parsing cell" + e.getMessage());
+                        log.error(">>> Error parsing cell" + e.getMessage());
                         currentCell.setCellStyle(createStyleForErrorInput(sheet));
                     }
                 }
                 book.setImported(new Date(new java.util.Date().getTime()));
-                book.setLibraryId(7);
+                book.setLibraryId((long) 7);
                 books.add(book);
             }
             if (haveParseError) {

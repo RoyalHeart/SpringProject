@@ -16,8 +16,9 @@ public class AuthenticationFailureHandlerImpl implements AuthenticationFailureHa
     private Logger logger = Logger.getLogger(AuthenticationFailureHandlerImpl.class.getName());
 
     @Override
-    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
-            AuthenticationException exception) throws IOException, ServletException {
+    public void onAuthenticationFailure(HttpServletRequest request,
+            HttpServletResponse response, AuthenticationException exception)
+            throws IOException, ServletException {
         logger.warning(">>> Exception: " + exception.getMessage());
         String redirectUrl = "/login?error";
         if (exception.getMessage().contains("user")) {
@@ -32,5 +33,4 @@ public class AuthenticationFailureHandlerImpl implements AuthenticationFailureHa
         // super.setDefaultFailureUrl(redirectUrl);
         // super.onAuthenticationFailure(request, response, exception);
     }
-
 }

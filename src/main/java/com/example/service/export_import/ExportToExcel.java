@@ -29,7 +29,7 @@ public class ExportToExcel {
     public static final int COLUMN_INDEX_IMPORTED = 4;
     private static CellStyle cellStyleFormatNumber = null;
 
-    public static void writeExcel(List<Book> books, String excelFilePath) throws IOException {
+    public static void writeExcel(Iterable<Book> books, String excelFilePath) throws IOException {
         // Create Workbook
         Workbook workbook = getWorkbook(excelFilePath);
 

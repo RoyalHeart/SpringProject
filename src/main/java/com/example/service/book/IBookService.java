@@ -1,4 +1,4 @@
-package com.example.service;
+package com.example.service.book;
 
 import java.util.List;
 import java.util.Optional;
@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 
 import com.example.persistence.model.Book;
 
-public interface BookService {
+public interface IBookService {
     public void initializeBooks();
 
     public Page<Book> getPage(Pageable pageable);
@@ -32,7 +32,7 @@ public interface BookService {
 
     public void insert(Book book);
 
-    public List<Book> findAll();
+    public Iterable<Book> findAll();
 
     public void delete(long id);
 

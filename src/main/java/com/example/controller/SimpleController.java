@@ -33,12 +33,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.example.persistence.mirageRepo.UserDetailRepository;
 import com.example.persistence.model.Book;
 import com.example.persistence.model.UserDetail;
 import com.example.persistence.model.Wrapper;
+import com.example.persistence.repository.UserRepository;
 import com.example.security.Validate;
-import com.example.service.BookService;
+import com.example.service.book.IBookService;
+import com.example.service.library.ILibraryService;
 
 @Controller
 @ComponentScan("com.example.service")
@@ -49,17 +50,17 @@ public class SimpleController {
         try {
             UserDetail user = new UserDetail();
             user.setUsername("admin");
-            user.setUser_role("ADMIN");
-            user.setUser_password("$2a$12$Jt8ENKHcdh28mkizdJfEc.ekBTcRRRX9Cp3bz5Ze.dYnUHL3QbRmK");
+            user.setRole("ADMIN");
+            user.setPassword("$2a$12$Jt8ENKHcdh28mkizdJfEc.ekBTcRRRX9Cp3bz5Ze.dYnUHL3QbRmK");
             userRepository.save(user);
             user = new UserDetail();
             user.setUsername("user");
-            user.setUser_role("USER");
-            user.setUser_password("$2a$12$Jt8ENKHcdh28mkizdJfEc.ekBTcRRRX9Cp3bz5Ze.dYnUHL3QbRmK");
+            user.setRole("USER");
+            user.setPassword("$2a$12$Jt8ENKHcdh28mkizdJfEc.ekBTcRRRX9Cp3bz5Ze.dYnUHL3QbRmK");
             user = new UserDetail();
             user.setUsername("u..");
-            user.setUser_role("USER");
-            user.setUser_password("$2a$12$Jt8ENKHcdh28mkizdJfEc.ekBTcRRRX9Cp3bz5Ze.dYnUHL3QbRmK");
+            user.setRole("USER");
+            user.setPassword("$2a$12$Jt8ENKHcdh28mkizdJfEc.ekBTcRRRX9Cp3bz5Ze.dYnUHL3QbRmK");
             userRepository.save(user);
         } catch (Exception e) {
             logger.log(Level.SEVERE, ">>> Init error: " + e.getMessage());
@@ -70,15 +71,19 @@ public class SimpleController {
     String appName;
 
     @Autowired
-    private BookService bookService;
+    private ILibraryService libraryService;
 
     @Autowired
-    private UserDetailRepository userRepository;
+    private IBookService bookService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @PostConstruct
     public void init() {
+        libraryService.initializeLibrary();
         bookService.initializeBooks();
-        initializeUsers();
+        // initializeUsers();
         // bookService.saveTrendingBooks();
     }
 
@@ -134,7 +139,7 @@ public class SimpleController {
         String plainPassword = "";
         try {
             logger.info(newUser.toString());
-            plainPassword = newUser.getUser_password();
+            plainPassword = newUser.getPassword();
         } catch (Exception e) {
             logger.severe(">>> Password Error" + e.getMessage());
             model.addAttribute("passwordError", "Invalid password");
@@ -144,8 +149,8 @@ public class SimpleController {
             logger.info(">>> plain password:" + plainPassword);
             String hashPassword = BCrypt.hashpw(plainPassword, BCrypt.gensalt());
             logger.info(">>> hash password:" + hashPassword);
-            newUser.setUser_password(hashPassword);
-            newUser.setUser_role("USER");
+            newUser.setPassword(hashPassword);
+            newUser.setRole("USER");
         } catch (Exception e) {
             logger.severe(">>> Password Error:" + e.getMessage());
             return "/signup";
@@ -241,7 +246,7 @@ public class SimpleController {
             if (book.getImported() == null) {
                 book.setImported(new Date(new java.util.Date().getTime()));
             }
-            book.setLibraryId(7);
+            book.setLibraryId((long) 1);
             bookService.updateBook(book);
             redirectAttributes.addFlashAttribute("success", "Update successfully");
             return "redirect:" + referer;
@@ -268,7 +273,7 @@ public class SimpleController {
             if (book.getImported() == null) {
                 book.setImported(new Date(new java.util.Date().getTime()));
             }
-            book.setLibraryId(7);
+            book.setLibraryId((long) 1);
             bookService.insert(book);
             redirectAttributes.addFlashAttribute("success", "Add successfully");
             return "redirect:" + referer;

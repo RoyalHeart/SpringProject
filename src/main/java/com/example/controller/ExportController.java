@@ -21,14 +21,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.example.persistence.model.Book;
 import com.example.persistence.model.UserDetail;
 import com.example.persistence.model.Wrapper;
-import com.example.service.BookService;
+import com.example.service.book.IBookService;
 import com.example.service.export_import.DocPdf;
 import com.example.service.export_import.ExportToExcel;
 
 @Controller
 public class ExportController {
     @Autowired
-    BookService bookService;
+    IBookService bookService;
 
     // max form input can only receive 255 Object, increase to 1000
     @InitBinder
@@ -82,7 +82,7 @@ public class ExportController {
             logger.log(Level.INFO, ">>> Username:" + auth.getName());
             logger.log(Level.INFO, ">>> Role:" + auth.getAuthorities().iterator().next().getAuthority());
             user.setUsername(auth.getName());
-            user.setUser_role(auth.getAuthorities().iterator().next().getAuthority());
+            user.setRole(auth.getAuthorities().iterator().next().getAuthority());
             if (referer.contains("search")) {
                 DocPdf.exportDoc(wrapper.getBooks(), user, exportPath);
             } else if (referer.contains("book")) {
@@ -107,7 +107,7 @@ public class ExportController {
             String exportPath = home + "/Downloads/" + filenamePdf;
             UserDetail user = new UserDetail();
             user.setUsername(auth.getName());
-            user.setUser_role(auth.getAuthorities().iterator().next().getAuthority());
+            user.setRole(auth.getAuthorities().iterator().next().getAuthority());
             if (referer.contains("search")) {
                 DocPdf.exportPdf(wrapper.getBooks(), user, exportPath);
             } else if (referer.contains("book")) {
