@@ -11,7 +11,10 @@ a:hover {
   cursor: pointer;
 }
 .login {
-  float: center;
+  font-size: x-large;
+  display: flex;
+  justify-content: center;
+  /* float: center; */
   max-width: 400px;
   margin: 0 auto;
 }

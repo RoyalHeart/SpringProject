@@ -29,7 +29,7 @@ public class TestDocPdf {
             }
             UserDetail userDetail = new UserDetail();
             userDetail.setUsername("admin");
-            userDetail.setUser_role("ADMIN");
+            userDetail.setRole("ADMIN");
             String pathDoc = "project_out.docx";
             String pathPdf = "project_out.pdf";
             DocPdf.exportDoc(books, userDetail, pathDoc);

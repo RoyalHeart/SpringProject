@@ -39,27 +39,30 @@ import com.example.persistence.model.UserDetail;
 import com.example.persistence.model.Wrapper;
 import com.example.security.Validate;
 import com.example.service.BookService;
+import com.example.service.user.UserService;
 
 @Controller
 @ComponentScan("com.example.service")
 public class SimpleController {
+    @Autowired
+    private UserService userService;
     static Logger logger = Logger.getLogger(SimpleController.class.getName());
 
     void initializeUsers() {
         try {
             UserDetail user = new UserDetail();
             user.setUsername("admin");
-            user.setUser_role("ADMIN");
-            user.setUser_password("$2a$12$Jt8ENKHcdh28mkizdJfEc.ekBTcRRRX9Cp3bz5Ze.dYnUHL3QbRmK");
+            user.setRole("ADMIN");
+            user.setPassword("$2a$12$Jt8ENKHcdh28mkizdJfEc.ekBTcRRRX9Cp3bz5Ze.dYnUHL3QbRmK");
             userRepository.save(user);
             user = new UserDetail();
             user.setUsername("user");
-            user.setUser_role("USER");
-            user.setUser_password("$2a$12$Jt8ENKHcdh28mkizdJfEc.ekBTcRRRX9Cp3bz5Ze.dYnUHL3QbRmK");
+            user.setRole("USER");
+            user.setPassword("$2a$12$Jt8ENKHcdh28mkizdJfEc.ekBTcRRRX9Cp3bz5Ze.dYnUHL3QbRmK");
             user = new UserDetail();
             user.setUsername("u..");
-            user.setUser_role("USER");
-            user.setUser_password("$2a$12$Jt8ENKHcdh28mkizdJfEc.ekBTcRRRX9Cp3bz5Ze.dYnUHL3QbRmK");
+            user.setRole("USER");
+            user.setPassword("$2a$12$Jt8ENKHcdh28mkizdJfEc.ekBTcRRRX9Cp3bz5Ze.dYnUHL3QbRmK");
             userRepository.save(user);
         } catch (Exception e) {
             logger.log(Level.SEVERE, ">>> Init error: " + e.getMessage());
@@ -77,8 +80,9 @@ public class SimpleController {
 
     @PostConstruct
     public void init() {
-        bookService.initializeBooks();
-        initializeUsers();
+        // libraryService.initializeLibrary();
+        // bookService.initializeBooks();
+        // initializeUsers();
         // bookService.saveTrendingBooks();
     }
 
@@ -129,35 +133,35 @@ public class SimpleController {
         String username = newUser.getUsername();
         if (!Validate.isUsernameValid(username)) {
             model.addAttribute("usernameError", "Invalid username");
-            return "/signup";
+            return "signup";
         }
         String plainPassword = "";
         try {
-            logger.info(newUser.toString());
-            plainPassword = newUser.getUser_password();
+            logger.info(">>> Add new user " + username);
+            plainPassword = newUser.getPassword();
         } catch (Exception e) {
             logger.severe(">>> Password Error" + e.getMessage());
             model.addAttribute("passwordError", "Invalid password");
-            return "/signup";
+            return "signup";
         }
         try {
             logger.info(">>> plain password:" + plainPassword);
             String hashPassword = BCrypt.hashpw(plainPassword, BCrypt.gensalt());
             logger.info(">>> hash password:" + hashPassword);
-            newUser.setUser_password(hashPassword);
-            newUser.setUser_role("USER");
+            newUser.setPassword(hashPassword);
+            newUser.setRole("USER");
         } catch (Exception e) {
             logger.severe(">>> Password Error:" + e.getMessage());
-            return "/signup";
+            return "signup";
         }
         try {
-            userRepository.save(newUser);
+            userService.insert(newUser);
         } catch (Exception e) {
             logger.severe(">>> Username error:" + e.getMessage());
             model.addAttribute("usernameError", "Username already exist");
-            return "/signup";
+            return "signup";
         }
-        return "/login";
+        return "login";
     }
 
     @GetMapping("/home")

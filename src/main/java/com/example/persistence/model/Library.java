@@ -12,7 +12,6 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-// @Entity
 // @Data
 // public class Library implements Serializable {
 

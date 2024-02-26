@@ -39,22 +39,24 @@ import lombok.Setter;
 @Setter
 @Table(name = "USER_DETAIL")
 public class UserDetail implements Serializable {
-    @Id
-    @PrimaryKey(generationType = GenerationType.SEQUENCE, generator = "SEQ_USER_DETAIL")
+    // @Id
+    // @PrimaryKey(generationType = GenerationType.SEQUENCE, generator =
+    // "SEQ_USER_DETAIL")
+    @Column(name = "id")
     private long id;
 
     @Column(name = "username")
     @ValidUsername
     private String username;
 
-    @Column(name = "user_password")
-    private String user_password;
+    @Column(name = "password")
+    private String password;
 
-    @Column(name = "user_role")
-    private String user_role;
+    @Column(name = "role")
+    private String role;
 
     @Override
     public String toString() {
-        return id + ": " + username + "-" + user_password + user_role;
+        return id + ": " + username + "-" + password + role;
     }
 }

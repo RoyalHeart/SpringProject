@@ -82,7 +82,7 @@ public class ExportController {
             logger.log(Level.INFO, ">>> Username:" + auth.getName());
             logger.log(Level.INFO, ">>> Role:" + auth.getAuthorities().iterator().next().getAuthority());
             user.setUsername(auth.getName());
-            user.setUser_role(auth.getAuthorities().iterator().next().getAuthority());
+            user.setRole(auth.getAuthorities().iterator().next().getAuthority());
             if (referer.contains("search")) {
                 DocPdf.exportDoc(wrapper.getBooks(), user, exportPath);
             } else if (referer.contains("book")) {
@@ -107,7 +107,7 @@ public class ExportController {
             String exportPath = home + "/Downloads/" + filenamePdf;
             UserDetail user = new UserDetail();
             user.setUsername(auth.getName());
-            user.setUser_role(auth.getAuthorities().iterator().next().getAuthority());
+            user.setRole(auth.getAuthorities().iterator().next().getAuthority());
             if (referer.contains("search")) {
                 DocPdf.exportPdf(wrapper.getBooks(), user, exportPath);
             } else if (referer.contains("book")) {
