@@ -1,5 +1,5 @@
 SELECT *
-FROM user_detail
+FROM USER_DETAIL
 
 /*BEGIN*/
 WHERE

@@ -26,7 +26,7 @@ public class SQLServerDialect extends StandardDialect {
     @Override
     public String getSequenceSql(String sequenceName) {
         return String.format(
-                "SELECT (NEXT VALUE FOR %s) AS NEXTVAL", sequenceName);
+                "SELECT nextval('%s') AS NEXTVAL", sequenceName);
     }
 
 }

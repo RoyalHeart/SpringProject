@@ -33,8 +33,3 @@ spring:
     url: jdbc:sqlserver://localhost:1433;databaseName=BookDatabase
     username: sqlserver
     password: admin
-# To initialize database, create table
-#   jpa:
-#     hibernate:
-#       ddl-auto: create
-#     show-sql: true

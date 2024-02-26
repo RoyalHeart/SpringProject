@@ -2,7 +2,7 @@ SELECT *
 FROM book
 
 WHERE
-	isDeleted IS NULL	
+	deleted IS NULL	
 	/*IF id != null*/
 	AND id = /*id*/1
 	/*END*/

@@ -16,6 +16,6 @@ SELECT * FROM book
   /*IF to != 0 */
    AND published <=/*to*/2002
   /*END*/
-  AND isDeleted IS NULL
+  AND deleted IS NULL
 /*END*/
 ORDER BY ID ASC

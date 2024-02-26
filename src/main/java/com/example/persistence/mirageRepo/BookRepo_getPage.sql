@@ -1,7 +1,7 @@
 SELECT * FROM ( 
     SELECT *, ROW_NUMBER() OVER (ORDER BY id) as row FROM book
     WHERE
-    isDeleted is null
+    deleted is null
     ) a 
 /*BEGIN*/
 WHERE 

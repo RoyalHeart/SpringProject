@@ -80,7 +80,7 @@ public class Book {
     private long libraryId;
 
     @Column(name = "is_deleted")
-    private boolean isDeleted;
+    private boolean deleted;
 
     @Override
     public String toString() {

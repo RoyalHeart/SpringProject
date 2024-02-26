@@ -1,3 +1,3 @@
 SELECT COUNT(*)
 FROM BOOK
-WHERE isDeleted is null
+WHERE deleted is null

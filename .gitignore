@@ -16,3 +16,6 @@ target
 *.docx
 *.pdf
 logs
+.classpath
+.factorypath
+application-prod.yml

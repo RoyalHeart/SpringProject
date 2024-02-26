@@ -3,6 +3,7 @@ package com.example.security;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -49,24 +50,21 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.userDetailsService(userDetailsService())
-                .authorizeRequests()
-                .antMatchers("/edit/**", "/delete/**")
-                .hasAuthority("ADMIN")
-                .antMatchers("/login/**", "/signup/**", "/css/**", "/js/**").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .formLogin().loginPage("/login")
-                .usernameParameter("username")
-                .passwordParameter("password")
-                .failureHandler(authenticationFailureHandler())
-                .defaultSuccessUrl("/", true)
-                // .failureUrl("/login?error")
-                .permitAll()
-                .and()
-                .logout().permitAll()
-                .and()
-                .exceptionHandling()
-                .and().cors().and().csrf().disable();
+                .authorizeRequests(requests -> requests
+                        .antMatchers("/edit/**", "/delete/**")
+                        .hasAuthority("ADMIN")
+                        .antMatchers("/login/**", "/signup/**", "/css/**", "/js/**").permitAll()
+                        .anyRequest().authenticated())
+                .formLogin(login -> login
+                        .usernameParameter("username")
+                        .passwordParameter("password")
+                        .failureHandler(authenticationFailureHandler())
+                        .defaultSuccessUrl("/", true)
+                        .loginPage("/login")
+                        .failureUrl("/login?error").permitAll())
+                .logout(logout -> logout.permitAll())
+                .exceptionHandling(Customizer.withDefaults()).cors(Customizer.withDefaults())
+                .csrf(csrf -> csrf.disable());
     }
 
 }
