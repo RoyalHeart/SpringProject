@@ -34,6 +34,7 @@ public class LibraryService implements ILibraryService {
 
     @Override
     public void initializeLibrary() {
+        log.info(">>> Library init");
         Library userLibrary = new Library();
         // userLibrary.setId(0);
         userLibrary.setName("user library");

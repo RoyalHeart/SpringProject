@@ -1,6 +1,6 @@
 package com.example.service.book.impl;
 
-import java.net.URL;
+import java.net.URI;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,8 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.persistence.model.Book;
 import com.example.persistence.model.Library;
-import com.example.persistence.repository.LibraryRepository;
 import com.example.persistence.repository.BookRepository;
+import com.example.persistence.repository.LibraryRepository;
 import com.example.service.API;
 import com.example.service.book.IBookService;
 import com.example.service.export_import.ImportFromExcel;
@@ -181,7 +181,7 @@ public class BookServiceImpl implements IBookService {
         try {
             log.info(">>> start getting Crossref trending books");
             Object response = API
-                    .fetch(new URL("https://api.crossref.org/works?sample=50&select=title,author,published"));
+                    .fetch(new URI("https://api.crossref.org/works?sample=50&select=title,author,published").toURL());
             Object object = new JSONParser().parse(response.toString());
             JSONObject jsonObject = (JSONObject) object;
             JSONObject message = (JSONObject) jsonObject.get("message");
@@ -240,7 +240,7 @@ public class BookServiceImpl implements IBookService {
             log.info(">>> start getting Gutenberg trending books");
             int randomPage = new Random().nextInt() % 2191 + 1;
             randomPage = (randomPage > 0) ? randomPage : -randomPage;
-            Object response = API.fetch(new URL("https://gutendex.com/books/?page=" + randomPage));
+            Object response = API.fetch(new URI("https://gutendex.com/books/?page=" + randomPage).toURL());
             Object object = new JSONParser().parse(response.toString());
             JSONObject jsonObject = (JSONObject) object;
             JSONArray results = (JSONArray) jsonObject.get("results");
@@ -278,7 +278,7 @@ public class BookServiceImpl implements IBookService {
         List<Book> trendingBooks = new ArrayList<Book>();
         try {
             log.info(">>> start getting Openlibrary trending books");
-            Object response = API.fetch(new URL("https://openlibrary.org/trending/now.json"));
+            Object response = API.fetch(new URI("https://openlibrary.org/trending/now.json").toURL());
             Object object = new JSONParser().parse(response.toString());
             JSONObject jsonObject = (JSONObject) object;
             JSONArray works = (JSONArray) jsonObject.get("works");

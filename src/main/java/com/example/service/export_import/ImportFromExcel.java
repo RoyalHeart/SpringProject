@@ -5,7 +5,6 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Logger;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
@@ -23,7 +22,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class ImportFromExcel {
-    private static Logger logger = Logger.getLogger(ImportFromExcel.class.getName());
     static String SHEET = "Books";
 
     private static CellStyle createStyleForErrorInput(Sheet sheet) {
