@@ -37,7 +37,6 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = false, rollbackFor = Exception.class)
 @Slf4j
 public class BookServiceImpl implements IBookService {
-    // static Logger log = Logger.getLogger(BookServiceImpl.class.getName());
     private long OPENLIBRARY_ID = 1;
     private long GUTENDEX_ID = 2;
     private long CROSSREF_ID = 3;

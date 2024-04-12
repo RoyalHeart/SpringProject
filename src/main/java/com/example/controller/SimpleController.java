@@ -13,9 +13,6 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import jakarta.annotation.PostConstruct;
-import jakarta.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.ComponentScan;
@@ -40,6 +37,9 @@ import com.example.persistence.repository.UserRepository;
 import com.example.security.Validate;
 import com.example.service.book.IBookService;
 import com.example.service.library.ILibraryService;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 @ComponentScan("com.example.service")
@@ -71,9 +71,6 @@ public class SimpleController {
     String appName;
 
     @Autowired
-    private ILibraryService libraryService;
-
-    @Autowired
     private IBookService bookService;
 
     @Autowired
@@ -81,8 +78,8 @@ public class SimpleController {
 
     @PostConstruct
     public void init() {
-        libraryService.initializeLibrary();
-        bookService.initializeBooks();
+        // libraryService.initializeLibrary();
+        // bookService.initializeBooks();
         // initializeUsers();
         // bookService.saveTrendingBooks();
     }
