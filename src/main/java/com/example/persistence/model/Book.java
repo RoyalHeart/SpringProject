@@ -17,7 +17,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Table("BOOK")
+@Table("book")
 public class Book {
 
     @Id
