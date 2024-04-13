@@ -1,10 +1,6 @@
 package com.example.controller;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +13,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.example.service.book.impl.BookServiceImpl;
 import com.example.service.export_import.ExcelService;
 
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
+
 @Controller
+@Slf4j
 public class ImportController {
 
-    static Logger logger = Logger.getLogger(ImportController.class.getName());
     @Autowired
     private BookServiceImpl bookService;
 
@@ -39,12 +38,12 @@ public class ImportController {
                 String errorOutputPath = System.getProperty("user.dir");
                 String exportPath = errorOutputPath + "/ErrorExcel_" + new java.util.Date().getTime() + ".xlsx";
                 ExcelService.createOutputFile(workBook, exportPath);
-                logger.log(Level.SEVERE, ">>> Error importing books: " + e.getMessage());
+                log.error(">>> Error importing books: " + e.getMessage());
                 redirectAttributes.addFlashAttribute("importError",
                         "Import has error - Export wrong Excel at: " + exportPath);
             }
         } else {
-            logger.log(Level.SEVERE, ">>> Not Excel");
+            log.error(">>> Not Excel");
             redirectAttributes.addFlashAttribute("isExcel", false);
         }
         return "redirect:" + referer;

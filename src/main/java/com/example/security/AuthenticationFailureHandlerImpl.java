@@ -30,7 +30,5 @@ public class AuthenticationFailureHandlerImpl implements AuthenticationFailureHa
             redirectUrl = "/login?authError=password&username=" + request.getParameter("username");
         }
         response.sendRedirect(redirectUrl);
-        // super.setDefaultFailureUrl(redirectUrl);
-        // super.onAuthenticationFailure(request, response, exception);
     }
 }

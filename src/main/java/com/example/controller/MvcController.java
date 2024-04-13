@@ -8,14 +8,11 @@ package com.example.controller;
 import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -36,15 +33,14 @@ import com.example.persistence.model.Wrapper;
 import com.example.persistence.repository.UserRepository;
 import com.example.security.Validate;
 import com.example.service.book.IBookService;
-import com.example.service.library.ILibraryService;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 
 @Controller
-@ComponentScan("com.example.service")
-public class SimpleController {
-    static Logger logger = Logger.getLogger(SimpleController.class.getName());
+@Slf4j
+public class MvcController {
 
     void initializeUsers() {
         try {
@@ -63,7 +59,7 @@ public class SimpleController {
             user.setPassword("$2a$12$Jt8ENKHcdh28mkizdJfEc.ekBTcRRRX9Cp3bz5Ze.dYnUHL3QbRmK");
             userRepository.save(user);
         } catch (Exception e) {
-            logger.log(Level.SEVERE, ">>> Init error: " + e.getMessage());
+            log.error(">>> Init error: " + e.getMessage());
         }
     }
 
@@ -78,7 +74,6 @@ public class SimpleController {
 
     @PostConstruct
     public void init() {
-        // libraryService.initializeLibrary();
         // bookService.initializeBooks();
         // initializeUsers();
         // bookService.saveTrendingBooks();
@@ -135,27 +130,27 @@ public class SimpleController {
         }
         String plainPassword = "";
         try {
-            logger.info(newUser.toString());
+            log.info(newUser.toString());
             plainPassword = newUser.getPassword();
         } catch (Exception e) {
-            logger.severe(">>> Password Error" + e.getMessage());
+            log.error(">>> Password Error" + e.getMessage());
             model.addAttribute("passwordError", "Invalid password");
             return "/signup";
         }
         try {
-            logger.info(">>> plain password:" + plainPassword);
+            log.info(">>> plain password:" + plainPassword);
             String hashPassword = BCrypt.hashpw(plainPassword, BCrypt.gensalt());
-            logger.info(">>> hash password:" + hashPassword);
+            log.info(">>> hash password:" + hashPassword);
             newUser.setPassword(hashPassword);
             newUser.setRole("USER");
         } catch (Exception e) {
-            logger.severe(">>> Password Error:" + e.getMessage());
+            log.error(">>> Password Error:" + e.getMessage());
             return "/signup";
         }
         try {
             userRepository.save(newUser);
         } catch (Exception e) {
-            logger.severe(">>> Username error:" + e.getMessage());
+            log.error(">>> Username error:" + e.getMessage());
             model.addAttribute("usernameError", "Username already exist");
             return "/signup";
         }
@@ -217,7 +212,7 @@ public class SimpleController {
     public String deleteBook(@PathVariable(name = "id") long id, Model model, HttpServletRequest request) {
         String referer = request.getHeader("Referer");
         bookService.delete(id);
-        logger.info(">>> Delelte book:" + id);
+        log.info(">>> Delelte book:" + id);
         return "redirect:" + referer;
     }
 
@@ -229,7 +224,7 @@ public class SimpleController {
             model.addAttribute("editBook", editBook);
             return "edit";
         } catch (Exception e) {
-            logger.severe(">>> Edit error:" + e.getMessage());
+            log.error(">>> Edit error:" + e.getMessage());
         }
         return "redirect:" + referer;
     }
@@ -238,7 +233,7 @@ public class SimpleController {
     public String update(@ModelAttribute("editBook") Book book,
             Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
         String referer = request.getHeader("Referer");
-        logger.log(Level.INFO, ">>> Update: " + book.getAuthor() + ":" + book.getTitle() + "-" + book.getPublished());
+        log.info(">>> Update: " + book.getAuthor() + ":" + book.getTitle() + "-" + book.getPublished());
         try {
             if (book.getImported() == null) {
                 book.setImported(new Date(new java.util.Date().getTime()));
@@ -248,7 +243,7 @@ public class SimpleController {
             redirectAttributes.addFlashAttribute("success", "Update successfully");
             return "redirect:" + referer;
         } catch (Exception e) {
-            logger.log(Level.SEVERE, ">>> Save error: " + e.getMessage());
+            log.error(">>> Save error: " + e.getMessage());
             model.addAttribute("error", e.getMessage());
             if (e.getMessage().contains("UNIQUE")) {
                 redirectAttributes.addFlashAttribute("error", "Can not import book with same author and title");
@@ -265,7 +260,7 @@ public class SimpleController {
     public String saveBook(@ModelAttribute("book") Book book,
             Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
         String referer = request.getHeader("Referer");
-        logger.log(Level.INFO, ">>> Save: " + book.getAuthor() + ":" + book.getTitle() + "-" + book.getPublished());
+        log.info(">>> Save: " + book.getAuthor() + ":" + book.getTitle() + "-" + book.getPublished());
         try {
             if (book.getImported() == null) {
                 book.setImported(new Date(new java.util.Date().getTime()));
@@ -275,7 +270,7 @@ public class SimpleController {
             redirectAttributes.addFlashAttribute("success", "Add successfully");
             return "redirect:" + referer;
         } catch (Exception e) {
-            logger.log(Level.SEVERE, ">>> Save error: " + e.getMessage());
+            log.error(">>> Save error: " + e.getMessage());
             redirectAttributes.addFlashAttribute("error", e.getMessage());
             if (e.getMessage().contains("UNIQUE")) {
                 redirectAttributes.addFlashAttribute("error", "Can not import book with same author and title");
