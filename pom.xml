@@ -1,180 +1,54 @@
-<?xml version='1.0' encoding='UTF-8'?>
 <project xmlns='http://maven.apache.org/POM/4.0.0'
     xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
     xsi:schemaLocation='http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd'>
     <modelVersion>4.0.0</modelVersion>
-
     <groupId>com.example</groupId>
-    <artifactId>book-api</artifactId>
-    <version>0.10.46</version>
-    <packaging>jar</packaging>
-
-    <name>book-api</name>
-    <description>Demo project for Spring Boot</description>
-
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.4</version>
-        <relativePath />
-    </parent>
-
+    <artifactId>parent</artifactId>
+    <version>${revision}</version>
+    <packaging>pom</packaging>
+    <name>parent</name>
+    <description>parent for spring</description>
 
     <properties>
         <spring.framework.version>6.2.0</spring.framework.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>22</java.version>
+        <rh.version>1.0-SNAPSHOT</rh.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <revision>0.10.46</revision>
     </properties>
+
+    <modules>
+        <module>api</module>
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.example.core</groupId>
+                <artifactId>rh-parent</artifactId>
+                <version>${rh.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
+            <groupId>com.example.core</groupId>
+            <artifactId>rh-core</artifactId>
+            <version>${rh.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.26</version>
-            <scope>provided</scope>
+            <groupId>com.example.core</groupId>
+            <artifactId>rh-security</artifactId>
+            <version>${rh.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-            <!-- <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-tomcat</artifactId>
-                </exclusion>
-            </exclusions> -->
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jdbc</artifactId>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>42.7.3</version>
-        </dependency>
-        <dependency>
-            <groupId>com.microsoft.sqlserver</groupId>
-            <artifactId>mssql-jdbc</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-thymeleaf</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-jdbc</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-config</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-taglibs</artifactId>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-validator -->
-        <!-- <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-validator</artifactId>
-            <version>6.2.0.Final</version>
-        </dependency> -->
-        <!-- https://mvnrepository.com/artifact/jakarta.validation/jakarta.validation-api -->
-        <dependency>
-            <groupId>jakarta.validation</groupId>
-            <artifactId>jakarta.validation-api</artifactId>
-            <version>2.0.2</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple -->
-        <dependency>
-            <groupId>com.googlecode.json-simple</groupId>
-            <artifactId>json-simple</artifactId>
-            <version>1.1.1</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml -->
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi-ooxml</artifactId>
-            <version>4.1.2</version>
-        </dependency>
-
-        <!-- DOCX, PDF export, convert -->
-        <!--
-        https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.xdocreport.core -->
-        <dependency>
-            <groupId>fr.opensagres.xdocreport</groupId>
-            <artifactId>fr.opensagres.xdocreport.core</artifactId>
-            <version>2.0.4</version>
-        </dependency>
-        <!--
-        https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.xdocreport.document -->
-        <dependency>
-            <groupId>fr.opensagres.xdocreport</groupId>
-            <artifactId>fr.opensagres.xdocreport.document</artifactId>
-            <version>2.0.4</version>
-        </dependency>
-        <!--
-        https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.xdocreport.template -->
-        <dependency>
-            <groupId>fr.opensagres.xdocreport</groupId>
-            <artifactId>fr.opensagres.xdocreport.template</artifactId>
-            <version>2.0.4</version>
-        </dependency>
-        <!--
-        https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.xdocreport.converter -->
-        <dependency>
-            <groupId>fr.opensagres.xdocreport</groupId>
-            <artifactId>fr.opensagres.xdocreport.converter</artifactId>
-            <version>2.0.4</version>
-        </dependency>
-        <!--
-        https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.xdocreport.document.docx -->
-        <dependency>
-            <groupId>fr.opensagres.xdocreport</groupId>
-            <artifactId>fr.opensagres.xdocreport.document.docx</artifactId>
-            <version>2.0.4</version>
-        </dependency>
-        <!--
-        https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.xdocreport.template.velocity -->
-        <dependency>
-            <groupId>fr.opensagres.xdocreport</groupId>
-            <artifactId>fr.opensagres.xdocreport.template.velocity</artifactId>
-            <version>2.0.4</version>
-        </dependency>
-        <dependency>
-            <groupId>fr.opensagres.xdocreport</groupId>
-            <artifactId>fr.opensagres.poi.xwpf.converter.pdf</artifactId>
-            <version>2.0.2</version>
-        </dependency>
-        <!--
-        https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.xdocreport.converter.docx.xwpf -->
-        <dependency>
-            <groupId>fr.opensagres.xdocreport</groupId>
-            <artifactId>fr.opensagres.xdocreport.converter.docx.xwpf</artifactId>
-            <version>2.0.4</version>
-        </dependency>
-
-
     </dependencies>
+
     <build>
         <plugins>
             <plugin>
