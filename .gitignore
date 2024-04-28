@@ -1,5 +1,6 @@
 # VSCode
 .vscode
+**/.vscode/
 
 # Eclipse
 .settings
@@ -7,6 +8,7 @@
 
 # Maven
 target
+**/target/
 
 # Java annotation processor (APT)
 .factorypath
@@ -16,6 +18,8 @@ target
 *.docx
 *.pdf
 logs
+**/logs
+*.log
 .classpath
 .factorypath
 .settings/org.eclipse.jdt.core.prefs
