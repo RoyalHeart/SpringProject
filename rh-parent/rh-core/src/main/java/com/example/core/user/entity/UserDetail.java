@@ -1,4 +1,4 @@
-package com.example.persistence.model;
+package com.example.core.user.entity;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;

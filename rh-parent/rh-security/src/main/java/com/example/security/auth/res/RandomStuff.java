@@ -1,4 +1,4 @@
-package com.example.security.auth.req;
+package com.example.security.auth.res;
 
 /*******************************************************
  * For Vietnamese readers:

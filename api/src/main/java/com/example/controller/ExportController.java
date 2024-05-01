@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.example.core.entity.UserDetail;
 import com.example.persistence.model.Book;
-import com.example.persistence.model.UserDetail;
 import com.example.persistence.model.Wrapper;
 import com.example.service.book.IBookService;
 import com.example.service.export_import.DocPdf;

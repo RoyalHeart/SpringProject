@@ -1,13 +1,13 @@
 package com.example;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.Assert.assertTrue;
 
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.logging.Logger;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 import com.example.service.API;
 

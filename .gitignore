@@ -12,6 +12,7 @@ target
 
 # Java annotation processor (APT)
 .factorypath
+application*.yml
 
 # Output
 *.xlsx

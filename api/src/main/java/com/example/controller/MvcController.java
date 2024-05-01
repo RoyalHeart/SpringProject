@@ -27,11 +27,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.example.core.entity.UserDetail;
+import com.example.core.repository.UserRepository;
+import com.example.core.validation.Validate;
 import com.example.persistence.model.Book;
-import com.example.persistence.model.UserDetail;
 import com.example.persistence.model.Wrapper;
-import com.example.persistence.repository.UserRepository;
-import com.example.security.Validate;
 import com.example.service.book.IBookService;
 
 import jakarta.annotation.PostConstruct;

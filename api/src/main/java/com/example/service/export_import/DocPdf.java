@@ -9,8 +9,8 @@ import java.sql.Date;
 
 import org.apache.poi.openxml4j.util.ZipSecureFile;
 
+import com.example.core.entity.UserDetail;
 import com.example.persistence.model.Book;
-import com.example.persistence.model.UserDetail;
 
 import fr.opensagres.poi.xwpf.converter.pdf.PdfOptions;
 import fr.opensagres.xdocreport.converter.ConverterTypeTo;

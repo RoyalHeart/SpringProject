@@ -1,5 +1,6 @@
 package com.example;
-import org.junit.jupiter.api.Test;
+
+import org.junit.Test;
 
 import com.example.service.scheduler.Job;
 import com.example.service.scheduler.Job.JobPriority;

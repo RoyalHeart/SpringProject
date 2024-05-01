@@ -1,10 +1,10 @@
 package com.example.core.annotation.impl;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-
 import com.example.core.annotation.ValidUsername;
 import com.example.core.validation.Validate;
+
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 public class ValidUsernameImpl implements ConstraintValidator<ValidUsername, String> {
     @Override

@@ -57,12 +57,11 @@ public class SecurityConfiguration {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/login/**", "/signup/**").permitAll()
-                        .requestMatchers("api/login/**", "api/signup/**").permitAll()
+                        .requestMatchers("api/auth/login/**", "api/auth/signup/**").permitAll()
                         .requestMatchers("/edit/**", "/delete/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
                 // .formLogin(login -> login.loginPage("/login")
-                // .failureHandler(authenticationFailureHandler()).permitAll())
                 // .sessionManagement(session ->
                 // session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider()) // Register the

@@ -4,13 +4,14 @@ import java.util.Comparator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.PriorityBlockingQueue;
-import java.util.logging.Logger;
 
 import com.example.service.scheduler.Job.JobPriority;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class PriorityJobScheduler {
 
-    private static Logger logger = Logger.getLogger(PriorityJobScheduler.class.getName());
     private ExecutorService priorityJobPoolExecutor;
     private ExecutorService priorityJobScheduler = Executors.newSingleThreadExecutor();
     private PriorityBlockingQueue<Job> priorityQueue;
@@ -29,7 +30,7 @@ public class PriorityJobScheduler {
 
     public void scheduleJob(Job job) {
         priorityQueue.add(job);
-        logger.info("add " + job);
+        log.info("add " + job);
     }
 
     public static void test() throws InterruptedException {
