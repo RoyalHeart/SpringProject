@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.example.core.entity.UserDetail;
+import com.example.core.user.entity.UserDetail;
 import com.example.persistence.model.Book;
 import com.example.service.export_import.DocPdf;
 

@@ -27,8 +27,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.example.core.entity.UserDetail;
-import com.example.core.repository.UserRepository;
+import com.example.core.user.entity.UserDetail;
+import com.example.core.user.repository.UserRepository;
 import com.example.core.validation.Validate;
 import com.example.persistence.model.Book;
 import com.example.persistence.model.Wrapper;

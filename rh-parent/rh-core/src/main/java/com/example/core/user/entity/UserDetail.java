@@ -1,5 +1,7 @@
 package com.example.core.user.entity;
 
+import java.io.Serializable;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
@@ -11,7 +13,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table("user_detail")
-public class UserDetail {
+public class UserDetail implements Serializable {
     @Id
     private long id;
 

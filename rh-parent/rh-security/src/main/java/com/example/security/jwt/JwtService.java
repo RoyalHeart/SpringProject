@@ -9,17 +9,24 @@ import java.util.function.Function;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import com.example.core.config.CustomProperties;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Component
 public class JwtService {
 
+    private CustomProperties customProperties;
+
+    public JwtService(CustomProperties customProperties) {
+        this.customProperties = customProperties;
+    }
     // Secret Key for signing the JWT. It should be kept private.
-    private static final String SECRET = "TmV3U2VjcmV0S2V5Rm9ySldUU2lnbmluZ1B1cnBvc2VzMTIzNDU2Nzg=\r\n" + "";
 
     // Generates a JWT token for the given userName.
     public String generateToken(String userName) {
@@ -28,12 +35,13 @@ public class JwtService {
 
         // Build JWT token with claims, subject, issued time, expiration time, and
         // signing algorithm
-        // Token valid for 3 minutes
+        // Token valid for 10 minutes
+        int tokenValidTimeInMilis = customProperties.getJwt().getValidTime();
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(userName)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 3))
+                .setExpiration(new Date(System.currentTimeMillis() + tokenValidTimeInMilis))
                 .signWith(getSignKey(), SignatureAlgorithm.HS256).compact();
     }
 
@@ -41,7 +49,8 @@ public class JwtService {
     // returns a Key object for signing the JWT.
     private Key getSignKey() {
         // Decode the base64 encoded secret key and return a Key object
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET);
+        String secret = customProperties.getJwt().getBase64Secret();
+        byte[] keyBytes = Decoders.BASE64.decode(secret);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
@@ -87,10 +96,12 @@ public class JwtService {
     // Validates the JWT token against the UserDetails.
     // return-> True if the token is valid, false otherwise.
 
-    public Boolean validateToken(String token, UserDetails userDetails) {
-        // Extract username from token and check if it matches UserDetails' username
+    public Boolean validateToken(HttpServletRequest request, String token, UserDetails userDetails) {
         final String userName = extractUserName(token);
-        // Also check if the token is expired
+        // not check when at auth api
+        if (request.getRequestURL().toString().contains("auth")) {
+            return userName.equals(userDetails.getUsername());
+        }
         return (userName.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 }
