@@ -1,4 +1,4 @@
-package com.example.service.auth.dto;
+package com.example.security.auth.res;
 
 /*******************************************************
  * For Vietnamese readers:

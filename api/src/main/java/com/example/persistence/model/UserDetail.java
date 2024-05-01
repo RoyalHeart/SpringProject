@@ -3,7 +3,7 @@ package com.example.persistence.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
-import com.example.security.annotation.ValidUsername;
+import com.example.core.annotation.ValidUsername;
 
 import lombok.Getter;
 import lombok.Setter;

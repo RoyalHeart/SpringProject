@@ -7,11 +7,10 @@ package com.example.persistence.model;
 
 import java.sql.Date;
 
-import javax.validation.constraints.NotBlank;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 

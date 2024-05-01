@@ -1,4 +1,6 @@
-package com.example.controller;
+package com.example.security.auth.controller;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -11,12 +13,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.security.JwtService;
-import com.example.service.auth.dto.LoginRequest;
-import com.example.service.auth.dto.LoginResponse;
-import com.example.service.auth.dto.RandomStuff;
-
-import jakarta.validation.Valid;
+import com.example.security.auth.req.LoginRequest;
+import com.example.security.auth.req.RandomStuff;
+import com.example.security.auth.res.LoginResponse;
+import com.example.security.jwt.JwtService;
 
 @RestController
 @RequestMapping("/api/auth")
