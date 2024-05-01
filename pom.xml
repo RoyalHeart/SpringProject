@@ -17,7 +17,7 @@
         <rh.version>1.0-SNAPSHOT</rh.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <revision>0.10.46</revision>
+        <revision>0.11.0</revision>
     </properties>
 
     <modules>
