@@ -1,6 +1,6 @@
 package com.example;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -20,6 +20,6 @@ public class TestApi {
         String openlibraryTrendingUrl = "https://openlibrary.org/trending/now.json";
         Object response = API.fetch(new URI(openlibraryTrendingUrl).toURL());
         logger.info(response.toString());
-        assertTrue(response != null);
+        assertNotNull(response);
     }
 }

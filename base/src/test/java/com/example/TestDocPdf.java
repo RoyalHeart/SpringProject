@@ -1,5 +1,7 @@
 package com.example;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,8 +34,8 @@ public class TestDocPdf {
             userDetail.setRole("ADMIN");
             String pathDoc = "project_out.docx";
             String pathPdf = "project_out.pdf";
-            DocPdf.exportDoc(books, userDetail, pathDoc);
-            DocPdf.exportPdf(books, userDetail, pathPdf);
+            assertDoesNotThrow(() -> DocPdf.exportDoc(books, userDetail, pathDoc));
+            assertDoesNotThrow(() -> DocPdf.exportPdf(books, userDetail, pathPdf));
         } catch (Exception e) {
             e.printStackTrace();
         }
