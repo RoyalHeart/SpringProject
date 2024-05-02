@@ -38,8 +38,7 @@ public class LibraryService implements ILibraryService {
         Library userLibrary = new Library();
         // userLibrary.setId(0);
         userLibrary.setName("user library");
-        userLibrary = libraryRepository.save(userLibrary);
-        System.out.println(userLibrary);
+        libraryRepository.save(userLibrary);
     }
 
 }

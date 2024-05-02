@@ -3,6 +3,9 @@
     xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
     xsi:schemaLocation='http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd'>
     <modelVersion>4.0.0</modelVersion>
+    <groupId>com.example</groupId>
+    <artifactId>mvc</artifactId>
+    <packaging>jar</packaging>
 
     <parent>
         <groupId>com.example</groupId>
@@ -10,11 +13,8 @@
         <version>${revision}</version>
     </parent>
 
-    <groupId>com.example</groupId>
-    <artifactId>api</artifactId>
-    <packaging>jar</packaging>
-    <name>api</name>
-    <description>Demo project for Spring Boot</description>
+    <name>mvc</name>
+    <description>MVC for spring project</description>
 
     <properties>
         <spring.framework.version>6.2.0</spring.framework.version>

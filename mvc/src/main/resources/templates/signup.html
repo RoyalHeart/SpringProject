@@ -1,0 +1,31 @@
+<html>
+
+<head>
+    <title>Sign up</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <script src="/js/validate.js"></script>
+</head>
+
+<body>
+    <form th:action="@{/signup}" method="post" action="#" class="login" th:object="${newUser}"
+        onsubmit="return validateUsername()">
+        <div>
+            <p>Sign up</p>
+            <p th:if="${usernameError}" style="color: red">Username:</p>
+            <p th:if="${usernameError} == null">Username:</p>
+            <input placeholder="Username" type="username" name="username" id="username" th:field="*{username}" />
+            <span th:text="${usernameError}"></span>
+
+            <p th:if="${passwordError}" style="color: red">Password:</p>
+            <p th:if="${passwordError} == null">Password:</p>
+            <input placeholder="Password" type="password" name="password" id="password" th:field="*{password}" />
+            <span th:text="${passwordError}"></span>
+            <p>
+                <input type="submit" value="Create" />
+                <span><button onclick="location.href='/login'" type="button">Back to login</button></span>
+            </p>
+        </div>
+    </form>
+</body>
+
+</html>

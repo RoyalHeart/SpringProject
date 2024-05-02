@@ -1,0 +1,32 @@
+<html>
+
+<head>
+    <title>Login Screen</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <script src="/js/validate.js"></script>
+</head>
+
+<body>
+    <form id="loginform" th:action="@{/login}" method="post" class="login" onsubmit="return validateUsername()">
+        <div>
+            <p>Login</p>
+            <p th:if="${usernameError}" style="color: red">Username:<span style="color: red">*</span></p>
+            <p th:if="${usernameError} == null">Username:<span style="color: red">*</span></p>
+            <input placeholder="Username" type="username" name="username" id="username" th:value="${username}"
+                minlength="2" required />
+            <span th:text="${usernameError}"></span>
+
+            <p th:if="${passwordError}" style="color: red">Password:</p>
+            <p th:if="${passwordError} == null">Password:</p>
+            <input placeholder="Password" type="password" name="password" id="password" />
+            <span th:text="${passwordError}"></span>
+            <p>
+                <input type="submit" value="Login" />
+                <span><button onclick="location.href='/signup'" type="button">Sign up</button></span>
+            </p>
+            <span th:text="${logout}" style="color: green"></span>
+        </div>
+    </form>
+</body>
+
+</html>

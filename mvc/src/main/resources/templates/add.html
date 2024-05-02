@@ -1,0 +1,76 @@
+<html>
+
+<head>
+    <title>Add book</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <script src="/js/validate.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"></script>
+</head>
+
+<body>
+    <div>
+        <div class="navigation">
+            <a href="/home">Home</a>
+            <a href="/book">Book</a>
+            <a href="/add">Add</a>
+            <form th:action="@{/logout}" method="post">
+                <input type="submit" value="Logout" />
+            </form>
+        </div>
+        <h1>Add new book</h1>
+        <form method="post" action="#" th:action="@{/fetchOpenlibraryTrending}">
+            <input type="submit" value="Fetch trending books from Openlibrary" />
+        </form>
+        <form method="post" action="#" th:action="@{/fetchGutendexTrending}">
+            <input type="submit" value="Fetch trending books from Gutendex (no published year)" />
+        </form>
+        <form method="post" action="#" th:action="@{/fetchCrossrefTrending}">
+            <input type="submit" value="Fetch trending books from Crossref" />
+        </form>
+        <form method="post" action="#" th:action="@{/downloadImportTemplate}">
+            <input type="submit" value="Download Import Template"></input>
+        </form>
+        <form method="post" action="#" th:action="@{/import}" enctype="multipart/form-data">
+            <input type="file" name="file" />
+            <input type="submit" value="Import excel"></input>
+            <span th:if="${isExcel} == false">Not an Excel file!</span>
+            <span th:text="${importError}"></span>
+            <span th:text="${importSuccessfully}"></span>
+        </form>
+        <form id="form" method="post" action="#" th:action="@{/save}" th:object="${book}"
+            onsubmit="return validateInput()">
+            <table border="0" cellpadding="10">
+                <tr>
+                    <td id="authorcell">
+                        <label>Book author:<span style="color: red">*</span></label>
+                    </td>
+                    <td>
+                        <input id="author" type="text" th:field="*{author}" required />
+                    </td>
+                    <td id="titlecell">
+                        <p>Book title:<span style="color: red">*</span></p>
+                    </td>
+                    <td>
+                        <input id="title" type="text" th:field="*{title}" required />
+                    </td>
+                    <td>
+                        <p>Book published year: </p>
+                    </td>
+                    <td>
+                        <input type="number" th:field="*{published}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <input type="submit" value="Add" />
+                    </td>
+                </tr>
+            </table>
+            <p style="color: green" th:if="${success}" th:text="${success}" />
+            <p style="color: red" th:if="${error}" th:text="${error}" />
+        </form>
+    </div>
+</body>
+
+</html>
